@@ -1,0 +1,5 @@
+package lys.sepr.game;
+
+public enum RequirementType {
+	DISTANCE_TRAVELLED, CONTRACTS_COMPLETED, TRAINS_OWNED, TRAINS_USED, POWER_UPS_USED, REPUTATION, MONEY
+}
