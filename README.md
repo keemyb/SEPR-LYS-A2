@@ -16,3 +16,13 @@ If you are using IntelliJ IDEA 14, you will need to make sure that the test fold
 <li> Select the "test" folder </li>
 <li> Mark the folder as a test folder in the above toolbar </li>
 </ol>
+
+In IntelliJ IDEA 14, a test configuration is required:
+<ol>
+<li> Select Run, Edit Configurations </li>
+<li> Select Add (Plus Button), JUnit </li>
+<li> Name this configuration "All Tests" </li>
+<li> Change Test Kind to "All in package" </li>
+<li> In the package textbox enter "lys" </li>
+<li> Change Search for tests to "In whole project" </li>
+</ol>
