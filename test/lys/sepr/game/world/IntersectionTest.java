@@ -26,8 +26,6 @@ public class IntersectionTest {
         this.track2 = new Track(startPoint2, endPoint2);
 
         this.intersection = new Intersection(endPoint1, track1, track2);
-        track1.addIntersection(intersection);
-        track2.addIntersection(intersection);
 
     }
 
