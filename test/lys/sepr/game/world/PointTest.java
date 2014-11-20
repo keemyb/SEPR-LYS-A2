@@ -41,7 +41,7 @@ public class PointTest {
     }
 
     @Test(expected = InputMismatchException.class)
-         public void testBadSetUp() throws Exception {
+    public void testBadSetUp() throws Exception {
         Point badPoint = new Point(-100, -50);
     }
 
