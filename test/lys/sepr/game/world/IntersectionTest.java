@@ -1,6 +1,7 @@
 package lys.sepr.game.world;
 
 import org.junit.Before;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,7 @@ public class IntersectionTest {
 
     private Track track1;
     private Track track2;
+    private Intersection intersection;
 
     @Before
     public void setUp() throws Exception {
@@ -22,21 +24,28 @@ public class IntersectionTest {
 
         this.track1 = new Track(startPoint1, endPoint1);
         this.track2 = new Track(startPoint2, endPoint2);
+
+        this.intersection = new Intersection(endPoint1, track1, track2);
+        track1.addIntersection(intersection);
+        track2.addIntersection(intersection);
+
     }
 
+    @Test
     public void testGetTracks() throws Exception {
         ArrayList<Track> expectedTracks = new ArrayList<Track>();
         expectedTracks.add(track1);
         expectedTracks.add(track2);
 
-        assertEquals(expectedTracks, track1.getIntersection().getTracks());
+        assertEquals(expectedTracks, intersection.getTracks());
     }
 
+    @Test
     public void testValidNextTracks() throws Exception {
         ArrayList<Track> expectedTracks = new ArrayList<Track>();
         expectedTracks.add(track2);
 
-        assertEquals(expectedTracks, track1.getIntersection().getValidNextTracks());
+        assertEquals(expectedTracks, intersection.getValidNextTracks(track1));
     }
 
 }

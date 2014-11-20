@@ -1,6 +1,7 @@
 package lys.sepr.game.world;
 
 import org.junit.Before;
+import org.junit.Test;
 
 import static org.junit.Assert.*;
 
@@ -17,10 +18,12 @@ public class TrackTest {
         this.track1 = new Track(startPoint1, endPoint1);
     }
 
+    @Test
     public void testNextTrackSolo() throws Exception {
         assertEquals(null, track1.getNextTrack(new Point(0,0)));
     }
 
+    @Test
     public void testNextTrack() throws Exception {
         Point startPoint2 = new Point(200,200);
         Point endPoint2 = new Point(100,100);
