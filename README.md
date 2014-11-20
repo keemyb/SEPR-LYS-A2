@@ -1,5 +1,18 @@
 SEPR-LYS-A2
 ===========
 
-Please try not to populate this repo with any personal config files
-(e.g. Workspace files)
+This project requires the JDK. You can download it from [here](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
+
+Tests
+-----
+
+Tests can be found in the directory "test". It mirrors the "src" folder.
+All tests use the JUnit 4 library.
+
+If you are using IntelliJ IDEA 14, you will need to make sure that the test folder is recognised as such.
+<ol>
+<li> Select File, Project Structure </li>
+<li> Select Modules </li>
+<li> Select the "test" folder </li>
+<li> Mark the folder as a test folder in the above toolbar </li>
+</ol>
