@@ -8,8 +8,8 @@ public class Point {
     private float y;
 
     Point(float x, float y) {
-        this.x = x;
-        this.y = y;
+        setX(x);
+        setY(y);
     }
 
     public float getX() {
