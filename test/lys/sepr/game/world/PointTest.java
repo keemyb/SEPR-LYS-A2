@@ -3,6 +3,8 @@ package lys.sepr.game.world;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.InputMismatchException;
+
 import static org.junit.Assert.*;
 
 public class PointTest {
@@ -37,4 +39,32 @@ public class PointTest {
         assertEquals(70, point.getX(), 0.0f);
         assertEquals(90, point.getY(), 0.0f);
     }
+
+    @Test(expected = InputMismatchException.class)
+         public void testBadSetUp() throws Exception {
+        Point badPoint = new Point(-100, -50);
+    }
+
+    @Test
+    public void testBadMove() throws Exception {
+        float oldX = point.getX();
+        float oldY = point.getY();
+
+        point.move(-100, -50);
+
+        assertEquals(oldX, point.getX(), 0.0f);
+        assertEquals(oldY, point.getY(), 0.0f);
+    }
+
+    @Test
+    public void testBadTranslate() throws Exception {
+        float oldX = point.getX();
+        float oldY = point.getY();
+
+        point.translate(-51, -61);
+
+        assertEquals(oldX, point.getX(), 0.0f);
+        assertEquals(oldY, point.getY(), 0.0f);
+    }
+
 }
