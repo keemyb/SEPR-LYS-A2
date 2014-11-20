@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 
 public class MapTest {
 
-    private Map map;
+    private Map map = new Map();
     private Track track1;
     private Track track2;
 
