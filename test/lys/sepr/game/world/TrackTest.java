@@ -18,7 +18,7 @@ public class TrackTest {
     }
 
     public void testNextTrackSolo() throws Exception {
-        assertEquals(null, track1.nextTrack());
+        assertEquals(null, track1.getNextTrack(new Point(0,0)));
     }
 
     public void testNextTrack() throws Exception {
@@ -27,7 +27,7 @@ public class TrackTest {
 
         this.track2 = new Track(startPoint2, endPoint2);
 
-        assertEquals(track2, track1.nextTrack());
+        assertEquals(track2, track1.getNextTrack(new Point(0,0)));
     }
     
 }
