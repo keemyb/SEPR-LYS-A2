@@ -1,4 +1,4 @@
-package lys.sepr.game.ui;
+package lys.sepr.ui;
 
 import javax.swing.JFrame;
 
