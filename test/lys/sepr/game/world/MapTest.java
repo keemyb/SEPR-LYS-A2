@@ -38,6 +38,7 @@ public class MapTest {
 
     @Test
     public void testNextTrack() throws Exception {
+        map.addTrack(track1);
         map.addTrack(track2);
 
         assertEquals(track2, track1.getNextTrack(new Point(0,0)));
