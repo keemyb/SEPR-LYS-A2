@@ -50,6 +50,19 @@ public class Track {
         return null;
     }
 
+    public ArrayList<Double> getVector(Point towards) {
+        Point from = (points.get(0).equals(towards)) ? points.get(1) : points.get(0);
+
+        ArrayList<Double> vector = new ArrayList<Double>(2);
+//        System.out.println(from.getX());
+//        System.out.println(from.getY());
+////        System.out.println(from.getX());
+////        System.out.println(from.getY());
+        vector.add(towards.getX() - from.getX());
+        vector.add(towards.getY() - from.getY());
+        return vector;
+    }
+
     public void addIntersection(Intersection intersection) {
         intersections.add(intersection);
     }
