@@ -3,6 +3,8 @@ package lys.sepr.game.world;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+
 import static org.junit.Assert.*;
 
 public class TrackTest {
@@ -52,5 +54,18 @@ public class TrackTest {
         assertEquals(track1, track2.getNextTrack(new Point(200,200)));
         assertEquals(track2, track1.getNextTrack(new Point(0,0)));
     }
-    
+
+    @Test
+    public void testGetVector() throws Exception {
+        ArrayList<Double> expectedVector1 = new ArrayList<Double>();
+        expectedVector1.add(100d);
+        expectedVector1.add(100d);
+
+        ArrayList<Double> expectedVector2 = new ArrayList<Double>();
+        expectedVector2.add(-100d);
+        expectedVector2.add(0d);
+
+        assertEquals(expectedVector1, track1.getVector(new Point(100,100)));
+        assertEquals(expectedVector2, track3.getVector(new Point(100,100)));
+    }
 }
