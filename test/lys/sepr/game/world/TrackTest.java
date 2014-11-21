@@ -10,6 +10,7 @@ public class TrackTest {
     private Map map = new Map();
     private Track track1;
     private Track track2;
+    private Track track3;
 
     @Before
     public void setUp() throws Exception {
@@ -19,8 +20,12 @@ public class TrackTest {
         Point startPoint2 = new Point(200,200);
         Point endPoint2 = new Point(100,100);
 
+        Point startPoint3 = new Point(100,100);
+        Point endPoint3 = new Point(200,100);
+
         this.track1 = new Track(startPoint1, endPoint1);
         this.track2 = new Track(startPoint2, endPoint2);
+        this.track3 = new Track(startPoint3, endPoint3);
     }
 
     @Test
@@ -29,12 +34,23 @@ public class TrackTest {
     }
 
     @Test
-    public void testNextTrack() throws Exception {
+    public void testNextTrackDuo() throws Exception {
         map.addTrack(track1);
         map.addTrack(track2);
 
         assertEquals(track2, track1.getNextTrack(new Point(0,0)));
-        assertEquals(null, track1.getNextTrack(new Point(100, 100)));
+        assertEquals(null, track1.getNextTrack(new Point(100,100)));
+    }
+
+    @Test
+    public void testNextTrackTrio() throws Exception {
+        map.addTrack(track1);
+        map.addTrack(track2);
+        map.addTrack(track3);
+
+        assertEquals(track1, track3.getNextTrack(new Point(200,100)));
+        assertEquals(track1, track2.getNextTrack(new Point(200,200)));
+        assertEquals(track2, track1.getNextTrack(new Point(0,0)));
     }
     
 }
