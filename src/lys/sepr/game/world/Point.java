@@ -4,23 +4,23 @@ import java.util.InputMismatchException;
 
 public class Point {
 
-    private float x;
-    private float y;
+    private double x;
+    private double y;
 
-    Point(float x, float y) {
+    Point(double x, double y) {
         setX(x);
         setY(y);
     }
 
-    public float getX() {
+    public double getX() {
         return x;
     }
 
-    public float getY() {
+    public double getY() {
         return y;
     }
 
-    private void setY(float y){
+    private void setY(double y){
         if (y < 0) {
             throw new InputMismatchException("y must be greater than 0");
         } else {
@@ -28,7 +28,7 @@ public class Point {
         }
     }
 
-    private void setX(float x) {
+    private void setX(double x) {
         if (x < 0) {
             throw new InputMismatchException("x must be greater than 0");
         } else {
@@ -36,7 +36,7 @@ public class Point {
         }
     }
 
-    public void move(float x, float y) {
+    public void move(double x, double y) {
         try {
             setX(x);
         } catch (InputMismatchException e) {
@@ -50,9 +50,9 @@ public class Point {
         }
     }
 
-    public void translate(float x, float y) {
-        float newX = x + getX();
-        float newY = y + getY();
+    public void translate(double x, double y) {
+        double newX = x + getX();
+        double newY = y + getY();
 
         try {
             setX(newX);
@@ -74,16 +74,20 @@ public class Point {
 
         Point point = (Point) o;
 
-        if (Float.compare(point.x, x) != 0) return false;
-        if (Float.compare(point.y, y) != 0) return false;
+        if (Double.compare(point.x, x) != 0) return false;
+        if (Double.compare(point.y, y) != 0) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = (x != +0.0f ? Float.floatToIntBits(x) : 0);
-        result = 31 * result + (y != +0.0f ? Float.floatToIntBits(y) : 0);
+        int result;
+        long temp;
+        temp = Double.doubleToLongBits(x);
+        result = (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(y);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
         return result;
     }
 }

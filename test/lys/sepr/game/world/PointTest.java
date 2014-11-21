@@ -18,26 +18,26 @@ public class PointTest {
 
     @Test
     public void testGetX() throws Exception {
-        assertEquals(50, point.getX(), 0.0f);
+        assertEquals(50, point.getX(),0.0d);
     }
 
     @Test
     public void testGetY() throws Exception {
-        assertEquals(60, point.getY(), 0.0f);
+        assertEquals(60, point.getY(), 0.0d);
     }
 
     @Test
     public void testMove() throws Exception {
         point.move(100, 90);
-        assertEquals(100, point.getX(), 0.0f);
-        assertEquals(90, point.getY(), 0.0f);
+        assertEquals(100, point.getX(), 0.0d);
+        assertEquals(90, point.getY(), 0.0d);
     }
 
     @Test
     public void testTranslate() throws Exception {
         point.translate(20, 30);
-        assertEquals(70, point.getX(), 0.0f);
-        assertEquals(90, point.getY(), 0.0f);
+        assertEquals(70, point.getX(), 0.0d);
+        assertEquals(90, point.getY(), 0.0d);
     }
 
     @Test(expected = InputMismatchException.class)
@@ -47,24 +47,24 @@ public class PointTest {
 
     @Test
     public void testBadMove() throws Exception {
-        float oldX = point.getX();
-        float oldY = point.getY();
+        double oldX = point.getX();
+        double oldY = point.getY();
 
         point.move(-100, -50);
 
-        assertEquals(oldX, point.getX(), 0.0f);
-        assertEquals(oldY, point.getY(), 0.0f);
+        assertEquals(oldX, point.getX(), 0.0d);
+        assertEquals(oldY, point.getY(), 0.0d);
     }
 
     @Test
     public void testBadTranslate() throws Exception {
-        float oldX = point.getX();
-        float oldY = point.getY();
+        double oldX = point.getX();
+        double oldY = point.getY();
 
         point.translate(-51, -61);
 
-        assertEquals(oldX, point.getX(), 0.0f);
-        assertEquals(oldY, point.getY(), 0.0f);
+        assertEquals(oldX, point.getX(), 0.0d);
+        assertEquals(oldY, point.getY(), 0.0d);
     }
 
 }
