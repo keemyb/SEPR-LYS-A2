@@ -2,10 +2,6 @@ package lys.sepr.game.world;
 
 import java.util.ArrayList;
 
-/*TODO create tests for adding more than 2 tracks with the same point (and implement)
-will require changes to the intersection constructor
- */
-
 public class Map {
 
     private ArrayList<Track> tracks = new ArrayList<Track>();
