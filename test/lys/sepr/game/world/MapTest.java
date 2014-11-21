@@ -42,6 +42,7 @@ public class MapTest {
         map.addTrack(track2);
 
         assertEquals(track2, track1.getNextTrack(new Point(0,0)));
+        assertEquals(null, track1.getNextTrack(new Point(100, 100)));
     }
 
 }
