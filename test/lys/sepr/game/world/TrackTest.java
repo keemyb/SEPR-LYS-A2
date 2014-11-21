@@ -28,6 +28,22 @@ public class TrackTest {
         this.track1 = new Track(startPoint1, endPoint1);
         this.track2 = new Track(startPoint2, endPoint2);
         this.track3 = new Track(startPoint3, endPoint3);
+
+        /*
+            +-----------------------------+
+            |                             |
+            | Test Track        X Track 2 |
+            | Locations        X          |
+            | (Approx)        X           |
+            |                X            |
+            | Intersection  OXXXX         |
+            |              X    Track 3   |
+            |             X               |
+            |            X                |
+            |   Track 1 X                 |
+            |                             |
+            +-----------------------------+
+         */
     }
 
     @Test
