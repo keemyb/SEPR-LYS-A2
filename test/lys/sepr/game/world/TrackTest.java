@@ -84,4 +84,28 @@ public class TrackTest {
         assertEquals(expectedVector1, track1.getVector(new Point(100,100)));
         assertEquals(expectedVector2, track3.getVector(new Point(100,100)));
     }
+
+    @Test
+    public void testGetIntersection() throws Exception {
+        assertEquals(null, track1.getIntersection(new Point(100, 100)));
+
+        Intersection intersection = new Intersection(new Point(100, 100), track1, track2);
+
+        assertEquals(intersection, track1.getIntersection(new Point(100, 100)));
+        assertEquals(null, track1.getIntersection(new Point(0, 0)));
+    }
+
+    @Test
+    public void testMove() throws Exception {
+        track1.move(new Point(0,0), new Point(20,10));
+
+        assertEquals(new Point(20,10), track1.getOtherPoint(new Point(100,100)));
+    }
+
+    @Test
+    public void testMoveBad() throws Exception {
+        track1.move(new Point(0,0), new Point(100,100));
+        // We don't want to move a point onto itself.
+        assertEquals(new Point(0, 0), track1.getOtherPoint(new Point(100, 100)));
+    }
 }

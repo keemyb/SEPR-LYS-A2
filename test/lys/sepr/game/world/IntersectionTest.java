@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 
+import static lys.sepr.game.world.Utilities.crossProduct;
 import static org.junit.Assert.*;
 
 public class IntersectionTest {
@@ -65,7 +66,7 @@ public class IntersectionTest {
         ArrayList<Double> vector1 = track1.getVector(intersection.getPoint());
         ArrayList<Double> vector2 = track2.getVector(intersection.getPoint());
 
-        assertEquals(0, intersection.crossProduct(vector1, vector2)%180, 0.0d);
+        assertEquals(0, crossProduct(vector1, vector2)%180, 0.0d);
 
     }
 
@@ -158,6 +159,44 @@ public class IntersectionTest {
         /* Favour the first track added (that can connect)
         We don't want to break an existing connection when adding new tracks.
          */
+        assertEquals(track2, track1.getNextTrack(new Point(0,0)));
+    }
+
+    @Test
+    public void testRemoveTrack() throws Exception {
+        setUp3Tracks();
+
+        ArrayList<Track> expectedTracks = new ArrayList<Track>();
+        expectedTracks.add(track1);
+        expectedTracks.add(track3);
+
+        intersection.removeTrack(track2);
+
+        assertEquals(expectedTracks, intersection.getTracks());
+        assertEquals(track3, track1.getNextTrack(new Point(0, 0)));
+        assertEquals(null, track2.getNextTrack(new Point(200, 200)));
+        /* We want to push the removed track away from the intersection after removal
+        so that it does not touch the old intersection and cause confusion.
+         */
+        assertNotEquals(new Point(100, 100), track2.getOtherPoint(new Point(200, 200)));
+    }
+
+    @Test
+    public void moveIntersection() throws Exception {
+        setUp3Tracks();
+
+        ArrayList<Track> expectedTracks = new ArrayList<Track>();
+        expectedTracks.add(track1);
+        expectedTracks.add(track2);
+        expectedTracks.add(track3);
+
+        intersection.move(new Point(90,90));
+
+        assertEquals(new Point(90,90), track1.getOtherPoint(new Point(0,0)));
+        assertEquals(new Point(90,90), track2.getOtherPoint(new Point(200,200)));
+        assertEquals(new Point(90,90), track3.getOtherPoint(new Point(200,100)));
+        assertEquals(expectedTracks, intersection.getTracks());
+        assertEquals(intersection, track1.getIntersection(new Point(90,90)));
         assertEquals(track2, track1.getNextTrack(new Point(0,0)));
     }
 
