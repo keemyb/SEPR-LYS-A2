@@ -1,9 +1,12 @@
 package lys.sepr.game.world;
 
 import java.util.ArrayList;
+import static lys.sepr.game.world.Utilities.closestPoint;
+import static lys.sepr.game.world.Utilities.getVector;
 
 public class Track {
 
+    private final double nudgeStrength = 0.1;
     private ArrayList<Point> points = new ArrayList<Point>();
     private ArrayList<Track> connectedTracks = new ArrayList<Track>();
     private ArrayList<Intersection> intersections = new ArrayList<Intersection>();
@@ -63,20 +66,56 @@ public class Track {
         return null;
     }
 
-    public ArrayList<Double> getVector(Point towards) {
-        Point from = getOtherPoint(towards);
-
-        ArrayList<Double> vector = new ArrayList<Double>(2);
-        vector.add(towards.getX() - from.getX());
-        vector.add(towards.getY() - from.getY());
-        return vector;
-    }
-
     public void addIntersection(Intersection intersection) {
         intersections.add(intersection);
     }
 
+    public void removeIntersection(Intersection intersection) {
+        intersections.remove(intersection);
+    }
+
     public void addConnectedTrack(Track track) {
         connectedTracks.add(track);
+    }
+
+    public void removeConnectedTrack(Track track) {
+        connectedTracks.remove(track);
+        nextTracks.remove(track);
+    }
+
+    public void move(Point from, Point to) {
+        Intersection existingIntersection = getIntersection(from);
+        if (getPoints().contains(from)) {
+            // A point cannot be moved to the same location.
+            if (to.equals(from)) return;
+            // A track cannot have two points in the same place
+            if (points.contains(to)) return;
+            points.remove(from);
+            points.add(to);
+        }
+        // If there was an intersection at the point where we moved from, break the connection
+        if (existingIntersection != null) {
+            existingIntersection.removeTrack(this);
+            removeIntersection(existingIntersection);
+        }
+    }
+
+    public void nudge(Point awayFrom) {
+        ArrayList<Double> vector = getVector(getOtherPoint(awayFrom), awayFrom);
+        for (int i=0; i < vector.size(); i++) {
+            vector.set(i, vector.get(i) * nudgeStrength);
+        }
+        // only move the point closest to the point we want to move away from
+        Point closestPoint = closestPoint(awayFrom, points);
+        closestPoint.translate(vector.get(0), vector.get(1));
+    }
+
+    public Point getCommonPoint(Track other) {
+        for (Point point : points) {
+            for (Point otherPoint : other.getPoints()) {
+                if (point.equals(otherPoint)) return point;
+            }
+        }
+        return null;
     }
 }

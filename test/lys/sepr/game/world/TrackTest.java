@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 
+import static lys.sepr.game.world.Utilities.getVector;
 import static org.junit.Assert.*;
 
 public class TrackTest {
@@ -81,8 +82,10 @@ public class TrackTest {
         expectedVector2.add(-100d);
         expectedVector2.add(0d);
 
-        assertEquals(expectedVector1, track1.getVector(new Point(100,100)));
-        assertEquals(expectedVector2, track3.getVector(new Point(100,100)));
+        Point point = new Point(100,100);
+
+        assertEquals(expectedVector1, getVector(track1.getOtherPoint(point), point));
+        assertEquals(expectedVector2, getVector(track3.getOtherPoint(point), point));
     }
 
     @Test

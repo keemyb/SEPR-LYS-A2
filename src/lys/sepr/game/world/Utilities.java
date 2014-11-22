@@ -30,10 +30,10 @@ public final class Utilities {
         return sqrt(magnitude);
     }
 
-    public static ArrayList<Double> getVector(Point point1, Point point2) {
+    public static ArrayList<Double> getVector(Point from, Point towards) {
         ArrayList<Double> vector = new ArrayList<Double>(2);
-        vector.add(point2.getX() - point1.getX());
-        vector.add(point2.getY() - point1.getY());
+        vector.add(towards.getX() - from.getX());
+        vector.add(towards.getY() - from.getY());
         return vector;
     }
 

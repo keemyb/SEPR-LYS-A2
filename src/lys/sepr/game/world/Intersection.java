@@ -3,7 +3,8 @@ package lys.sepr.game.world;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static java.lang.Math.*;
+import static lys.sepr.game.world.Utilities.crossProduct;
+import static lys.sepr.game.world.Utilities.getVector;
 
 public class Intersection {
 
@@ -39,14 +40,18 @@ public class Intersection {
         updateValidTracks();
     }
 
-    public void updateValidTracks() {
+    private void updateValidTracks() {
+        /* Clear existing valid tracks as we will be regenerating them.
+        As the angles between tracks change when an intersection is moved,
+        we must recalculate them to see if they are still valid.
+        */
         validNextTracks = new HashMap<Track,ArrayList<Track>>();
         for (Track track1 : tracks) {
-            ArrayList<Double> vector1 = track1.getVector(point);
+            ArrayList<Double> vector1 = getVector(track1.getOtherPoint(point), point);
             for (Track track2 : tracks) {
                 if (track1 == track2) continue;
 
-                ArrayList<Double> vector2 = track2.getVector(point);
+                ArrayList<Double> vector2 = getVector(track2.getOtherPoint(point), point);
                 double angle = crossProduct(vector1, vector2);
 
                 if (validAngle(angle)) {
@@ -54,15 +59,6 @@ public class Intersection {
                         validNextTracks.put(track1, new ArrayList<Track>());
                     }
                     validNextTracks.get(track1).add(track2);
-//                    if (!validNextTracks.get(track1).contains(track2)){
-//                        validNextTracks.get(track1).add(track2);
-//                    }
-//                    if (validNextTracks.get(track2) == null) {
-//                        validNextTracks.put(track2, new ArrayList<Track>());
-//                    }
-//                    if (!validNextTracks.get(track2).contains(track1)){
-//                        validNextTracks.get(track2).add(track1);
-//                    }
                 }
             }
         }
@@ -74,7 +70,8 @@ public class Intersection {
             // We want the point that is not at this intersection so that we can find its current next track
             Point destination = track.getOtherPoint(getPoint());
             Track currentNextTrack = track.getNextTrack(destination);
-            // We don't want to change the next track if it is still valid
+
+            // We don't want to change a track's next track if it is still valid
             if (currentNextTrack != null) {
                 if (validNextTracks.get(track) != null
                     && validNextTracks.get(track).contains(currentNextTrack)) continue;
@@ -88,30 +85,6 @@ public class Intersection {
     private boolean validAngle(double angle) {
         return angle >= minAngle;
     }
-    
-    public double crossProduct(ArrayList<Double> vector1, ArrayList<Double> vector2) {
-        double dotProduct = dotProduct(vector1, vector2);
-        double magnitude = magnitude(vector1) * magnitude(vector2);
-        double cosTheta = dotProduct / magnitude;
-        double theta = acos(cosTheta);
-        return (theta * 180 / PI);
-    }
-
-    private double dotProduct(ArrayList<Double> vector1, ArrayList<Double> vector2) {
-        double dotProduct = 0;
-        for (int i=0; i <vector1.size(); i++) {
-            dotProduct += vector1.get(i) * vector2.get(i);
-        }
-        return dotProduct;
-    }
-
-    private double magnitude(ArrayList<Double> vector) {
-        double magnitude = 0;
-        for (double component : vector) {
-            magnitude += pow(component, 2);
-        }
-        return sqrt(magnitude);
-    }
 
     public Point getPoint() {
         return point;
@@ -123,6 +96,48 @@ public class Intersection {
 
     public ArrayList<Track> getValidNextTracks(Track track) {
         return validNextTracks.get(track);
+    }
+
+    public void removeTrack(Track track) {
+        for (Track existingTrack : tracks) {
+            existingTrack.removeConnectedTrack(track);
+            track.removeConnectedTrack(existingTrack);
+        }
+        track.removeIntersection(this);
+        tracks.remove(track);
+
+        // Move the track away from the intersection a little bit,
+        // so that it is not confused as being part of it.
+        track.nudge(getPoint());
+
+        if (tracks.size() == 1) {
+            /* remove this intersection from the remaining track, since an intersection
+            cannot consist of one track */
+            tracks.get(0).removeIntersection(this);
+        } else {
+            updateValidTracks();
+        }
+    }
+
+    public void move(Point to) {
+        if (getPoint().equals(to)) return;
+
+        // Remove all tracks in the intersection, move them, and then add them back
+        for (Track track : tracks) {
+            track.removeIntersection(this);
+            track.move(getPoint(), to);
+        }
+        for (Track track : tracks) {
+            track.addIntersection(this);
+            // Re add connected tracks since they were removed when they were removed from the intersection
+            for (Track otherTrack : tracks) {
+                if (otherTrack.equals(track)) continue;
+                otherTrack.addConnectedTrack(track);
+                track.addConnectedTrack(otherTrack);
+            }
+        }
+        point = to;
+        updateValidTracks();
     }
 
 }
