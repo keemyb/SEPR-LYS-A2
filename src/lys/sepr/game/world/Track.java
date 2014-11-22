@@ -7,6 +7,7 @@ public class Track {
     private ArrayList<Point> points = new ArrayList<Point>();
     private ArrayList<Track> connectedTracks = new ArrayList<Track>();
     private ArrayList<Intersection> intersections = new ArrayList<Intersection>();
+    private ArrayList<Track> nextTracks = new ArrayList<Track>();
 
     Track(Point a, Point b) {
         points.add(a);
@@ -22,21 +23,33 @@ public class Track {
         if (connectedTracks.isEmpty()) return null;
 
         /* as tracks have no distinguishable start and end point, the destination
-        the one that is not the origin point */
-        Point destination = null;
-        for (Point point : points) {
-            if (!point.equals(origin)) destination = point;
-        }
+        is the one that is not the origin point */
+        Point destination = getOtherPoint(origin);
 
-        // the next track is the one that shares a point with this track.
-        for (Track connectedTrack : connectedTracks) {
-            for (Point point: connectedTrack.getPoints()) {
-                if (point.equals(destination)) return connectedTrack;
+        // Look for the track that has a point that equals the destination.
+        for (Track track : nextTracks) {
+            for (Point point : track.getPoints()) {
+                if (point.equals(destination)) return track;
             }
         }
 
         return null;
+    }
 
+    public void setNextTrack(Intersection intersection, Track prospectiveNextTrack) {
+        if (intersection.getValidNextTracks(this).contains(prospectiveNextTrack)) {
+            Track trackToRemove = null;
+            // Remove existing next tracks if they connect via this intersection
+            for (Track existingNextTrack : nextTracks) {
+                if (intersection.getTracks().contains(existingNextTrack)) trackToRemove = existingNextTrack;
+            }
+            if (trackToRemove != null) nextTracks.remove(trackToRemove);
+            nextTracks.add(prospectiveNextTrack);
+        }
+    }
+
+    public Point getOtherPoint(Point point) {
+        return (points.get(0).equals(point)) ? points.get(1) : points.get(0);
     }
 
     public Intersection getIntersection(Point point) {
@@ -51,13 +64,9 @@ public class Track {
     }
 
     public ArrayList<Double> getVector(Point towards) {
-        Point from = (points.get(0).equals(towards)) ? points.get(1) : points.get(0);
+        Point from = getOtherPoint(towards);
 
         ArrayList<Double> vector = new ArrayList<Double>(2);
-//        System.out.println(from.getX());
-//        System.out.println(from.getY());
-////        System.out.println(from.getX());
-////        System.out.println(from.getY());
         vector.add(towards.getX() - from.getX());
         vector.add(towards.getY() - from.getY());
         return vector;

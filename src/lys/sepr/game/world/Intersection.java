@@ -7,6 +7,7 @@ import static java.lang.Math.*;
 
 public class Intersection {
 
+    // Tracks must be have at least this angle between them for trains to be able to move from one to another
     private int minAngle = 120;
     private Point point;
     private ArrayList<Track> tracks = new ArrayList<Track>();
@@ -44,8 +45,10 @@ public class Intersection {
             ArrayList<Double> vector1 = track1.getVector(point);
             for (Track track2 : tracks) {
                 if (track1 == track2) continue;
+
                 ArrayList<Double> vector2 = track2.getVector(point);
                 double angle = crossProduct(vector1, vector2);
+
                 if (validAngle(angle)) {
                     if (validNextTracks.get(track1) == null) {
                         validNextTracks.put(track1, new ArrayList<Track>());
@@ -62,6 +65,23 @@ public class Intersection {
 //                    }
                 }
             }
+        }
+        setDefaultNextTracks();
+    }
+
+    private void setDefaultNextTracks() {
+        for (Track track : tracks) {
+            // We want the point that is not at this intersection so that we can find its current next track
+            Point destination = track.getOtherPoint(getPoint());
+            Track currentNextTrack = track.getNextTrack(destination);
+            // We don't want to change the next track if it is still valid
+            if (currentNextTrack != null) {
+                if (validNextTracks.get(track) != null
+                    && validNextTracks.get(track).contains(currentNextTrack)) continue;
+            }
+
+            // Set the first valid next track, if there is one
+            if (getValidNextTracks(track) != null) track.setNextTrack(this, getValidNextTracks(track).get(0));
         }
     }
 
