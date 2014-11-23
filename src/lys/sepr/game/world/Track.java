@@ -118,4 +118,22 @@ public class Track {
         }
         return null;
     }
+
+    public ArrayList<Track> getValidNextTracks() {
+        ArrayList<Track> validNextTracks = new ArrayList<Track>();
+        for (Intersection intersection : intersections) {
+            if (intersection.getValidNextTracks(this) != null) {
+                validNextTracks.addAll(intersection.getValidNextTracks(this));
+            }
+        }
+        return validNextTracks;
+    }
+
+    public ArrayList<Track> getNextTracks() {
+        return nextTracks;
+    }
+
+    public ArrayList<Track> getConnectedTracks() {
+        return connectedTracks;
+    }
 }

@@ -1,6 +1,7 @@
 package lys.sepr.game.world;
 
 import javax.swing.*;
+import java.awt.geom.Line2D;
 import java.util.ArrayList;
 
 import static java.lang.Math.*;
@@ -65,6 +66,14 @@ public final class Utilities {
 
     public static double distance(Point point1, Point point2) {
         return magnitude(getVector(point1, point2));
+    }
+
+    public static Line2D.Double trackToLine2D(Track track, JFrame jFrame) {
+        double pointX1 = track.getPoints().get(0).getX();
+        double pointY1 = jFrame.getHeight() - track.getPoints().get(0).getY();
+        double pointX2 = track.getPoints().get(1).getX();
+        double pointY2 = jFrame.getHeight() - track.getPoints().get(1).getY();
+        return new Line2D.Double(pointX1, pointY1, pointX2, pointY2);
     }
 
 }
