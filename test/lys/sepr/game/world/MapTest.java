@@ -153,4 +153,21 @@ public class MapTest {
         assertNull(track2.getIntersection(track2.getOtherPoint(new Point(200,200))));
         assertNull(track3.getIntersection(track3.getOtherPoint(new Point(200,100))));
     }
+
+    @Test
+    public void removeTrack() throws Exception {
+        Track track4 = new Track(new Point(0,100), new Point(90, 100));
+
+        map.addTrack(track1);
+        map.addTrack(track2);
+        map.addTrack(track3);
+        map.addTrack(track4);
+
+        Intersection intersection = map.getIntersections().get(0);
+
+        map.removeTrack(track2);
+        map.removeTrack(track4);
+
+        assertEquals(2, map.getTracks().size());
+    }
 }

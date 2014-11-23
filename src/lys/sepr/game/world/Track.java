@@ -66,6 +66,10 @@ public class Track {
         return null;
     }
 
+    public ArrayList<Intersection> getIntersections() {
+        return intersections;
+    }
+
     public void addIntersection(Intersection intersection) {
         intersections.add(intersection);
     }
@@ -101,7 +105,8 @@ public class Track {
     }
 
     public void nudge(Point awayFrom) {
-        ArrayList<Double> vector = getVector(getOtherPoint(awayFrom), awayFrom);
+        // TODO: recursive nudge to prevent nudging into another track/intersection
+        ArrayList<Double> vector = getVector(awayFrom, getOtherPoint(awayFrom));
         for (int i=0; i < vector.size(); i++) {
             vector.set(i, vector.get(i) * nudgeStrength);
         }
