@@ -5,12 +5,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
+import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.*;
 
-import static lys.sepr.game.world.Utilities.clickPointToTrackPoint;
-import static lys.sepr.game.world.Utilities.distance;
-import static lys.sepr.game.world.Utilities.trackToLine2D;
+import static lys.sepr.game.world.Utilities.*;
 
 /* y axis points have been inverted as the window coordinates start from the top left
 where as the points start from the bottom left
@@ -61,18 +60,17 @@ public class TrackDrawTest extends JFrame {
             "<br>pressing the mouse again with CTRL will move it." +
             "<br>Placing a new track in the vicinity of an existing track/intersection will merge the track(s)." +
             "<br>Moving an existing track in the vicinity of other tracks/intersections will merge the track(s) " +
-            "<br>To inspect a track, shift click one of its ends." +
+            "<br>To inspect a track, click it whilst holding shift." +
             "<br>Coming Soon:" +
-            "<br>Track Inspector: The ability to select a track by any point along it" +
             "<br>Deleting tracks (Not implemented in GUI)" +
             "<br>CURVES! (Not Implemented at all)" +
-            "</html>", SwingConstants.NORTH_EAST);
+            "</html>", SwingConstants.LEFT);
 
-    JLabel selectedTrackLabel = new JLabel("Selected Track", SwingConstants.NORTH_EAST);
-    JLabel activeNextTrackLabel = new JLabel("Active Next Track", SwingConstants.NORTH_EAST);
-    JLabel validNextTrackLabel = new JLabel("Valid Next Track", SwingConstants.NORTH_EAST);
-    JLabel connectedTrackLabel = new JLabel("Connected Track", SwingConstants.NORTH_EAST);
-    JLabel unconnectedTrackLabel = new JLabel("Unconnected Track", SwingConstants.NORTH_EAST);
+    JLabel selectedTrackLabel = new JLabel("Selected Track", SwingConstants.LEFT);
+    JLabel activeNextTrackLabel = new JLabel("Active Next Track", SwingConstants.LEFT);
+    JLabel validNextTrackLabel = new JLabel("Valid Next Track", SwingConstants.LEFT);
+    JLabel connectedTrackLabel = new JLabel("Connected Track", SwingConstants.LEFT);
+    JLabel unconnectedTrackLabel = new JLabel("Unconnected Track", SwingConstants.LEFT);
 
     TrackDrawTest() {
         super("Track Draw Test");
@@ -195,18 +193,46 @@ public class TrackDrawTest extends JFrame {
     }
 
     private void selectTrack(Point clickPoint) {
-        // should find the track within an allowable distance of the click point
-        // right now it only looks at end points
+        // With help from http://doswa.com/2009/07/13/circle-segment-intersectioncollision.html
         for (Track track : map.getTracks()) {
-            for (Point existingPoint : track.getPoints()) {
-                if (distance(clickPoint, existingPoint) < minPickUpDistance) {
-                    selectedTrack = track;
-                    inspectSelectedTrack = true;
-                    repaint();
-                    return;
-                }
+            Point trackPoint1 = track.getPoints().get(0);
+            Point trackPoint2 = track.getPoints().get(1);
+            ArrayList<Double> trackVector = getVector(trackPoint1, trackPoint2);
+            ArrayList<Double> unitTrackVector = unitVector(trackVector);
+            ArrayList<Double> trackPointToClickPointVector = getVector(trackPoint1, clickPoint);
+            double lengthProjectedVector = dotProduct(trackPointToClickPointVector, unitTrackVector);
+            ArrayList<Double> projectedVector = multiply(unitTrackVector,lengthProjectedVector);
+            ArrayList<Double> closestPoint = new ArrayList<Double>();
+            if (lengthProjectedVector < 0) {
+                closestPoint.add(trackPoint1.getX());
+                closestPoint.add(trackPoint1.getY());
+            } else if (lengthProjectedVector > magnitude(trackVector)) {
+                closestPoint.add(trackPoint2.getX());
+                closestPoint.add(trackPoint2.getY());
+            } else {
+                closestPoint.add(trackPoint1.getX()+projectedVector.get(0));
+                closestPoint.add(trackPoint1.getY()+projectedVector.get(1));
             }
-        }
+            double distance = magnitude(getVector(new Point(closestPoint.get(0), closestPoint.get(1)) , clickPoint));
+            if (distance < minPickUpDistance) {
+                selectedTrack = track;
+                inspectSelectedTrack = true;
+                repaint();
+                return;
+            }
+            }
+
+// Only picks up track ends
+//        for (Track track : map.getTracks()) {
+//            for (Point existingPoint : track.getPoints()) {
+//                if (distance(clickPoint, existingPoint) < minPickUpDistance) {
+//                    selectedTrack = track;
+//                    inspectSelectedTrack = true;
+//                    repaint();
+//                    return;
+//                }
+//            }
+//        }
     }
 
     private void drawLines(Graphics g) {

@@ -3,6 +3,7 @@ package lys.sepr.game.world;
 import javax.swing.*;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
+import java.util.Vector;
 
 import static java.lang.Math.*;
 
@@ -76,4 +77,20 @@ public final class Utilities {
         return new Line2D.Double(pointX1, pointY1, pointX2, pointY2);
     }
 
+    public static ArrayList<Double> unitVector(ArrayList<Double> vector) {
+        ArrayList<Double> unitVector = new ArrayList<Double>();
+        double size = magnitude(vector);
+        for (double component : vector) {
+            unitVector.add(component/size);
+        }
+        return unitVector;
+    }
+
+    public static ArrayList<Double> multiply(ArrayList<Double> vector, double constant) {
+        ArrayList<Double> newVector = new ArrayList<Double>();
+        for (double component : vector) {
+            newVector.add(component * constant);
+        }
+        return newVector;
+    }
 }
