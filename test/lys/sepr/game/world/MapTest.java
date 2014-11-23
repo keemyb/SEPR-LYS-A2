@@ -89,4 +89,52 @@ public class MapTest {
 
         assertEquals(expectedTracks, map.getIntersections().get(0).getTracks());
     }
+
+    @Test
+    public void moveIntersectionConsumeSoloTrack() throws Exception {
+        Track track4 = new Track(new Point(0,100), new Point(90, 100));
+
+        ArrayList<Track> expectedTracks = new ArrayList<Track>();
+        expectedTracks.add(track1);
+        expectedTracks.add(track2);
+        expectedTracks.add(track3);
+        expectedTracks.add(track4);
+
+        map.addTrack(track1);
+        map.addTrack(track2);
+        map.addTrack(track3);
+        map.addTrack(track4);
+
+        Intersection intersection = map.getIntersections().get(0);
+
+        map.moveIntersection(intersection, new Point(90, 100));
+
+        assertEquals(expectedTracks, intersection.getTracks());
+    }
+
+    @Test
+    public void moveIntersectionMergeIntersection() throws Exception {
+        Track track4 = new Track(new Point(0,100), new Point(90, 100));
+        Track track5 = new Track(new Point(0,200), new Point(90, 100));
+
+        map.addTrack(track1);
+        map.addTrack(track2);
+        map.addTrack(track3);
+        map.addTrack(track4);
+        map.addTrack(track5);
+
+        Intersection firstIntersection = map.getIntersections().get(0);
+        Intersection secondIntersection = map.getIntersections().get(1);
+
+        map.moveIntersection(firstIntersection, new Point(90, 100));
+
+        assertTrue(secondIntersection.getTracks().contains(track1));
+        assertTrue(secondIntersection.getTracks().contains(track2));
+        assertTrue(secondIntersection.getTracks().contains(track3));
+        assertTrue(secondIntersection.getTracks().contains(track4));
+        assertTrue(secondIntersection.getTracks().contains(track5));
+        // second is the master as it remained in it's original location.
+        assertTrue(map.getIntersections().contains(secondIntersection));
+        assertEquals(1, map.getIntersections().size());
+    }
 }

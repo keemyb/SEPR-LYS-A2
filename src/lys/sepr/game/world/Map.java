@@ -60,6 +60,32 @@ public class Map {
         }
     }
 
+    public void moveIntersection(Intersection intersection, Point to) {
+        for (Intersection otherIntersections : intersections) {
+            if (otherIntersections.getPoint().equals(to)) {
+                intersection.move(to);
+                mergeIntersections(otherIntersections, intersection);
+                return;
+            }
+        }
+        for (Track track : tracks) {
+            if (track.getPoints().contains(to)){
+                intersection.move(to);
+                intersection.addTrack(track);
+                return;
+            }
+        }
+        intersection.move(to);
+    }
+
+    private void mergeIntersections(Intersection master, Intersection slave) {
+        for (Track slaveTrack : slave.getTracks()) {
+            slaveTrack.removeIntersection(slave);
+            master.addTrack(slaveTrack);
+        }
+        intersections.remove(slave);
+    }
+
     public ArrayList<Track> getTracks() {
         return tracks;
     }
