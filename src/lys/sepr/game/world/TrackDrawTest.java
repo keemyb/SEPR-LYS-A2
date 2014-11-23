@@ -5,8 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.*;
 import javax.swing.*;
 
 import static lys.sepr.game.world.Utilities.*;
@@ -110,7 +109,7 @@ public class TrackDrawTest extends JFrame {
 
             int modifiers = e.getModifiers();
             if ((modifiers & ActionEvent.SHIFT_MASK) == ActionEvent.SHIFT_MASK) {
-                selectTrack(clickPoint);
+                inspectTrack(clickPoint);
             } else if ((modifiers & ActionEvent.CTRL_MASK) == ActionEvent.CTRL_MASK) {
                 moveTrack(clickPoint);
             } else if ((modifiers & ActionEvent.ALT_MASK) == ActionEvent.ALT_MASK) {
@@ -121,92 +120,30 @@ public class TrackDrawTest extends JFrame {
         }
     }
 
-    private void removeIntersection(Point clickPoint) {
-        // We look for intersection before tracks when we are looking for something to move.
+    private Intersection selectIntersection(Point clickPoint) {
         for (Intersection intersection : map.getIntersections()) {
             if (distance(clickPoint, intersection.getPoint()) < minPickUpDistance) {
-                map.removeIntersection(intersection);
-                repaint();
-                return;
+                return intersection;
             }
         }
+        return null;
     }
 
-    private void pickUpIntersectionOrTrack(Point clickPoint) {
-        // We look for intersection before tracks when we are looking for something to move.
-        for (Intersection intersection : map.getIntersections()) {
-            if (distance(clickPoint, intersection.getPoint()) < minPickUpDistance) {
-                lastIntersectionPickedUp = intersection;
-                pickupMode = false;
-                trackPickedUpLast = false;
-                return;
-            }
-        }
-
-        for (Track track : map.getTracks()) {
-            for (Point point : track.getPoints()){
-                if (distance(clickPoint, point) < minPickUpDistance) {
-                    lastTrackPickedUp = track;
-                    lastTrackPointPickedUp = point;
-                    pickupMode = false;
-                    trackPickedUpLast = true;
-                    return;
-                }
-            }
-        }
-    }
-
-    private void putDownIntersectionOrTrack(Point clickPoint) {
+    private java.util.List<Object> selectTrackEnd(Point clickPoint) {
         for (Track track : map.getTracks()) {
             for (Point point : track.getPoints()) {
                 if (distance(clickPoint, point) < minPickUpDistance) {
-                    clickPoint = point;
+                    java.util.List<Object> list = new ArrayList<Object>();
+                    list.add(track);
+                    list.add(point);
+                    return list;
                 }
             }
         }
-        if (trackPickedUpLast) {
-            map.moveTrack(lastTrackPickedUp, lastTrackPointPickedUp, clickPoint);
-        } else {
-            map.moveIntersection(lastIntersectionPickedUp, clickPoint);
-        }
-        pickupMode = true;
-        repaint();
+        return null;
     }
 
-    private void createTrack(Point clickPoint) {
-        if (!drawing) {
-            newTrackPoint1 = clickPoint;
-        } else {
-            newTrackPoint2 = clickPoint;
-            Track originalNewTrack = new Track(newTrackPoint1, newTrackPoint2);
-            Track movedNewTrack = new Track(newTrackPoint1, newTrackPoint2);
-            // Iterating over the original track so that we can change the coordinates
-            // if we find a close track
-            for (Track existingTrack : map.getTracks()) {
-                for (Point newPoint : originalNewTrack.getPoints()){
-                    for (Point existingPoint : existingTrack.getPoints()) {
-                        if (distance(newPoint, existingPoint) < minPickUpDistance) {
-                            movedNewTrack.move(newPoint, existingPoint);
-                        }
-                    }
-                }
-            }
-            // Add the 'moved' track, whether it has been moved or not
-            map.addTrack(movedNewTrack);
-            repaint();
-        }
-        drawing = !drawing;
-    }
-
-    private void moveTrack(Point clickPoint) {
-        if (pickupMode) {
-            pickUpIntersectionOrTrack(clickPoint);
-        } else {
-            putDownIntersectionOrTrack(clickPoint);
-        }
-    }
-
-    private void selectTrack(Point clickPoint) {
+    private Track selectTrack(Point clickPoint) {
         // With help from http://doswa.com/2009/07/13/circle-segment-intersectioncollision.html
         for (Track track : map.getTracks()) {
             Point trackPoint1 = track.getPoints().get(0);
@@ -229,24 +166,93 @@ public class TrackDrawTest extends JFrame {
             }
             double distance = magnitude(getVector(new Point(closestPoint.get(0), closestPoint.get(1)) , clickPoint));
             if (distance < minPickUpDistance) {
-                selectedTrack = track;
-                inspectSelectedTrack = true;
-                repaint();
-                return;
+                return track;
             }
-            }
+        }
+        return null;
+    }
 
-// Only picks up track ends
-//        for (Track track : map.getTracks()) {
-//            for (Point existingPoint : track.getPoints()) {
-//                if (distance(clickPoint, existingPoint) < minPickUpDistance) {
-//                    selectedTrack = track;
-//                    inspectSelectedTrack = true;
-//                    repaint();
-//                    return;
-//                }
-//            }
-//        }
+    private void selectIntersectionOrTrackEnd(Point clickPoint) {
+        // We look for intersection before tracks when we are looking for something to move.
+        Intersection intersection = selectIntersection(clickPoint);
+        if (intersection != null) {
+            lastIntersectionPickedUp = intersection;
+            pickupMode = false;
+            trackPickedUpLast = false;
+            return;
+        }
+
+        ArrayList<Object> trackAndPoint = (ArrayList<Object>) selectTrackEnd(clickPoint);
+        if (trackAndPoint != null) {
+            lastTrackPickedUp = (Track) trackAndPoint.get(0);
+            lastTrackPointPickedUp = (Point) trackAndPoint.get(1);
+            pickupMode = false;
+            trackPickedUpLast = true;
+        }
+    }
+
+    private void removeIntersection(Point clickPoint) {
+        Intersection intersection = selectIntersection(clickPoint);
+        if (intersection != null) {
+            map.removeIntersection(intersection);
+            repaint();
+        }
+    }
+
+    private void inspectTrack(Point clickPoint) {
+        Track track = selectTrack(clickPoint);
+        if (track != null) {
+            selectedTrack = track;
+            inspectSelectedTrack = true;
+            repaint();
+            return;
+        }
+    }
+
+    private void moveSelectedIntersectionOrTrackEnd(Point clickPoint) {
+        ArrayList<Object> trackAndPoint = (ArrayList<Object>) selectTrackEnd(clickPoint);
+        if (trackAndPoint != null) {
+            clickPoint = (Point) trackAndPoint.get(1);
+        }
+        if (trackPickedUpLast) {
+            map.moveTrack(lastTrackPickedUp, lastTrackPointPickedUp, clickPoint);
+        } else {
+            map.moveIntersection(lastIntersectionPickedUp, clickPoint);
+        }
+        pickupMode = true;
+        repaint();
+    }
+
+    private void createTrack(Point clickPoint) {
+        if (!drawing) {
+            newTrackPoint1 = clickPoint;
+        } else {
+            newTrackPoint2 = clickPoint;
+            Track track = new Track(newTrackPoint1, newTrackPoint2);
+            // Finding a close existing point for each point in the new track
+            // so that we can change the coordinates to match (and thus make an intersection).
+            ArrayList<Object> trackAndPoint1 = (ArrayList<Object>) selectTrackEnd(newTrackPoint1);
+            if (trackAndPoint1 != null) {
+                Point closePoint = (Point) trackAndPoint1.get(1);
+                track.move(newTrackPoint1, closePoint);
+            }
+            ArrayList<Object> trackAndPoint2 = (ArrayList<Object>) selectTrackEnd(newTrackPoint2);
+            if (trackAndPoint2 != null) {
+                Point closePoint = (Point) trackAndPoint2.get(1);
+                track.move(newTrackPoint2, closePoint);
+            }
+            map.addTrack(track);
+            repaint();
+        }
+        drawing = !drawing;
+    }
+
+    private void moveTrack(Point clickPoint) {
+        if (pickupMode) {
+            selectIntersectionOrTrackEnd(clickPoint);
+        } else {
+            moveSelectedIntersectionOrTrackEnd(clickPoint);
+        }
     }
 
     private void drawLines(Graphics g) {
