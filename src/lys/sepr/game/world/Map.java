@@ -86,6 +86,14 @@ public class Map {
         intersections.remove(slave);
     }
 
+    public void removeIntersection(Intersection intersection) {
+        for (int i=intersection.getTracks().size() - 1; i>0; i--) {
+            Track track = intersection.getTracks().get(i);
+            intersection.removeTrack(track);
+        }
+        intersections.remove(intersection);
+    }
+
     public ArrayList<Track> getTracks() {
         return tracks;
     }
