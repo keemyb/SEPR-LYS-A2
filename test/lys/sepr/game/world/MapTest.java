@@ -137,4 +137,20 @@ public class MapTest {
         assertTrue(map.getIntersections().contains(secondIntersection));
         assertEquals(1, map.getIntersections().size());
     }
+
+    @Test
+    public void removeIntersection() throws Exception {
+        map.addTrack(track1);
+        map.addTrack(track2);
+        map.addTrack(track3);
+
+        Intersection intersection = map.getIntersections().get(0);
+
+        map.removeIntersection(intersection);
+
+        assertEquals(0, map.getIntersections().size());
+        assertNull(track1.getIntersection(track1.getOtherPoint(new Point(0,0))));
+        assertNull(track2.getIntersection(track2.getOtherPoint(new Point(200,200))));
+        assertNull(track3.getIntersection(track3.getOtherPoint(new Point(200,100))));
+    }
 }
