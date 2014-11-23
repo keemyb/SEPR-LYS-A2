@@ -153,7 +153,7 @@ public class TrackDrawTest extends JFrame {
         if (trackPickedUpLast) {
             map.moveTrack(lastTrackPickedUp, lastTrackPointPickedUp, clickPoint);
         } else {
-            lastIntersectionPickedUp.move(clickPoint);
+            map.moveIntersection(lastIntersectionPickedUp, clickPoint);
         }
         pickupMode = true;
         repaint();
