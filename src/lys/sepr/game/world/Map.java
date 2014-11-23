@@ -94,6 +94,14 @@ public class Map {
         intersections.remove(intersection);
     }
 
+    public void removeTrack(Track track) {
+        for (int i=track.getIntersections().size() - 1; i>0; i--) {
+            Intersection intersection = track.getIntersections().get(i);
+            intersection.removeTrack(track);
+        }
+        tracks.remove(track);
+    }
+
     public ArrayList<Track> getTracks() {
         return tracks;
     }

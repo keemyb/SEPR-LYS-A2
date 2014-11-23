@@ -66,6 +66,10 @@ public class Track {
         return null;
     }
 
+    public ArrayList<Intersection> getIntersections() {
+        return intersections;
+    }
+
     public void addIntersection(Intersection intersection) {
         intersections.add(intersection);
     }
