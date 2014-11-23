@@ -59,8 +59,9 @@ public class TrackDrawTest extends JFrame {
             "<br>To move a track or intersection, click whilst holding CTRL will pick it up," +
             "<br>pressing the mouse again with CTRL will move it." +
             "<br>Placing a new track in the vicinity of an existing track/intersection will merge the track(s)." +
-            "<br>Moving an existing track in the vicinity of other tracks/intersections will merge the track(s) " +
-            "<br>To inspect a track, click it whilst holding shift." +
+            "<br>Moving an existing track/intersection in the vicinity of other tracks/intersections will merge them" +
+            "<br>To break up an intersection, click it whilst holding ALT" +
+            "<br>To inspect a track, click it whilst holding SHIFT." +
             "<br>Coming Soon:" +
             "<br>Deleting tracks (Not implemented in GUI)" +
             "<br>CURVES! (Not Implemented at all)" +
@@ -69,7 +70,7 @@ public class TrackDrawTest extends JFrame {
     JLabel selectedTrackLabel = new JLabel("Selected Track", SwingConstants.LEFT);
     JLabel activeNextTrackLabel = new JLabel("Active Next Track", SwingConstants.LEFT);
     JLabel validNextTrackLabel = new JLabel("Valid Next Track", SwingConstants.LEFT);
-    JLabel connectedTrackLabel = new JLabel("Connected Track", SwingConstants.LEFT);
+    JLabel connectedTrackLabel = new JLabel("Connected (Non traversable) Track", SwingConstants.LEFT);
     JLabel unconnectedTrackLabel = new JLabel("Unconnected Track", SwingConstants.LEFT);
 
     TrackDrawTest() {
@@ -112,8 +113,21 @@ public class TrackDrawTest extends JFrame {
                 selectTrack(clickPoint);
             } else if ((modifiers & ActionEvent.CTRL_MASK) == ActionEvent.CTRL_MASK) {
                 moveTrack(clickPoint);
+            } else if ((modifiers & ActionEvent.ALT_MASK) == ActionEvent.ALT_MASK) {
+                removeIntersection(clickPoint);
             } else {
                 createTrack(clickPoint);
+            }
+        }
+    }
+
+    private void removeIntersection(Point clickPoint) {
+        // We look for intersection before tracks when we are looking for something to move.
+        for (Intersection intersection : map.getIntersections()) {
+            if (distance(clickPoint, intersection.getPoint()) < minPickUpDistance) {
+                map.removeIntersection(intersection);
+                repaint();
+                return;
             }
         }
     }
