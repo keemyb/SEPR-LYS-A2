@@ -1,5 +1,6 @@
 package lys.sepr.game.world;
 
+import javax.swing.*;
 import java.util.ArrayList;
 
 import static java.lang.Math.*;
@@ -48,6 +49,22 @@ public final class Utilities {
             }
         }
         return closestPoint;
+    }
+
+    public static Point clickPointToTrackPoint(java.awt.Point clickPoint, JFrame jFrame) {
+        double clickPointX = clickPoint.x;
+        double clickPointY = jFrame.getHeight() - clickPoint.y;
+        return new Point(clickPointX, clickPointY);
+    }
+
+    public static java.awt.Point trackPointToClickPoint(Point point, JFrame jFrame) {
+        double pointX = point.getX();
+        double pointY = jFrame.getHeight() - point.getY();
+        return new java.awt.Point((int) pointX, (int) pointY);
+    }
+
+    public static double distance(Point point1, Point point2) {
+        return magnitude(getVector(point1, point2));
     }
 
 }
