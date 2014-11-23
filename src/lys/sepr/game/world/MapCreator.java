@@ -10,27 +10,21 @@ import javax.swing.*;
 
 import static lys.sepr.game.world.Utilities.*;
 
-/* y axis points have been inverted as the window coordinates start from the top left
-where as the points start from the bottom left
-*/
-
-public class TrackDrawTest extends JFrame {
+public class MapCreator extends JFrame {
 
     public MouseHandler mouseHandler = new MouseHandler();
-    public boolean drawing = false;
-    public boolean pickupMode = true;
-    public Intersection lastIntersectionPickedUp;
-    public Track lastTrackPickedUp;
-    public Point lastTrackPointPickedUp;
-    public boolean trackPickedUpLast = false;
-
-    public Track selectedTrack;
-    public boolean inspectSelectedTrack = false;
-
     public double minPickUpDistance = 20;
 
+    public Track selectedTrack;
+
+    public boolean startedNewTrack = false;
     public Point newTrackPoint1;
     public Point newTrackPoint2;
+
+    public boolean holdingTrackOrIntersection = false;
+    public Intersection intersectionPickedUp;
+    public Point trackPointPickedUp;
+    public Track trackPickedUp;
 
     public Map map = new Map();
     Point startPoint1 = new Point(0,0);
@@ -54,15 +48,14 @@ public class TrackDrawTest extends JFrame {
 
     JLabel instructions = new JLabel("<html>" +
             "This will probably be how we set up the track (with our map image behind as the guide)." +
-            "<br>To make a new track click once to set the origin and again to set the destination" +
-            "<br>To move a track or intersection, click whilst holding CTRL will pick it up," +
-            "<br>pressing the mouse again with CTRL will move it." +
-            "<br>Placing a new track in the vicinity of an existing track/intersection will merge the track(s)." +
-            "<br>Moving an existing track/intersection in the vicinity of other tracks/intersections will merge them" +
-            "<br>To break up an intersection, click it whilst holding ALT" +
-            "<br>To inspect a track, click it whilst holding SHIFT." +
+            "<br>Click a track to inspect it" +
+            "<br>Click twice to whilst holding down SHIFT to create a new track" +
+            "<br>Click twice to whilst holding down CTRL to move a track or intersection" +
+            "<br>Creating a track in the vicinity of an existing track/intersection will merge them." +
+            "<br>Moving a track/intersection in the vicinity of other tracks/intersections will merge them" +
+            "<br>Right click a track to remove it" +
+            "<br>Right click an intersection whilst holding SHIFT to remove it" +
             "<br>Coming Soon:" +
-            "<br>Deleting tracks (Not implemented in GUI)" +
             "<br>CURVES! (Not Implemented at all)" +
             "</html>", SwingConstants.LEFT);
 
@@ -72,9 +65,9 @@ public class TrackDrawTest extends JFrame {
     JLabel connectedTrackLabel = new JLabel("Connected (Non traversable) Track", SwingConstants.LEFT);
     JLabel unconnectedTrackLabel = new JLabel("Unconnected Track", SwingConstants.LEFT);
 
-    TrackDrawTest() {
-        super("Track Draw Test");
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+    MapCreator() {
+        super("Map Creator");
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(1280, 720);
         addMouseListener(mouseHandler);
         addMouseMotionListener(mouseHandler);
@@ -105,17 +98,20 @@ public class TrackDrawTest extends JFrame {
 
         @Override
         public void mousePressed(MouseEvent e) {
-            Point clickPoint = clickPointToTrackPoint(e.getPoint(), TrackDrawTest.this);
+            Point clickPoint = clickPointToTrackPoint(e.getPoint(), MapCreator.this);
 
             int modifiers = e.getModifiers();
-            if ((modifiers & ActionEvent.SHIFT_MASK) == ActionEvent.SHIFT_MASK) {
-                inspectTrack(clickPoint);
+            if (SwingUtilities.isRightMouseButton(e) &&
+                    (modifiers & ActionEvent.SHIFT_MASK) == ActionEvent.SHIFT_MASK ) {
+                removeIntersection(clickPoint);
+            } else if (SwingUtilities.isRightMouseButton(e)) {
+                removeTrack(clickPoint);
+            } else if ((modifiers & ActionEvent.SHIFT_MASK) == ActionEvent.SHIFT_MASK) {
+                createTrack(clickPoint);
             } else if ((modifiers & ActionEvent.CTRL_MASK) == ActionEvent.CTRL_MASK) {
                 moveTrack(clickPoint);
-            } else if ((modifiers & ActionEvent.ALT_MASK) == ActionEvent.ALT_MASK) {
-                removeIntersection(clickPoint);
             } else {
-                createTrack(clickPoint);
+                inspectTrack(clickPoint);
             }
         }
     }
@@ -176,18 +172,26 @@ public class TrackDrawTest extends JFrame {
         // We look for intersection before tracks when we are looking for something to move.
         Intersection intersection = selectIntersection(clickPoint);
         if (intersection != null) {
-            lastIntersectionPickedUp = intersection;
-            pickupMode = false;
-            trackPickedUpLast = false;
+            intersectionPickedUp = intersection;
+            trackPickedUp = null;
+            holdingTrackOrIntersection = true;
             return;
         }
 
         ArrayList<Object> trackAndPoint = (ArrayList<Object>) selectTrackEnd(clickPoint);
         if (trackAndPoint != null) {
-            lastTrackPickedUp = (Track) trackAndPoint.get(0);
-            lastTrackPointPickedUp = (Point) trackAndPoint.get(1);
-            pickupMode = false;
-            trackPickedUpLast = true;
+            trackPickedUp = (Track) trackAndPoint.get(0);
+            trackPointPickedUp = (Point) trackAndPoint.get(1);
+            intersectionPickedUp = null;
+            holdingTrackOrIntersection = true;
+        }
+    }
+
+    private void removeTrack(Point clickPoint) {
+        Track track = selectTrack(clickPoint);
+        if (track != null) {
+            map.removeTrack(track);
+            repaint();
         }
     }
 
@@ -203,28 +207,28 @@ public class TrackDrawTest extends JFrame {
         Track track = selectTrack(clickPoint);
         if (track != null) {
             selectedTrack = track;
-            inspectSelectedTrack = true;
             repaint();
-            return;
-        }
+        } else selectedTrack = null;
     }
 
     private void moveSelectedIntersectionOrTrackEnd(Point clickPoint) {
+        // Finding a close existing point for each point in the new track
+        // so that we can change the new destination to match (and thus make an intersection).
         ArrayList<Object> trackAndPoint = (ArrayList<Object>) selectTrackEnd(clickPoint);
         if (trackAndPoint != null) {
             clickPoint = (Point) trackAndPoint.get(1);
         }
-        if (trackPickedUpLast) {
-            map.moveTrack(lastTrackPickedUp, lastTrackPointPickedUp, clickPoint);
+        if (trackPickedUp != null && trackPointPickedUp != null) {
+            map.moveTrack(trackPickedUp, trackPointPickedUp, clickPoint);
         } else {
-            map.moveIntersection(lastIntersectionPickedUp, clickPoint);
+            map.moveIntersection(intersectionPickedUp, clickPoint);
         }
-        pickupMode = true;
+        holdingTrackOrIntersection = false;
         repaint();
     }
 
     private void createTrack(Point clickPoint) {
-        if (!drawing) {
+        if (!startedNewTrack) {
             newTrackPoint1 = clickPoint;
         } else {
             newTrackPoint2 = clickPoint;
@@ -244,21 +248,21 @@ public class TrackDrawTest extends JFrame {
             map.addTrack(track);
             repaint();
         }
-        drawing = !drawing;
+        startedNewTrack = !startedNewTrack;
     }
 
     private void moveTrack(Point clickPoint) {
-        if (pickupMode) {
-            selectIntersectionOrTrackEnd(clickPoint);
-        } else {
+        if (holdingTrackOrIntersection) {
             moveSelectedIntersectionOrTrackEnd(clickPoint);
+        } else {
+            selectIntersectionOrTrackEnd(clickPoint);
         }
     }
 
     private void drawLines(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         g2.setStroke(new BasicStroke(5));
-        if (inspectSelectedTrack) {
+        if (selectedTrack != null) {
             drawNextTracks(selectedTrack, g2);
         } else {
             drawAllTracksNormal(g2);
@@ -282,7 +286,6 @@ public class TrackDrawTest extends JFrame {
             g2.setColor(lineColour);
             g2.draw(line);
         }
-        inspectSelectedTrack = false;
     }
 
     private void drawAllTracksNormal(Graphics2D g2) {
@@ -304,7 +307,7 @@ public class TrackDrawTest extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new TrackDrawTest().setVisible(true);
+                new MapCreator().setVisible(true);
             }
         });
     }

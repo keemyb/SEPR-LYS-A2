@@ -54,12 +54,18 @@ public final class Utilities {
     }
 
     public static Point clickPointToTrackPoint(java.awt.Point clickPoint, JFrame jFrame) {
+        /* y axis points have been inverted as the window coordinates start from the top left
+        where as the points start from the bottom left
+        */
         double clickPointX = clickPoint.x;
         double clickPointY = jFrame.getHeight() - clickPoint.y;
         return new Point(clickPointX, clickPointY);
     }
 
     public static java.awt.Point trackPointToClickPoint(Point point, JFrame jFrame) {
+        /* y axis points have been inverted as the window coordinates start from the top left
+        where as the points start from the bottom left
+        */
         double pointX = point.getX();
         double pointY = jFrame.getHeight() - point.getY();
         return new java.awt.Point((int) pointX, (int) pointY);
