@@ -34,7 +34,8 @@ $RECYCLE.BIN/
 .LSOverride
 
 # Icon must end with two \r
-Icon
+Icon
+
 
 # Thumbnails
 ._*
@@ -213,3 +214,4 @@ tramp
 # cask packages
 .cask/
 
+src/META-INF/MANIFEST.MF

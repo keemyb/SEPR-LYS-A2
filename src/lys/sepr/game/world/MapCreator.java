@@ -1,9 +1,7 @@
 package lys.sepr.game.world;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.awt.geom.Line2D;
 import java.util.*;
 import javax.swing.*;
@@ -13,6 +11,7 @@ import static lys.sepr.game.world.Utilities.*;
 public class MapCreator extends JFrame {
 
     public MouseHandler mouseHandler = new MouseHandler();
+    public KeyHandler keyHandler = new KeyHandler();
     public double minPickUpDistance = 20;
 
     public Track selectedTrack;
@@ -47,7 +46,8 @@ public class MapCreator extends JFrame {
     java.awt.Color unconnectedTrackColour = Color.BLACK;
 
     JLabel instructions = new JLabel("<html>" +
-            "This will probably be how we set up the track (with our map image behind as the guide)." +
+            "Press 1 to hide/show me" +
+            "<br>This will probably be how we set up the track (with our map image behind as the guide)." +
             "<br>Click a track to inspect it" +
             "<br>Click twice to whilst holding down SHIFT to create a new track" +
             "<br>Click twice to whilst holding down CTRL to move a track or intersection" +
@@ -71,6 +71,7 @@ public class MapCreator extends JFrame {
         setSize(1280, 720);
         addMouseListener(mouseHandler);
         addMouseMotionListener(mouseHandler);
+        addKeyListener(keyHandler);
 
         selectedTrackLabel.setForeground(selectedTrackColour);
         activeNextTrackLabel.setForeground(activeNextTrackColour);
@@ -113,6 +114,23 @@ public class MapCreator extends JFrame {
             } else {
                 inspectTrack(clickPoint);
             }
+        }
+    }
+
+    private class KeyHandler implements KeyListener{
+        public void keyTyped(KeyEvent e) {
+
+        }
+
+        public void keyPressed(KeyEvent e) {
+            if(e.getKeyCode() == KeyEvent.VK_1) {
+                getContentPane().getComponent(0).setVisible(!getContentPane().getComponent(0).isVisible());
+                repaint();
+            }
+        }
+
+        public void keyReleased(KeyEvent e) {
+
         }
     }
 
@@ -205,10 +223,12 @@ public class MapCreator extends JFrame {
 
     private void inspectTrack(Point clickPoint) {
         Track track = selectTrack(clickPoint);
-        if (track != null) {
+        if (track != null && track.equals(selectedTrack)) {
+            selectedTrack = null;
+        } else if (track != null) {
             selectedTrack = track;
-            repaint();
         } else selectedTrack = null;
+        repaint();
     }
 
     private void moveSelectedIntersectionOrTrackEnd(Point clickPoint) {
