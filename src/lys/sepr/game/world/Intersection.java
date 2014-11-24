@@ -23,17 +23,10 @@ public class Intersection {
         a.addIntersection(this);
         b.addIntersection(this);
 
-        a.addConnectedTrack(b);
-        b.addConnectedTrack(a);
-
         updateValidTracks();
     }
 
     public void addTrack(Track track) {
-        for (Track existingTrack : tracks) {
-            existingTrack.addConnectedTrack(track);
-            track.addConnectedTrack(existingTrack);
-        }
         tracks.add(track);
         track.addIntersection(this);
 
@@ -99,10 +92,6 @@ public class Intersection {
     }
 
     public void removeTrack(Track track) {
-        for (Track existingTrack : tracks) {
-            existingTrack.removeConnectedTrack(track);
-            track.removeConnectedTrack(existingTrack);
-        }
         track.removeIntersection(this);
         tracks.remove(track);
 
@@ -129,12 +118,6 @@ public class Intersection {
         }
         for (Track track : tracks) {
             track.addIntersection(this);
-            // Re add connected tracks since they were removed when they were removed from the intersection
-            for (Track otherTrack : tracks) {
-                if (otherTrack.equals(track)) continue;
-                otherTrack.addConnectedTrack(track);
-                track.addConnectedTrack(otherTrack);
-            }
         }
         point = to;
         updateValidTracks();

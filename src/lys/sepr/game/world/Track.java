@@ -8,7 +8,6 @@ public class Track {
 
     private final double nudgeStrength = 0.1;
     private ArrayList<Point> points = new ArrayList<Point>();
-    private ArrayList<Track> connectedTracks = new ArrayList<Track>();
     private ArrayList<Intersection> intersections = new ArrayList<Intersection>();
     private ArrayList<Track> nextTracks = new ArrayList<Track>();
 
@@ -23,7 +22,7 @@ public class Track {
 
     public Track getNextTrack(Point origin) {
         // origin is the point that we are travelling away from.
-        if (connectedTracks.isEmpty()) return null;
+        if (intersections.isEmpty()) return null;
 
         /* as tracks have no distinguishable start and end point, the destination
         is the one that is not the origin point */
@@ -56,8 +55,7 @@ public class Track {
     }
 
     public Intersection getIntersection(Point point) {
-        // an orphaned track will have no intersections as it doesn't connect to anything.
-        if (connectedTracks.isEmpty()) return null;
+        if (intersections.isEmpty()) return null;
 
         for (Intersection intersection : intersections) {
             if (point.equals(intersection.getPoint())) return intersection;
@@ -76,15 +74,6 @@ public class Track {
 
     public void removeIntersection(Intersection intersection) {
         intersections.remove(intersection);
-    }
-
-    public void addConnectedTrack(Track track) {
-        connectedTracks.add(track);
-    }
-
-    public void removeConnectedTrack(Track track) {
-        connectedTracks.remove(track);
-        nextTracks.remove(track);
     }
 
     public void move(Point from, Point to) {
@@ -134,11 +123,15 @@ public class Track {
         return validNextTracks;
     }
 
-    public ArrayList<Track> getNextTracks() {
-        return nextTracks;
+    public ArrayList<Track> getConnectedTracks() {
+        ArrayList<Track> connectedTracks = new ArrayList<Track>();
+        for (Intersection intersection : intersections) {
+            connectedTracks.addAll(intersection.getTracks());
+        }
+        return connectedTracks;
     }
 
-    public ArrayList<Track> getConnectedTracks() {
-        return connectedTracks;
+    public ArrayList<Track> getNextTracks() {
+        return nextTracks;
     }
 }
