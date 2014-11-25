@@ -10,6 +10,7 @@ public class Track {
     private ArrayList<Point> points = new ArrayList<Point>();
     private ArrayList<Intersection> intersections = new ArrayList<Intersection>();
     private ArrayList<Track> activeNextTracks = new ArrayList<Track>();
+    private Boolean broken = false;
 
     Track(Point a, Point b) {
         points.add(a);
@@ -143,5 +144,13 @@ public class Track {
 
     public void removeActiveNextTrack(Track track) {
         activeNextTracks.remove(track);
+    }
+
+    public Boolean isBroken() {
+        return broken;
+    }
+
+    public void setBroken(Boolean broken) {
+        this.broken = broken;
     }
 }
