@@ -295,7 +295,7 @@ public class MapCreator extends JFrame {
             Line2D.Double line = trackToLine2D(track, this);
             if (track.equals(selectedTrack)) {
                 lineColour = selectedTrackColour;
-            } else if (selectedTrack.getNextTracks().contains(track)) {
+            } else if (selectedTrack.getActiveNextTracks().contains(track)) {
                 lineColour = activeNextTrackColour;
             } else if (selectedTrack.getValidNextTracks().contains(track)) {
                 lineColour = validNextTrackColour;

@@ -70,7 +70,7 @@ public class Intersection {
                 if (validNextTracks.get(track) != null && validNextTracks.get(track).contains(currentNextTrack)){
                     continue;
                 } else {
-                    track.removeNextTrack(currentNextTrack);
+                    track.removeActiveNextTrack(currentNextTrack);
                 }
             }
 
@@ -101,6 +101,13 @@ public class Intersection {
         track.removeIntersection(this);
         tracks.remove(track);
 
+        // Remove the removed track from all other active next tracks
+        for (int i=0; i < tracks.size(); i++) {
+            Track remainingTrack = tracks.get(i);
+            track.removeActiveNextTrack(remainingTrack);
+            remainingTrack.removeActiveNextTrack(track);
+        }
+
         // Move the track away from the intersection a little bit,
         // so that it is not confused as being part of it.
         track.nudge(getPoint());
@@ -128,5 +135,4 @@ public class Intersection {
         point = to;
         updateValidTracks();
     }
-
 }

@@ -9,7 +9,7 @@ public class Track {
     private final double nudgeStrength = 0.1;
     private ArrayList<Point> points = new ArrayList<Point>();
     private ArrayList<Intersection> intersections = new ArrayList<Intersection>();
-    private ArrayList<Track> nextTracks = new ArrayList<Track>();
+    private ArrayList<Track> activeNextTracks = new ArrayList<Track>();
 
     Track(Point a, Point b) {
         points.add(a);
@@ -29,7 +29,7 @@ public class Track {
         Point destination = getOtherPoint(origin);
 
         // Look for the track that has a point that equals the destination.
-        for (Track track : nextTracks) {
+        for (Track track : activeNextTracks) {
             for (Point point : track.getPoints()) {
                 if (point.equals(destination)) return track;
             }
@@ -42,11 +42,11 @@ public class Track {
         if (intersection.getValidNextTracks(this).contains(prospectiveNextTrack)) {
             Track trackToRemove = null;
             // Remove existing next tracks if they connect via this intersection
-            for (Track existingNextTrack : nextTracks) {
+            for (Track existingNextTrack : activeNextTracks) {
                 if (intersection.getTracks().contains(existingNextTrack)) trackToRemove = existingNextTrack;
             }
-            if (trackToRemove != null) nextTracks.remove(trackToRemove);
-            nextTracks.add(prospectiveNextTrack);
+            if (trackToRemove != null) activeNextTracks.remove(trackToRemove);
+            activeNextTracks.add(prospectiveNextTrack);
         }
     }
 
@@ -137,11 +137,11 @@ public class Track {
         return connectedTracks;
     }
 
-    public ArrayList<Track> getNextTracks() {
-        return nextTracks;
+    public ArrayList<Track> getActiveNextTracks() {
+        return activeNextTracks;
     }
 
-    public void removeNextTrack(Track track) {
-        nextTracks.remove(track);
+    public void removeActiveNextTrack(Track track) {
+        activeNextTracks.remove(track);
     }
 }

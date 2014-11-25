@@ -211,8 +211,18 @@ public class IntersectionTest {
 
         track1.move(new Point(0,0), new Point(200, 100));
 
-        assertEquals(0, track1.getNextTracks().size());
-        assertEquals(0, track2.getNextTracks().size());
+        assertEquals(0, track1.getActiveNextTracks().size());
+        assertEquals(0, track2.getActiveNextTracks().size());
+    }
+
+    @Test
+    public void testBreakIntersection() throws Exception {
+        Intersection intersection = new Intersection(new Point(100,100), track1, track2);
+
+        intersection.removeTrack(track1);
+
+        assertEquals(0, track1.getActiveNextTracks().size());
+        assertEquals(0, track2.getActiveNextTracks().size());
     }
 
 }
