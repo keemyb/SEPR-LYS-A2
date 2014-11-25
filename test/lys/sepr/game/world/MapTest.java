@@ -170,4 +170,19 @@ public class MapTest {
 
         assertEquals(2, map.getTracks().size());
     }
+
+    @Test
+    public void testMoveIntersectionNoNewIntersectionCreated() throws Exception {
+        map.addTrack(track1);
+        map.addTrack(track2);
+        map.addTrack(track3);
+
+        Intersection intersection = map.getIntersections().get(0);
+
+        intersection.move(new Point(300,300));
+
+        assertEquals(1, map.getIntersections().size());
+        assertEquals(intersection, track1.getIntersections().get(0));
+        assertEquals(1, track1.getIntersections().size());
+    }
 }

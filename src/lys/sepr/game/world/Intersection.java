@@ -117,12 +117,12 @@ public class Intersection {
     public void move(Point to) {
         if (getPoint().equals(to)) return;
 
-        // Remove all tracks in the intersection, move them, and then add them back
-        for (Track track : tracks) {
+        // Remove the reference to this intersection of every track,
+        // before moving them, and then add the reference back
+        for (int i=0; i < tracks.size(); i++) {
+            Track track = tracks.get(i);
             track.removeIntersection(this);
             track.move(getPoint(), to);
-        }
-        for (Track track : tracks) {
             track.addIntersection(this);
         }
         point = to;
