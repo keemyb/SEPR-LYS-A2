@@ -4,12 +4,21 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Line2D;
 import java.util.*;
+
 import javax.swing.*;
 
 import static lys.sepr.game.world.Utilities.*;
 
 public class MapCreator extends JFrame {
 
+	public static final int INSPECT_TRACK_MODE = 0;
+	public static final int MOVE_TRACK_MODE = 1;
+	public static final int DELETE_TRACK_MODE = 2;
+	public static final int DELETE_INTERSECTION_MODE = 3;
+	public static final int CREATE_TRACK_MODE = 4;
+	
+	public int mode = INSPECT_TRACK_MODE;
+	
     public MouseHandler mouseHandler = new MouseHandler();
     public KeyHandler keyHandler = new KeyHandler();
     public double minPickUpDistance = 20;
@@ -48,13 +57,6 @@ public class MapCreator extends JFrame {
     JLabel instructions = new JLabel("<html>" +
             "Press 1 to hide/show me" +
             "<br>This will probably be how we set up the track (with our map image behind as the guide)." +
-            "<br>Click a track to inspect it" +
-            "<br>Click twice to whilst holding down SHIFT to create a new track" +
-            "<br>Click twice to whilst holding down CTRL to move a track or intersection" +
-            "<br>Creating a track in the vicinity of an existing track/intersection will merge them." +
-            "<br>Moving a track/intersection in the vicinity of other tracks/intersections will merge them" +
-            "<br>Right click a track to remove it" +
-            "<br>Right click an intersection whilst holding SHIFT to remove it" +
             "<br>Coming Soon:" +
             "<br>CURVES! (Not Implemented at all)" +
             "</html>", SwingConstants.LEFT);
@@ -65,6 +67,14 @@ public class MapCreator extends JFrame {
     JLabel connectedTrackLabel = new JLabel("Connected (Non traversable) Track", SwingConstants.LEFT);
     JLabel unconnectedTrackLabel = new JLabel("Unconnected Track", SwingConstants.LEFT);
 
+    JRadioButton createTrackModeButton = new JRadioButton("Create Track");
+    JRadioButton moveTrackModeButton = new JRadioButton("Move Track");
+    JRadioButton inspectTrackModeButton = new JRadioButton("Inspect Track");
+    JRadioButton deleteTrackModeButton = new JRadioButton("Delete Track");
+    JRadioButton deleteIntersectionModeButton = new JRadioButton("Delete Intersection");
+    
+    ButtonGroup modeButtons = new ButtonGroup();
+    
     MapCreator() {
         super("Map Creator");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -90,31 +100,103 @@ public class MapCreator extends JFrame {
         container.add(unconnectedTrackLabel);
         getContentPane().add(container, BorderLayout.NORTH);
 
+        modeButtons.add(inspectTrackModeButton);
+        modeButtons.add(createTrackModeButton);
+        modeButtons.add(moveTrackModeButton);
+        modeButtons.add(deleteTrackModeButton);
+        modeButtons.add(deleteIntersectionModeButton);
+        
+        inspectTrackModeButton.setSelected(true);
+        
+        createTrackModeButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				clearMove();
+				mode = CREATE_TRACK_MODE;
+			}	
+        });
+        
+        moveTrackModeButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				clearCreateNew();
+				mode = MOVE_TRACK_MODE;
+			}	
+        });
+        
+        inspectTrackModeButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				clearCreateNew();
+				clearMove();
+				mode = INSPECT_TRACK_MODE;
+			}	
+        });
+        
+       deleteTrackModeButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				clearCreateNew();
+				clearMove();
+				mode = DELETE_TRACK_MODE;
+			}	
+        });
+       
+       deleteIntersectionModeButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				clearCreateNew();
+				clearMove();
+				mode = DELETE_INTERSECTION_MODE;
+			}	
+       });
+       
+       JPanel buttonPanel = new JPanel();
+       
+       buttonPanel.add(inspectTrackModeButton);
+       buttonPanel.add(createTrackModeButton);
+       buttonPanel.add(moveTrackModeButton);
+       buttonPanel.add(deleteTrackModeButton);
+       buttonPanel.add(deleteIntersectionModeButton);
+       
+       buttonPanel.setSize(1280, 100);
+       
+       getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+       
         map.addTrack(track1);
         map.addTrack(track2);
         map.addTrack(track3);
     }
 
     private class MouseHandler extends MouseAdapter {
-
-        @Override
         public void mousePressed(MouseEvent e) {
             Point clickPoint = clickPointToTrackPoint(e.getPoint(), MapCreator.this);
-
-            int modifiers = e.getModifiers();
-            if (SwingUtilities.isRightMouseButton(e) &&
-                    (modifiers & ActionEvent.SHIFT_MASK) == ActionEvent.SHIFT_MASK ) {
-                removeIntersection(clickPoint);
-            } else if (SwingUtilities.isRightMouseButton(e)) {
-                removeTrack(clickPoint);
-            } else if ((modifiers & ActionEvent.SHIFT_MASK) == ActionEvent.SHIFT_MASK) {
-                createTrack(clickPoint);
-            } else if ((modifiers & ActionEvent.CTRL_MASK) == ActionEvent.CTRL_MASK) {
-                moveTrack(clickPoint);
-            } else {
-                inspectTrack(clickPoint);
+            switch(mode) {
+            case CREATE_TRACK_MODE:
+            	createTrack(clickPoint);
+            	break;
+            case INSPECT_TRACK_MODE:
+            	inspectTrack(clickPoint);
+            	break;
+            case MOVE_TRACK_MODE:
+            	moveTrack(clickPoint);
+            	break;
+            case DELETE_TRACK_MODE:
+            	removeTrack(clickPoint);
+            	break;
+            case DELETE_INTERSECTION_MODE:
+            	removeIntersection(clickPoint);
+            	break;
             }
         }
+    }
+    
+    private void clearCreateNew() {
+    	startedNewTrack = false;
+    	newTrackPoint1 = null;
+    	newTrackPoint2 = null;
+    }
+    
+    private void clearMove() {
+    	holdingTrackOrIntersection = false;
+    	intersectionPickedUp = null;
+    	trackPointPickedUp = null;
+    	trackPickedUp = null;
     }
 
     private class KeyHandler implements KeyListener{
