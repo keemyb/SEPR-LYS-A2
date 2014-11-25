@@ -33,7 +33,7 @@ public class Intersection {
         updateValidTracks();
     }
 
-    private void updateValidTracks() {
+    public void updateValidTracks() {
         /* Clear existing valid tracks as we will be regenerating them.
         As the angles between tracks change when an intersection is moved,
         we must recalculate them to see if they are still valid.
@@ -64,14 +64,20 @@ public class Intersection {
             Point destination = track.getOtherPoint(getPoint());
             Track currentNextTrack = track.getNextTrack(destination);
 
-            // We don't want to change a track's next track if it is still valid
             if (currentNextTrack != null) {
-                if (validNextTracks.get(track) != null
-                    && validNextTracks.get(track).contains(currentNextTrack)) continue;
+                // If there are valid next tracks and the current next track is one of them,
+                // leave it, or else remove it
+                if (validNextTracks.get(track) != null && validNextTracks.get(track).contains(currentNextTrack)){
+                    continue;
+                } else {
+                    track.removeNextTrack(currentNextTrack);
+                }
             }
 
             // Set the first valid next track, if there is one
-            if (getValidNextTracks(track) != null) track.setNextTrack(this, getValidNextTracks(track).get(0));
+            if (getValidNextTracks(track) != null) {
+                track.setNextTrack(this, getValidNextTracks(track).get(0));
+            }
         }
     }
 

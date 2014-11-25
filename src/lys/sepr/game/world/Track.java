@@ -77,7 +77,6 @@ public class Track {
     }
 
     public void move(Point from, Point to) {
-        Intersection existingIntersection = getIntersection(from);
         if (getPoints().contains(from)) {
             // A point cannot be moved to the same location.
             if (to.equals(from)) return;
@@ -86,10 +85,17 @@ public class Track {
             points.remove(from);
             points.add(to);
         }
+
         // If there was an intersection at the point where we moved from, break the connection
+        Intersection existingIntersection = getIntersection(from);
         if (existingIntersection != null) {
             existingIntersection.removeTrack(this);
             removeIntersection(existingIntersection);
+        }
+
+        // Update the valid tracks as the angle between tracks may have changed
+        for (Intersection intersection : intersections) {
+            intersection.updateValidTracks();
         }
     }
 
@@ -133,5 +139,9 @@ public class Track {
 
     public ArrayList<Track> getNextTracks() {
         return nextTracks;
+    }
+
+    public void removeNextTrack(Track track) {
+        nextTracks.remove(track);
     }
 }

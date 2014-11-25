@@ -201,4 +201,18 @@ public class IntersectionTest {
         assertEquals(track2, track1.getNextTrack(new Point(0,0)));
     }
 
+    @Test
+    public void testLastActiveNextTrackMove() throws Exception {
+        // Testing to ensure that a track is removed from next tracks
+        // after being moved to a non traversable location,
+        // when no other tracks can take it's place (as a valid next track).
+
+        Intersection intersection = new Intersection(new Point(100,100), track1, track2);
+
+        track1.move(new Point(0,0), new Point(200, 100));
+
+        assertEquals(0, track1.getNextTracks().size());
+        assertEquals(0, track2.getNextTracks().size());
+    }
+
 }
