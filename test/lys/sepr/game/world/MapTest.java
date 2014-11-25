@@ -149,9 +149,9 @@ public class MapTest {
         map.removeIntersection(intersection);
 
         assertEquals(0, map.getIntersections().size());
-        assertNull(track1.getIntersection(track1.getOtherPoint(new Point(0,0))));
-        assertNull(track2.getIntersection(track2.getOtherPoint(new Point(200,200))));
-        assertNull(track3.getIntersection(track3.getOtherPoint(new Point(200,100))));
+        assertEquals(0, track1.getIntersections().size());
+        assertEquals(0, track2.getIntersections().size());
+        assertEquals(0, track3.getIntersections().size());
     }
 
     @Test
