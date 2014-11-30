@@ -87,10 +87,7 @@ public class Map {
     }
 
     public void removeIntersection(Intersection intersection) {
-        for (int i=intersection.getTracks().size() - 1; i>=0; i--) {
-            Track track = intersection.getTracks().get(i);
-            intersection.removeTrack(track);
-        }
+        intersection.dissolve();
         intersections.remove(intersection);
     }
 
@@ -98,6 +95,7 @@ public class Map {
         for (int i=track.getIntersections().size() - 1; i>=0; i--) {
             Intersection intersection = track.getIntersections().get(i);
             intersection.removeTrack(track);
+            if (intersection.getTracks().size() == 0) intersections.remove(intersection);
         }
         tracks.remove(track);
     }

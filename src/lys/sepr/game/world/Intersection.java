@@ -115,9 +115,21 @@ public class Intersection {
         if (tracks.size() == 1) {
             /* remove this intersection from the remaining track, since an intersection
             cannot consist of one track */
-            tracks.get(0).removeIntersection(this);
+            Track remainingTrack = tracks.get(0);
+            remainingTrack.removeIntersection(this);
+            tracks.remove(remainingTrack);
         } else {
             updateValidTracks();
+        }
+    }
+
+    public void dissolve() {
+        for (int i=getTracks().size() - 1; i>=0; i--) {
+            Track track = getTracks().get(i);
+            removeTrack(track);
+            // Break after the second last track is removed,
+            // as the intersection will remove the last one in the remove track method
+            if (i == 1) break;
         }
     }
 

@@ -216,11 +216,23 @@ public class IntersectionTest {
     }
 
     @Test
-    public void testBreakIntersection() throws Exception {
+    public void testIndirectDissolveIntersection() throws Exception {
         Intersection intersection = new Intersection(new Point(100,100), track1, track2);
 
         intersection.removeTrack(track1);
 
+        assertEquals(0, intersection.getTracks().size());
+        assertEquals(0, track1.getActiveNextTracks().size());
+        assertEquals(0, track2.getActiveNextTracks().size());
+    }
+
+    @Test
+    public void testDirectDissolveIntersection() throws Exception {
+        Intersection intersection = new Intersection(new Point(100,100), track1, track2);
+
+        intersection.dissolve();
+
+        assertEquals(0, intersection.getTracks().size());
         assertEquals(0, track1.getActiveNextTracks().size());
         assertEquals(0, track2.getActiveNextTracks().size());
     }

@@ -16,14 +16,14 @@ public class MapTest {
 
     @Before
     public void setUp() throws Exception {
-        Point startPoint1 = new Point(0,0);
-        Point endPoint1 = new Point(100,100);
+        Point startPoint1 = new Point(0, 0);
+        Point endPoint1 = new Point(100, 100);
 
-        Point startPoint2 = new Point(200,200);
-        Point endPoint2 = new Point(100,100);
+        Point startPoint2 = new Point(200, 200);
+        Point endPoint2 = new Point(100, 100);
 
-        Point startPoint3 = new Point(100,100);
-        Point endPoint3 = new Point(200,100);
+        Point startPoint3 = new Point(100, 100);
+        Point endPoint3 = new Point(200, 100);
 
         this.track1 = new Track(startPoint1, endPoint1);
         this.track2 = new Track(startPoint2, endPoint2);
@@ -58,7 +58,7 @@ public class MapTest {
 
     @Test
     public void moveTrackCreateNewIntersection() throws Exception {
-        Track track4 = new Track(new Point(0,100), new Point(90, 100));
+        Track track4 = new Track(new Point(0, 100), new Point(90, 100));
 
         ArrayList<Track> expectedTracks = new ArrayList<Track>();
         expectedTracks.add(track1);
@@ -74,7 +74,7 @@ public class MapTest {
 
     @Test
     public void moveTrackExistingIntersection() throws Exception {
-        Track track4 = new Track(new Point(0,100), new Point(90, 100));
+        Track track4 = new Track(new Point(0, 100), new Point(90, 100));
 
         ArrayList<Track> expectedTracks = new ArrayList<Track>();
         expectedTracks.add(track1);
@@ -92,7 +92,7 @@ public class MapTest {
 
     @Test
     public void moveIntersectionConsumeSoloTrack() throws Exception {
-        Track track4 = new Track(new Point(0,100), new Point(90, 100));
+        Track track4 = new Track(new Point(0, 100), new Point(90, 100));
 
         ArrayList<Track> expectedTracks = new ArrayList<Track>();
         expectedTracks.add(track1);
@@ -114,8 +114,8 @@ public class MapTest {
 
     @Test
     public void moveIntersectionMergeIntersection() throws Exception {
-        Track track4 = new Track(new Point(0,100), new Point(90, 100));
-        Track track5 = new Track(new Point(0,200), new Point(90, 100));
+        Track track4 = new Track(new Point(0, 100), new Point(90, 100));
+        Track track5 = new Track(new Point(0, 200), new Point(90, 100));
 
         map.addTrack(track1);
         map.addTrack(track2);
@@ -156,7 +156,7 @@ public class MapTest {
 
     @Test
     public void removeTrack() throws Exception {
-        Track track4 = new Track(new Point(0,100), new Point(90, 100));
+        Track track4 = new Track(new Point(0, 100), new Point(90, 100));
 
         map.addTrack(track1);
         map.addTrack(track2);
@@ -179,10 +179,21 @@ public class MapTest {
 
         Intersection intersection = map.getIntersections().get(0);
 
-        intersection.move(new Point(300,300));
+        intersection.move(new Point(300, 300));
 
         assertEquals(1, map.getIntersections().size());
         assertEquals(intersection, track1.getIntersections().get(0));
         assertEquals(1, track1.getIntersections().size());
+    }
+
+    @Test
+    public void removeFinalTrack() throws Exception {
+        map.addTrack(track1);
+        map.addTrack(track2);
+
+        map.removeTrack(track1);
+        map.removeTrack(track2);
+
+        assertEquals(0, map.getIntersections().size());
     }
 }
