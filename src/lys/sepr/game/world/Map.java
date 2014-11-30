@@ -95,6 +95,9 @@ public class Map {
         for (int i=track.getIntersections().size() - 1; i>=0; i--) {
             Intersection intersection = track.getIntersections().get(i);
             intersection.removeTrack(track);
+            // As an intersection automatically dissolves after the second
+            // last remaining track is removed, we check the intersection
+            // is empty and remove it from the map if so
             if (intersection.getTracks().size() == 0) intersections.remove(intersection);
         }
         tracks.remove(track);
