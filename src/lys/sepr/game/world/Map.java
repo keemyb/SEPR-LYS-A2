@@ -10,8 +10,7 @@ public class Map {
 
     public void addLocation(Location location) {
         for (Location existingLocation : locations) {
-            if (existingLocation.getX() == location.getX() &&
-                    existingLocation.getY() == location.getY()) {
+            if (existingLocation.getPoint().equals(location.getPoint())) {
                 return;
             }
         }

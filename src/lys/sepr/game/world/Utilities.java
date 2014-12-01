@@ -39,11 +39,6 @@ public final class Utilities {
         return vector;
     }
 
-    public static Point closestPoint(Location to, ArrayList<Point> points) {
-        Point toPoint = new Point(to.getX(), to.getY());
-        return closestPoint(toPoint, points);
-    }
-
     public static Point closestPoint(Point to, ArrayList<Point> points) {
         Point closestPoint = null;
         Double closestDistance = null;
