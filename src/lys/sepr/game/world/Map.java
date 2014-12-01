@@ -6,6 +6,21 @@ public class Map {
 
     private ArrayList<Track> tracks = new ArrayList<Track>();
     private ArrayList<Intersection> intersections = new ArrayList<Intersection>();
+    private ArrayList<Location> locations = new ArrayList<Location>();
+
+    public void addLocation(Location location) {
+        for (Location existingLocation : locations) {
+            if (existingLocation.getX() == location.getX() &&
+                    existingLocation.getY() == location.getY()) {
+                return;
+            }
+        }
+        locations.add(location);
+    }
+
+    public void removeLocation(Location location) {
+        locations.remove(location);
+    }
 
     public void addTrack(Track track) {
         tracks.add(track);
