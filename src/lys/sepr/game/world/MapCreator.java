@@ -1,11 +1,11 @@
 package lys.sepr.game.world;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Line2D;
-import java.util.*;
-
-import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Random;
 
 import static lys.sepr.game.world.Utilities.*;
 
@@ -240,32 +240,7 @@ public class MapCreator extends JFrame {
     }
 
     private Track selectTrack(Point clickPoint) {
-        // With help from http://doswa.com/2009/07/13/circle-segment-intersectioncollision.html
-        for (Track track : map.getTracks()) {
-            Point trackPoint1 = track.getPoints().get(0);
-            Point trackPoint2 = track.getPoints().get(1);
-            ArrayList<Double> trackVector = getVector(trackPoint1, trackPoint2);
-            ArrayList<Double> unitTrackVector = unitVector(trackVector);
-            ArrayList<Double> trackPointToClickPointVector = getVector(trackPoint1, clickPoint);
-            double lengthProjectedVector = dotProduct(trackPointToClickPointVector, unitTrackVector);
-            ArrayList<Double> projectedVector = multiply(unitTrackVector,lengthProjectedVector);
-            ArrayList<Double> closestPoint = new ArrayList<Double>();
-            if (lengthProjectedVector < 0) {
-                closestPoint.add(trackPoint1.getX());
-                closestPoint.add(trackPoint1.getY());
-            } else if (lengthProjectedVector > magnitude(trackVector)) {
-                closestPoint.add(trackPoint2.getX());
-                closestPoint.add(trackPoint2.getY());
-            } else {
-                closestPoint.add(trackPoint1.getX()+projectedVector.get(0));
-                closestPoint.add(trackPoint1.getY()+projectedVector.get(1));
-            }
-            double distance = magnitude(getVector(new Point(closestPoint.get(0), closestPoint.get(1)) , clickPoint));
-            if (distance < minPickUpDistance) {
-                return track;
-            }
-        }
-        return null;
+        return closestTrack(clickPoint, map.getTracks(), minPickUpDistance);
     }
 
     private void selectIntersectionOrTrackEnd(Point clickPoint) {

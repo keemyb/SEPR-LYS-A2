@@ -3,7 +3,6 @@ package lys.sepr.game.world;
 import javax.swing.*;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
-import java.util.Vector;
 
 import static java.lang.Math.*;
 
@@ -38,6 +37,11 @@ public final class Utilities {
         vector.add(towards.getX() - from.getX());
         vector.add(towards.getY() - from.getY());
         return vector;
+    }
+
+    public static Point closestPoint(Location to, ArrayList<Point> points) {
+        Point toPoint = new Point(to.getX(), to.getY());
+        return closestPoint(toPoint, points);
     }
 
     public static Point closestPoint(Point to, ArrayList<Point> points) {
@@ -98,5 +102,41 @@ public final class Utilities {
             newVector.add(component * constant);
         }
         return newVector;
+    }
+
+    public static Track closestTrack(Point to, ArrayList<Track> tracks){
+        return closestTrack(to, tracks, Double.POSITIVE_INFINITY);
+    }
+
+    public static Track closestTrack(Point to, ArrayList<Track> tracks, double range) {
+        // With help from http://doswa.com/2009/07/13/circle-segment-intersectioncollision.html
+        Track closestTrack = null;
+        Double closestDistance = null;
+        for (Track track : tracks) {
+            Point trackPoint1 = track.getPoints().get(0);
+            Point trackPoint2 = track.getPoints().get(1);
+            ArrayList<Double> trackVector = getVector(trackPoint1, trackPoint2);
+            ArrayList<Double> unitTrackVector = unitVector(trackVector);
+            ArrayList<Double> trackPointToClickPointVector = getVector(trackPoint1, to);
+            double lengthProjectedVector = dotProduct(trackPointToClickPointVector, unitTrackVector);
+            ArrayList<Double> projectedVector = multiply(unitTrackVector, lengthProjectedVector);
+            ArrayList<Double> closestPoint = new ArrayList<Double>();
+            if (lengthProjectedVector < 0) {
+                closestPoint.add(trackPoint1.getX());
+                closestPoint.add(trackPoint1.getY());
+            } else if (lengthProjectedVector > magnitude(trackVector)) {
+                closestPoint.add(trackPoint2.getX());
+                closestPoint.add(trackPoint2.getY());
+            } else {
+                closestPoint.add(trackPoint1.getX() + projectedVector.get(0));
+                closestPoint.add(trackPoint1.getY() + projectedVector.get(1));
+            }
+            double distance = magnitude(getVector(new Point(closestPoint.get(0), closestPoint.get(1)), to));
+            if (distance < range && (closestDistance == null || distance < closestDistance)) {
+                closestDistance = distance;
+                closestTrack = track;
+            }
+        }
+        return closestTrack;
     }
 }
