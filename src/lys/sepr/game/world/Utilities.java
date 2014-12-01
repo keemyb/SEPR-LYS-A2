@@ -74,6 +74,10 @@ public final class Utilities {
         return magnitude(getVector(point1, point2));
     }
 
+    public static double length(Track track) {
+        return distance(track.getPoints().get(0), track.getPoints().get(1));
+    }
+
     public static Line2D.Double trackToLine2D(Track track, JFrame jFrame) {
         double pointX1 = track.getPoints().get(0).getX();
         double pointY1 = jFrame.getHeight() - track.getPoints().get(0).getY();
