@@ -141,23 +141,20 @@ public class Map {
         ArrayList<Track> trail = new ArrayList<Track>();
         trail.add(startingTrack);
 
-        ArrayList<Track> route = getRoute(destinationTrack, trail);
-
-        // If the route does not contain the destination track there is no route.
-        if (route.contains(destinationTrack)) {
-            return route;
-        } else {
-            return null;
-        }
+        return getRoute(destinationTrack, trail);
     }
 
     public ArrayList<Track> getRoute(Track to, ArrayList<Track> trail) {
         int trailSize = trail.size();
+        if (trailSize == 0) return null;
         Track lastTrackInTrail = trail.get(trailSize-1);
         if (lastTrackInTrail.equals(to)) return trail;
         // We have reached a dead end, as there are no more tracks connected we
         // haven't visited
-        if (trail.containsAll(lastTrackInTrail.getConnectedTracks())) return trail;
+        if (trail.containsAll(lastTrackInTrail.getConnectedTracks())) {
+            trail.remove(lastTrackInTrail);
+            return getRoute(to, trail);
+        }
 
         for (Track connectedTrack : lastTrackInTrail.getConnectedTracks()){
             if (trail.contains(connectedTrack)) continue;
