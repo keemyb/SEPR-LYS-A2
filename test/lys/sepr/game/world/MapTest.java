@@ -199,16 +199,36 @@ public class MapTest {
 
     @Test
     public void testFindRouteOnePath() throws Exception {
+        Location locationOne = new Location(new Point(0,0), "one");
+        Location locationTwo = new Location(new Point(200,200), "two");
+        map.addLocation(locationOne);
+        map.addLocation(locationTwo);
 
-    }
+        map.addTrack(track1);
+        map.addTrack(track2);
 
-    @Test
-    public void testFindRouteMultiplePath() throws Exception {
+        ArrayList<Track> expectedRoute = new ArrayList<Track>();
+        expectedRoute.add(track1);
+        expectedRoute.add(track2);
 
+        assertEquals(expectedRoute, map.getRoute(locationOne, locationTwo));
     }
 
     @Test
     public void testFindRouteNoPath() throws Exception {
+        Location locationOne = new Location(new Point(0,0), "one");
+        Location locationTwo = new Location(new Point(300,300), "two");
+        map.addLocation(locationOne);
+        map.addLocation(locationTwo);
+
+        map.addTrack(track1);
+        map.addTrack(track2);
+
+        assertEquals(null, map.getRoute(locationOne, locationTwo));
+    }
+
+    @Test
+    public void testFindRouteMultiplePath() throws Exception {
 
     }
 
