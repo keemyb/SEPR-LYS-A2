@@ -124,4 +124,38 @@ public class Map {
     public ArrayList<Intersection> getIntersections() {
         return intersections;
     }
+
+    public ArrayList<Track> getRoute(Location from, Location to) {
+        return getRoute(from.getPoint(), to.getPoint());
+    }
+
+    public ArrayList<Track> getRoute(Point from, Point to) {
+        ArrayList<Track> trail = new ArrayList<Track>();
+        // Note, not using ranges to limit the range of a close track
+        Track startingTrack = Utilities.closestTrack(from, tracks);
+        Track finishingTrack = Utilities.closestTrack(to, tracks);
+
+        trail.add(startingTrack);
+
+        ArrayList<Track> route = getRoute(finishingTrack, trail);
+
+        if (route.contains(finishingTrack)) {
+            return route;
+        } else {
+            return null;
+        }
+    }
+
+    public ArrayList<Track> getRoute(Track to, ArrayList<Track> trail) {
+        int trailSize = trail.size();
+        Track lastTrackInTrail = trail.get(trailSize-1);
+        if (lastTrackInTrail.equals(to)) return trail;
+
+        for (Track connectedTrack : lastTrackInTrail.getConnectedTracks()){
+            if (trail.contains(connectedTrack)) continue;
+                trail.add(connectedTrack);
+                return getRoute(to, trail);
+        }
+        return trail;
+    }
 }
