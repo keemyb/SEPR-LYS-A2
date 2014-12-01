@@ -155,6 +155,9 @@ public class Map {
         int trailSize = trail.size();
         Track lastTrackInTrail = trail.get(trailSize-1);
         if (lastTrackInTrail.equals(to)) return trail;
+        // We have reached a dead end, as there are no more tracks connected we
+        // haven't visited
+        if (trail.containsAll(lastTrackInTrail.getConnectedTracks())) return trail;
 
         for (Track connectedTrack : lastTrackInTrail.getConnectedTracks()){
             if (trail.contains(connectedTrack)) continue;
