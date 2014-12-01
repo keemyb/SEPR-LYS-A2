@@ -196,4 +196,25 @@ public class MapTest {
 
         assertEquals(0, map.getIntersections().size());
     }
+
+    @Test
+    public void testFindRouteOnePath() throws Exception {
+
+    }
+
+    @Test
+    public void testFindRouteMultiplePath() throws Exception {
+
+    }
+
+    @Test
+    public void testFindRouteNoPath() throws Exception {
+
+    }
+
+    @Test
+    public void testFindFastestPath() throws Exception {
+
+    }
+
 }
