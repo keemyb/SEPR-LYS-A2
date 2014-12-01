@@ -130,16 +130,21 @@ public class Map {
     }
 
     public ArrayList<Track> getRoute(Point from, Point to) {
-        ArrayList<Track> trail = new ArrayList<Track>();
-        // Note, not using ranges to limit the range of a close track
-        Track startingTrack = Utilities.closestTrack(from, tracks);
-        Track finishingTrack = Utilities.closestTrack(to, tracks);
+        Track startingTrack = Utilities.closestTrack(from, tracks, 10);
+        Track destinationTrack = Utilities.closestTrack(to, tracks, 10);
 
+        // There is no track close enough that serves one of the points
+        if (startingTrack == null || destinationTrack == null) {
+            return null;
+        }
+
+        ArrayList<Track> trail = new ArrayList<Track>();
         trail.add(startingTrack);
 
-        ArrayList<Track> route = getRoute(finishingTrack, trail);
+        ArrayList<Track> route = getRoute(destinationTrack, trail);
 
-        if (route.contains(finishingTrack)) {
+        // If the route does not contain the destination track there is no route.
+        if (route.contains(destinationTrack)) {
             return route;
         } else {
             return null;
