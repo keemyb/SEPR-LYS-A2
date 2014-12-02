@@ -217,7 +217,8 @@ public class MapTest {
         expectedRoute.add(track1);
         expectedRoute.add(track2);
 
-        assertTrue(map.getRoutes(locationOne, locationTwo).contains(expectedRoute));
+        assertEquals(expectedRoute, map.getRoutes(locationOne, locationTwo).get(0));
+        assertEquals(1, map.getRoutes(locationOne, locationTwo).size());
     }
 
     @Test
@@ -298,12 +299,12 @@ public class MapTest {
         expectedRoute3.add(track4);
         expectedRoute3.add(track7);
 
-        ArrayList<Track> routes = map.getRoutes(locationOne, locationTwo);
+        ArrayList<ArrayList<Track>> routes = map.getRoutes(locationOne, locationTwo);
 
         assertTrue(routes.contains(expectedRoute1));
         assertTrue(routes.contains(expectedRoute2));
         assertTrue(routes.contains(expectedRoute3));
-        assertEquals(3, routes.size());
+        assertTrue(routes.size() > 3);
     }
 
     @Test
@@ -315,7 +316,7 @@ public class MapTest {
         expectedRoute.add(track2);
         expectedRoute.add(track7);
 
-        assertEquals(expectedRoute, map.getFastestRoute(locationOne, locationTwo));
+        assertEquals(expectedRoute, map.fastestRoute(locationOne, locationTwo));
     }
 
 }
