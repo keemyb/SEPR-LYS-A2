@@ -120,16 +120,6 @@ public class Track {
         return null;
     }
 
-    public ArrayList<Track> getValidNextTracks() {
-        ArrayList<Track> validNextTracks = new ArrayList<Track>();
-        for (Intersection intersection : intersections) {
-            if (intersection.getValidNextTracks(this) != null) {
-                validNextTracks.addAll(intersection.getValidNextTracks(this));
-            }
-        }
-        return validNextTracks;
-    }
-
     public ArrayList<Track> getConnectedTracks() {
         ArrayList<Track> connectedTracks = new ArrayList<Track>();
         for (Intersection intersection : intersections) {
@@ -144,6 +134,19 @@ public class Track {
 
     public ArrayList<Track> getActiveNextTracks() {
         return activeNextTracks;
+    }
+
+    public ArrayList<Track> getValidNextTracks() {
+        ArrayList<Track> validNextTracks = new ArrayList<Track>();
+        for (Point point : points) {
+            validNextTracks.addAll(getValidNextTracks(point));
+        }
+        return validNextTracks;
+    }
+
+    public ArrayList<Track> getValidNextTracks(Point towards) {
+        Intersection nextIntersection = getIntersection(towards);
+        return nextIntersection.getValidNextTracks(this);
     }
 
     public void removeActiveNextTrack(Track track) {
