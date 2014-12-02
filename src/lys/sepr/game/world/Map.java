@@ -80,9 +80,9 @@ public class Map {
 
     private void mergeIntersections(Intersection master, Intersection slave) {
         for (Track slaveTrack : slave.getTracks()) {
-            slaveTrack.removeIntersection(slave);
             master.addTrack(slaveTrack);
         }
+        slave.dissolve();
         intersections.remove(slave);
     }
 
