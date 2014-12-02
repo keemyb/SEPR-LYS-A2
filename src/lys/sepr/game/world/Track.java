@@ -133,7 +133,13 @@ public class Track {
     public ArrayList<Track> getConnectedTracks() {
         ArrayList<Track> connectedTracks = new ArrayList<Track>();
         for (Intersection intersection : intersections) {
-            connectedTracks.addAll(intersection.getTracks());
+            for (Track track : intersection.getTracks()) {
+                if (track.equals(this)){
+                    continue;
+                } else if (!connectedTracks.contains(track)) {
+                    connectedTracks.add(track);
+                }
+            }
         }
         return connectedTracks;
     }
