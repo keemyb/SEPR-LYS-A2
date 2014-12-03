@@ -13,18 +13,21 @@ public class Map {
         // If there is only one track there can be no intersections
         if (tracks.size() == 1) return;
 
-        // Creating intersections for tracks with matching points
-        int createdIntersections = 0;
+        // Keeping track of the points of intersection tracks were added to
+        // so that the track isn't added again to an intersection at this point
+        ArrayList<Point> intersectionPoints = new ArrayList<Point>();
+
         // Look for another track that shares a point with this one
         for (Track existingTrack : tracks) {
             if (existingTrack.equals(track)) continue;
 
             Point commonPoint = track.getCommonPoint(existingTrack);
-            if (commonPoint != null){
+            if (commonPoint != null && !intersectionPoints.contains(commonPoint)){
+                intersectionPoints.add(commonPoint);
                 addTracksToIntersection(track, existingTrack, commonPoint);
+
                 // a track can have a maximum of two intersections, one for each end
-                createdIntersections++;
-                if (createdIntersections == 2) return;
+                if (intersectionPoints.size() == 2) return;
             }
         }
     }
