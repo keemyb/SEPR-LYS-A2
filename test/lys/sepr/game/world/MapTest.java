@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import static org.junit.Assert.*;
 
@@ -195,5 +196,59 @@ public class MapTest {
         map.removeTrack(track2);
 
         assertEquals(0, map.getIntersections().size());
+    }
+
+    @Test
+    public void testAddTrackToTrackWithTwoIntersections() throws Exception {
+        Track track1 = new Track(new Point(100,100), new Point(150,200));
+        Track track2 = new Track(new Point(200,100), new Point(150,200));
+        Track track3 = new Track(new Point(100,100), new Point(200,100));
+        Track track4 = new Track(new Point(100,100), new Point(150,0));
+        Track track5 = new Track(new Point(150,0), new Point(200,100));
+
+        map.addTrack(track1);
+        map.addTrack(track2);
+        map.addTrack(track3);
+        map.addTrack(track4);
+        map.addTrack(track5);
+
+        ArrayList<Track> expectedConnections1 = new ArrayList<Track>();
+        expectedConnections1.add(track2);
+        expectedConnections1.add(track3);
+        expectedConnections1.add(track4);
+
+        ArrayList<Track> expectedConnections2 = new ArrayList<Track>();
+        expectedConnections2.add(track1);
+        expectedConnections2.add(track3);
+        expectedConnections2.add(track5);
+
+        ArrayList<Track> expectedConnections3 = new ArrayList<Track>();
+        expectedConnections3.add(track1);
+        expectedConnections3.add(track2);
+        expectedConnections3.add(track4);
+        expectedConnections3.add(track5);
+
+        ArrayList<Track> expectedConnections4 = new ArrayList<Track>();
+        expectedConnections4.add(track1);
+        expectedConnections4.add(track3);
+        expectedConnections4.add(track5);
+
+        ArrayList<Track> expectedConnections5 = new ArrayList<Track>();
+        expectedConnections5.add(track2);
+        expectedConnections5.add(track3);
+        expectedConnections5.add(track4);
+
+        System.out.println(track1);
+        System.out.println(track2);
+        System.out.println(track3);
+        System.out.println(track4);
+        System.out.println(track5);
+
+        assertEquals(4, map.getIntersections().size());
+        assertEquals(new HashSet(expectedConnections1), new HashSet(track1.getConnectedTracks()));
+        assertEquals(new HashSet(expectedConnections2), new HashSet(track2.getConnectedTracks()));
+        assertEquals(new HashSet(expectedConnections3), new HashSet(track3.getConnectedTracks()));
+        assertEquals(new HashSet(expectedConnections4), new HashSet(track4.getConnectedTracks()));
+        assertEquals(new HashSet(expectedConnections5), new HashSet(track5.getConnectedTracks()));
     }
 }
