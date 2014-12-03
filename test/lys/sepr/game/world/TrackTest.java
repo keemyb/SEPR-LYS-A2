@@ -140,4 +140,12 @@ public class TrackTest {
         assertEquals(expectedConnections2, track2.getConnectedTracks());
         assertEquals(expectedConnections3, track3.getConnectedTracks());
     }
+
+    @Test
+    public void testGetIntersections() throws Exception {
+        map.addTrack(track1);
+        map.addTrack(track2);
+        assertEquals(null, track1.getIntersection(new Point(0,0)));
+        assertNotEquals(null, track1.getIntersection(new Point(100,100)));
+    }
 }

@@ -147,8 +147,12 @@ public class Track {
     }
 
     public ArrayList<Track> getValidNextTracks(Point towards) {
-        Intersection nextIntersection = getIntersection(towards);
-        return nextIntersection.getValidNextTracks(this);
+        Intersection intersection = getIntersection(towards);
+        if (intersection != null) {
+            return getIntersection(towards).getValidNextTracks(this);
+        } else {
+            return new ArrayList<Track>();
+        }
     }
 
     public void removeActiveNextTrack(Track track) {
