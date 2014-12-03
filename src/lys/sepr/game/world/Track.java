@@ -124,7 +124,7 @@ public class Track {
         ArrayList<Track> connectedTracks = new ArrayList<Track>();
         for (Intersection intersection : intersections) {
             for (Track track : intersection.getTracks()) {
-                if (!track.equals(this)) {
+                if (track.equals(this)) {
                     continue;
                 } else if (!connectedTracks.contains(track)){
                     connectedTracks.add(track);
