@@ -52,7 +52,9 @@ public class Track {
     }
 
     public Point getOtherPoint(Point point) {
-        return (points.get(0).equals(point)) ? points.get(1) : points.get(0);
+        if (points.contains(point)) {
+            return (points.get(0).equals(point)) ? points.get(1) : points.get(0);
+        } else return null;
     }
 
     public Intersection getIntersection(Point point) {

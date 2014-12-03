@@ -128,42 +128,87 @@ public class Map {
         return intersections;
     }
 
-    public ArrayList<Track> getRoute(Location from, Location to) {
-        return getRoute(from.getPoint(), to.getPoint());
+    public ArrayList<ArrayList<Track>> getRoutes(Location from, Location to) {
+        return getRoutes(from.getPoint(), to.getPoint());
     }
 
-    public ArrayList<Track> getRoute(Point from, Point to) {
+    public ArrayList<ArrayList<Track>> getRoutes(Point from, Point to) {
         Track startingTrack = Utilities.closestTrack(from, tracks, 10);
         Track destinationTrack = Utilities.closestTrack(to, tracks, 10);
 
+        ArrayList<ArrayList<Track>> routes = new ArrayList<ArrayList<Track>>();
+
         // There is no track close enough that serves one of the points
         if (startingTrack == null || destinationTrack == null) {
-            return null;
+            return routes;
         }
 
-        ArrayList<Track> trail = new ArrayList<Track>();
-        trail.add(startingTrack);
+        ArrayList<Track> currentRoute = new ArrayList<Track>();
+        currentRoute.add(startingTrack);
 
-        return getRoute(destinationTrack, trail);
+        getRoutes(destinationTrack, currentRoute, new ArrayList<Track>(), routes);
+
+        return routes;
     }
 
-    public ArrayList<Track> getRoute(Track to, ArrayList<Track> trail) {
-        int trailSize = trail.size();
-        if (trailSize == 0) return null;
-        Track lastTrackInTrail = trail.get(trailSize-1);
-        if (lastTrackInTrail.equals(to)) return trail;
-        // We have reached a dead end, as there are no more tracks connected we
-        // haven't visited
-        if (trail.containsAll(lastTrackInTrail.getConnectedTracks())) {
-            trail.remove(lastTrackInTrail);
-            return getRoute(to, trail);
+    private void getRoutes(Track destination,
+                           ArrayList<Track> currentRoute,
+                           ArrayList<Track> visitedTracks,
+                           ArrayList<ArrayList<Track>> routes) {
+        // If we have backtracked to the first track , and we have visited all its connected tracks,
+        // there are no more solutions.
+        if (currentRoute.size() == 1 && visitedTracks.contains(currentRoute.get(0).getValidNextTracks())) return;
+
+        Track lastTrackInCurrentRoute = currentRoute.get(currentRoute.size() - 1);
+
+        ArrayList<Track> validNextTracks;
+        if (currentRoute.size() == 1) {
+            validNextTracks = lastTrackInCurrentRoute.getValidNextTracks();
+        } else {
+            // We have come from the point that the last two tracks meet
+            Point comingFrom = lastTrackInCurrentRoute.getCommonPoint(currentRoute.get(currentRoute.size()-2));
+            Point goingTowards = lastTrackInCurrentRoute.getOtherPoint(comingFrom);
+            validNextTracks = lastTrackInCurrentRoute.getValidNextTracks(goingTowards);
         }
 
-        for (Track connectedTrack : lastTrackInTrail.getConnectedTracks()){
-            if (trail.contains(connectedTrack)) continue;
-                trail.add(connectedTrack);
-                return getRoute(to, trail);
+        // Discard all visited tracks
+        validNextTracks.removeAll(visitedTracks);
+
+        // Recurse over all non visited valid tracks
+        for (Track nextTrack : validNextTracks){
+            currentRoute.add(nextTrack);
+            // If the last track visited is our destination, add the route
+            // and keep looking for more routes
+            if (nextTrack == destination) {
+                // Cloning the route as we don't want it to be mutated.
+                routes.add((ArrayList<Track>) currentRoute.clone());
+                currentRoute.remove(destination);
+            } else {
+                visitedTracks.add(nextTrack);
+                getRoutes(destination, currentRoute, visitedTracks, routes);
+                currentRoute.remove(nextTrack);
+            }
         }
-        return trail;
+    }
+
+    public ArrayList<Track> fastestRoute(Location from, Location to) {
+        return fastestRoute(from.getPoint(), to.getPoint());
+    }
+
+    public ArrayList<Track> fastestRoute(Point from, Point to) {
+        ArrayList<ArrayList<Track>> routes = getRoutes(from, to);
+        ArrayList<Track> fastestRoute = null;
+        Double shortestDistance = null;
+        for (ArrayList<Track> route : routes) {
+            Double distance = 0d;
+            for (Track track : route) {
+                distance += Utilities.length(track);
+            }
+            if (shortestDistance == null || distance < shortestDistance) {
+                shortestDistance = distance;
+                fastestRoute = route;
+            }
+        }
+        return fastestRoute;
     }
 }

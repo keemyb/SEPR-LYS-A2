@@ -40,7 +40,7 @@ public class Intersection {
         */
         validNextTracks = new HashMap<Track,ArrayList<Track>>();
         for (Track track1 : tracks) {
-            validNextTracks.put(track1, new ArrayList<Track>());
+            ArrayList<Track> validNextTracksList = new ArrayList<Track>();
             ArrayList<Double> vector1 = getVector(track1.getOtherPoint(point), point);
             for (Track track2 : tracks) {
                 if (track1 == track2) continue;
@@ -49,9 +49,10 @@ public class Intersection {
                 double angle = crossProduct(vector1, vector2);
 
                 if (validAngle(angle)) {
-                    validNextTracks.get(track1).add(track2);
+                    validNextTracksList.add(track2);
                 }
             }
+            validNextTracks.put(track1, validNextTracksList);
         }
         setDefaultNextTracks();
     }
@@ -108,7 +109,7 @@ public class Intersection {
 
         // Move the track away from the intersection a little bit,
         // so that it is not confused as being part of it.
-        track.nudge(getPoint());
+//        track.nudge(getPoint());
 
         if (tracks.size() == 1) {
             /* remove this intersection from the remaining track, since an intersection

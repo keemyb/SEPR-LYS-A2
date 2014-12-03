@@ -44,9 +44,17 @@ public class MapCreator extends JFrame {
     Point startPoint3 = new Point(100,100);
     Point endPoint3 = new Point(200,100);
 
-    Track track1 = new Track(startPoint1, endPoint1);
-    Track track2 = new Track(startPoint2, endPoint2);
-    Track track3 = new Track(startPoint3, endPoint3);
+//    Track track1 = new Track(startPoint1, endPoint1);
+//    Track track2 = new Track(startPoint2, endPoint2);
+//    Track track3 = new Track(startPoint3, endPoint3);
+
+    Track track1 = new Track(new Point(0, 0), new Point(100, 100));
+    Track track2 = new Track(new Point(100, 100), new Point(200, 200));
+    Track track3 = new Track(new Point(100, 100), new Point(130, 150));
+    Track track4 = new Track(new Point(130, 150), new Point(200, 200));
+    Track track5 = new Track(new Point(100, 100), new Point(160, 150));
+    Track track6 = new Track(new Point(160, 150), new Point(200, 200));
+    Track track7 = new Track(new Point(200, 200), new Point(300, 300));
 
     java.awt.Color selectedTrackColour = Color.ORANGE;
     java.awt.Color activeNextTrackColour = Color.GREEN;
@@ -157,10 +165,14 @@ public class MapCreator extends JFrame {
        buttonPanel.setSize(1280, 100);
        
        getContentPane().add(buttonPanel, BorderLayout.SOUTH);
-       
+
         map.addTrack(track1);
         map.addTrack(track2);
         map.addTrack(track3);
+        map.addTrack(track4);
+        map.addTrack(track5);
+        map.addTrack(track6);
+        map.addTrack(track7);
     }
 
     private class MouseHandler extends MouseAdapter {

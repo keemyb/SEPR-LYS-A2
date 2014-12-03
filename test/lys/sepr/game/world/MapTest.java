@@ -223,7 +223,7 @@ public class MapTest {
     }
 
     @Test
-    public void testFindRouteNoPath() throws Exception {
+    public void testFindRouteNoPathLocationNotOnPath() throws Exception {
         Location locationOne = new Location(new Point(0,0), "one");
         Location locationTwo = new Location(new Point(300,300), "two");
         map.addLocation(locationOne);
@@ -231,6 +231,22 @@ public class MapTest {
 
         map.addTrack(track1);
         map.addTrack(track2);
+
+        assertEquals(0, map.getRoutes(locationOne, locationTwo).size());
+    }
+
+    @Test
+    public void testFindRouteLocationUnreachable() throws Exception {
+        Track track3 = new Track(new Point(250,250), new Point(300,300));
+
+        Location locationOne = new Location(new Point(0,0), "one");
+        Location locationTwo = new Location(new Point(300,300), "two");
+        map.addLocation(locationOne);
+        map.addLocation(locationTwo);
+
+        map.addTrack(track1);
+        map.addTrack(track2);
+        map.addTrack(track3);
 
         assertEquals(0, map.getRoutes(locationOne, locationTwo).size());
     }
@@ -258,10 +274,10 @@ public class MapTest {
 
         this.track1 = new Track(new Point(0, 0), new Point(100, 100));
         this.track2 = new Track(new Point(100, 100), new Point(200, 200));
-        this.track3 = new Track(new Point(100, 100), new Point(100, 200));
-        this.track4 = new Track(new Point(100, 200), new Point(200, 200));
-        this.track5 = new Track(new Point(100, 100), new Point(200, 150));
-        this.track6 = new Track(new Point(200, 150), new Point(200, 200));
+        this.track3 = new Track(new Point(100, 100), new Point(130, 150));
+        this.track4 = new Track(new Point(130, 150), new Point(200, 200));
+        this.track5 = new Track(new Point(100, 100), new Point(160, 150));
+        this.track6 = new Track(new Point(160, 150), new Point(200, 200));
         this.track7 = new Track(new Point(200, 200), new Point(300, 300));
 
         map.addTrack(track1);
@@ -305,7 +321,7 @@ public class MapTest {
         assertTrue(routes.contains(expectedRoute1));
         assertTrue(routes.contains(expectedRoute2));
         assertTrue(routes.contains(expectedRoute3));
-        assertTrue(routes.size() > 3);
+        assertEquals(3, routes.size());
     }
 
     @Test
@@ -320,6 +336,7 @@ public class MapTest {
         assertEquals(expectedRoute, map.fastestRoute(locationOne, locationTwo));
     }
 
+    @Test
     public void testAddTrackToTrackWithTwoIntersections() throws Exception {
         Track track1 = new Track(new Point(100,100), new Point(150,200));
         Track track2 = new Track(new Point(200,100), new Point(150,200));
@@ -358,12 +375,6 @@ public class MapTest {
         expectedConnections5.add(track2);
         expectedConnections5.add(track3);
         expectedConnections5.add(track4);
-
-        System.out.println(track1);
-        System.out.println(track2);
-        System.out.println(track3);
-        System.out.println(track4);
-        System.out.println(track5);
 
         assertEquals(4, map.getIntersections().size());
         assertEquals(new HashSet(expectedConnections1), new HashSet(track1.getConnectedTracks()));
