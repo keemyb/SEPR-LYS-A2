@@ -51,10 +51,19 @@ public class MapCreator extends JFrame {
     java.awt.Color unconnectedTrackColour = Color.BLACK;
 
     JLabel instructions = new JLabel("<html>" +
-            "Press 1 to hide/show me" +
-            "<br>This will probably be how we set up the track (with our map image behind as the guide)." +
+            "Once two locations have been created, go to inspect route and click them to see if there is a route between them" +
+            "<br>Move will move anything (Location first, then Intersection, then Track End." +
+            "<br>Your aim is to find as many bugs as possible." +
+            "<br>I cannot fix anything however if it can't be reproduced." +
+            "<br>" +
             "<br>Coming Soon:" +
-            "<br>CURVES! (Not Implemented at all)" +
+            "<br>Map Guide (Image of map in background)" +
+            "<br>Move view (to create maps larger than the screen)" +
+            "<br>Location naming (just not implemented in GUI)" +
+            "<br>Showing all routes and not just the fastest/closest (just not implemented in GUI)" +
+            "<br>Save/Restore Map" +
+            "<br>Probably Not Coming Soon:" +
+            "<br>Curves" +
             "</html>", SwingConstants.LEFT);
 
     JLabel selectedTrackLabel = new JLabel("Selected Track", SwingConstants.LEFT);
