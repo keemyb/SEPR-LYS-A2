@@ -1,9 +1,11 @@
 package lys.sepr.game.world;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.Vector;
+import java.util.Random;
 
 import static java.lang.Math.*;
 
@@ -75,12 +77,28 @@ public final class Utilities {
         return magnitude(getVector(point1, point2));
     }
 
+    public static double length(Track track) {
+        return distance(track.getPoints().get(0), track.getPoints().get(1));
+    }
+
     public static Line2D.Double trackToLine2D(Track track, JFrame jFrame) {
         double pointX1 = track.getPoints().get(0).getX();
         double pointY1 = jFrame.getHeight() - track.getPoints().get(0).getY();
         double pointX2 = track.getPoints().get(1).getX();
         double pointY2 = jFrame.getHeight() - track.getPoints().get(1).getY();
         return new Line2D.Double(pointX1, pointY1, pointX2, pointY2);
+    }
+
+    public static Rectangle2D.Double locationToRect2D(Location location, Double size, JFrame jFrame) {
+        double pointX1 = location.getPoint().getX() - size/2;
+        double pointY1 = jFrame.getHeight() - location.getPoint().getY() - size/2;
+        return new Rectangle2D.Double(pointX1, pointY1, size, size);
+    }
+
+    public static Color randomColor() {
+        Random r = new Random();
+        int rgb = Color.HSBtoRGB(r.nextFloat(),0.5f,0.5f);
+        return new Color(rgb);
     }
 
     public static ArrayList<Double> unitVector(ArrayList<Double> vector) {
@@ -98,5 +116,58 @@ public final class Utilities {
             newVector.add(component * constant);
         }
         return newVector;
+    }
+
+    public static Track closestTrack(Point to, ArrayList<Track> tracks){
+        return closestTrack(to, tracks, Double.POSITIVE_INFINITY);
+    }
+
+    public static Track closestTrack(Point to, ArrayList<Track> tracks, double range) {
+        // With help from http://doswa.com/2009/07/13/circle-segment-intersectioncollision.html
+        Track closestTrack = null;
+        Double closestDistance = null;
+        for (Track track : tracks) {
+            Point trackPoint1 = track.getPoints().get(0);
+            Point trackPoint2 = track.getPoints().get(1);
+            ArrayList<Double> trackVector = getVector(trackPoint1, trackPoint2);
+            ArrayList<Double> unitTrackVector = unitVector(trackVector);
+            ArrayList<Double> trackPointToClickPointVector = getVector(trackPoint1, to);
+            double lengthProjectedVector = dotProduct(trackPointToClickPointVector, unitTrackVector);
+            ArrayList<Double> projectedVector = multiply(unitTrackVector, lengthProjectedVector);
+            ArrayList<Double> closestPoint = new ArrayList<Double>();
+            if (lengthProjectedVector < 0) {
+                closestPoint.add(trackPoint1.getX());
+                closestPoint.add(trackPoint1.getY());
+            } else if (lengthProjectedVector > magnitude(trackVector)) {
+                closestPoint.add(trackPoint2.getX());
+                closestPoint.add(trackPoint2.getY());
+            } else {
+                closestPoint.add(trackPoint1.getX() + projectedVector.get(0));
+                closestPoint.add(trackPoint1.getY() + projectedVector.get(1));
+            }
+            double distance = magnitude(getVector(new Point(closestPoint.get(0), closestPoint.get(1)), to));
+            if (distance < range && (closestDistance == null || distance < closestDistance)) {
+                closestDistance = distance;
+                closestTrack = track;
+            }
+        }
+        return closestTrack;
+    }
+
+    public static Location closestLocation(Point to, ArrayList<Location> locations, double range) {
+        Location closestLocation = null;
+        Double closestDistance = null;
+        for (Location location : locations) {
+            double distance = magnitude(getVector(to, location.getPoint()));
+            if (distance < range && (closestDistance == null || distance < closestDistance)) {
+                closestDistance = distance;
+                closestLocation = location;
+            }
+        }
+        return closestLocation;
+    }
+
+    public static Location closestLocation(Point to, ArrayList<Location> locations) {
+        return closestLocation(to, locations, Double.POSITIVE_INFINITY);
     }
 }

@@ -237,4 +237,28 @@ public class IntersectionTest {
         assertEquals(0, track2.getActiveNextTracks().size());
     }
 
+    @Test
+    public void testValidNextTracks() {
+        this.intersection = new Intersection(new Point(100,100), track1, track2);
+        intersection.addTrack(track3);
+
+        ArrayList<Track> expectedTracks1 = new ArrayList<Track>();
+        expectedTracks1.add(track2);
+        expectedTracks1.add(track3);
+
+        ArrayList<Track> expectedTracks2 = new ArrayList<Track>();
+        expectedTracks2.add(track1);
+
+        ArrayList<Track> expectedTracks3 = new ArrayList<Track>();
+        expectedTracks3.add(track1);
+
+        assertEquals(expectedTracks1, intersection.getValidNextTracks(track1));
+        assertEquals(expectedTracks2, intersection.getValidNextTracks(track2));
+        assertEquals(expectedTracks3, intersection.getValidNextTracks(track3));
+
+        assertEquals(expectedTracks1, track1.getValidNextTracks(new Point(100,100)));
+        assertEquals(expectedTracks2, track2.getValidNextTracks(new Point(100,100)));
+        assertEquals(expectedTracks3, track3.getValidNextTracks(new Point(100,100)));
+    }
+
 }

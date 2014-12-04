@@ -52,7 +52,9 @@ public class Track {
     }
 
     public Point getOtherPoint(Point point) {
-        return (points.get(0).equals(point)) ? points.get(1) : points.get(0);
+        if (points.contains(point)) {
+            return (points.get(0).equals(point)) ? points.get(1) : points.get(0);
+        } else return null;
     }
 
     public Intersection getIntersection(Point point) {
@@ -120,23 +122,13 @@ public class Track {
         return null;
     }
 
-    public ArrayList<Track> getValidNextTracks() {
-        ArrayList<Track> validNextTracks = new ArrayList<Track>();
-        for (Intersection intersection : intersections) {
-            if (intersection.getValidNextTracks(this) != null) {
-                validNextTracks.addAll(intersection.getValidNextTracks(this));
-            }
-        }
-        return validNextTracks;
-    }
-
     public ArrayList<Track> getConnectedTracks() {
         ArrayList<Track> connectedTracks = new ArrayList<Track>();
         for (Intersection intersection : intersections) {
             for (Track track : intersection.getTracks()) {
-                if (track.equals(this)){
+                if (track.equals(this)) {
                     continue;
-                } else if (!connectedTracks.contains(track)) {
+                } else if (!connectedTracks.contains(track)){
                     connectedTracks.add(track);
                 }
             }
@@ -146,6 +138,23 @@ public class Track {
 
     public ArrayList<Track> getActiveNextTracks() {
         return activeNextTracks;
+    }
+
+    public ArrayList<Track> getValidNextTracks() {
+        ArrayList<Track> validNextTracks = new ArrayList<Track>();
+        for (Point point : points) {
+            validNextTracks.addAll(getValidNextTracks(point));
+        }
+        return validNextTracks;
+    }
+
+    public ArrayList<Track> getValidNextTracks(Point towards) {
+        Intersection intersection = getIntersection(towards);
+        if (intersection != null) {
+            return getIntersection(towards).getValidNextTracks(this);
+        } else {
+            return new ArrayList<Track>();
+        }
     }
 
     public void removeActiveNextTrack(Track track) {
