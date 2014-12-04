@@ -15,7 +15,7 @@ public class Intersection {
     private HashMap<Track,ArrayList<Track>> validNextTracks = new HashMap<Track,ArrayList<Track>>();
 
     Intersection(Point point, Track a, Track b) {
-        this.point = point;
+        this.point = new Point(point);
 
         tracks.add(a);
         tracks.add(b);
@@ -109,7 +109,7 @@ public class Intersection {
 
         // Move the track away from the intersection a little bit,
         // so that it is not confused as being part of it.
-//        track.nudge(getPoint());
+        track.nudge(getPoint());
 
         if (tracks.size() == 1) {
             /* remove this intersection from the remaining track, since an intersection
@@ -117,6 +117,7 @@ public class Intersection {
             Track remainingTrack = tracks.get(0);
             remainingTrack.removeIntersection(this);
             tracks.remove(remainingTrack);
+            remainingTrack.nudge(getPoint());
         } else {
             updateValidTracks();
         }

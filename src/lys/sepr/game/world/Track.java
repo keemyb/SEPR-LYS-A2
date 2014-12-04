@@ -85,8 +85,12 @@ public class Track {
             if (to.equals(from)) return;
             // A track cannot have two points in the same place
             if (points.contains(to)) return;
-            points.remove(from);
-            points.add(to);
+
+            // We want to get the point that is part of the track,
+            // as the point "from" may actually be another point
+            // (from another track/intersection) with the same location.
+            points.remove(points.indexOf(from));
+            points.add(new Point(to));
         }
 
         // If there was an intersection at the point where we moved from, break the connection
@@ -103,13 +107,12 @@ public class Track {
     }
 
     public void nudge(Point awayFrom) {
-        // TODO: recursive nudge to prevent nudging into another track/intersection
-        ArrayList<Double> vector = getVector(awayFrom, getOtherPoint(awayFrom));
+        // only move the point closest to the point we want to move away from
+        Point closestPoint = closestPoint(awayFrom, points);
+        ArrayList<Double> vector = getVector(closestPoint, getOtherPoint(closestPoint));
         for (int i=0; i < vector.size(); i++) {
             vector.set(i, vector.get(i) * nudgeStrength);
         }
-        // only move the point closest to the point we want to move away from
-        Point closestPoint = closestPoint(awayFrom, points);
         closestPoint.translate(vector.get(0), vector.get(1));
     }
 
