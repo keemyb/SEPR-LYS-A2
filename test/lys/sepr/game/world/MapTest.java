@@ -337,6 +337,24 @@ public class MapTest {
     }
 
     @Test
+    public void testFindImmediatePath() throws Exception {
+        map.addTrack(track1);
+//        map.addTrack(track2);
+
+        this.locationOne = new Location(new Point(0, 0), "location one");
+        this.locationTwo = new Location(new Point(100, 100), "location two");
+
+        map.addLocation(locationOne);
+        map.addLocation(locationTwo);
+
+        ArrayList<Track> expectedRoute = new ArrayList<Track>();
+        expectedRoute.add(track1);
+
+        assertTrue(map.getRoutes(locationOne, locationTwo).contains(expectedRoute));
+        assertEquals(1, map.getRoutes(locationOne, locationTwo).size());
+    }
+
+    @Test
     public void testAddTrackToTrackWithTwoIntersections() throws Exception {
         Track track1 = new Track(new Point(100,100), new Point(150,200));
         Track track2 = new Track(new Point(200,100), new Point(150,200));

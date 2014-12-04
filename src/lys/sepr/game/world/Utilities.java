@@ -1,8 +1,11 @@
 package lys.sepr.game.world;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Random;
 
 import static java.lang.Math.*;
 
@@ -86,6 +89,18 @@ public final class Utilities {
         return new Line2D.Double(pointX1, pointY1, pointX2, pointY2);
     }
 
+    public static Rectangle2D.Double locationToRect2D(Location location, Double size, JFrame jFrame) {
+        double pointX1 = location.getPoint().getX() - size/2;
+        double pointY1 = jFrame.getHeight() - location.getPoint().getY() - size/2;
+        return new Rectangle2D.Double(pointX1, pointY1, size, size);
+    }
+
+    public static Color randomColor() {
+        Random r = new Random();
+        int rgb = Color.HSBtoRGB(r.nextFloat(),0.5f,0.5f);
+        return new Color(rgb);
+    }
+
     public static ArrayList<Double> unitVector(ArrayList<Double> vector) {
         ArrayList<Double> unitVector = new ArrayList<Double>();
         double size = magnitude(vector);
@@ -137,5 +152,22 @@ public final class Utilities {
             }
         }
         return closestTrack;
+    }
+
+    public static Location closestLocation(Point to, ArrayList<Location> locations, double range) {
+        Location closestLocation = null;
+        Double closestDistance = null;
+        for (Location location : locations) {
+            double distance = magnitude(getVector(to, location.getPoint()));
+            if (distance < range && (closestDistance == null || distance < closestDistance)) {
+                closestDistance = distance;
+                closestLocation = location;
+            }
+        }
+        return closestLocation;
+    }
+
+    public static Location closestLocation(Point to, ArrayList<Location> locations) {
+        return closestLocation(to, locations, Double.POSITIVE_INFINITY);
     }
 }

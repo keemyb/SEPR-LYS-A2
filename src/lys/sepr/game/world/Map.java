@@ -95,6 +95,10 @@ public class Map {
         intersection.move(to);
     }
 
+    public void moveLocation(Location location, Point to) {
+        location.getPoint().move(to.getX(), to.getY());
+    }
+
     private void mergeIntersections(Intersection master, Intersection slave) {
         for (Track slaveTrack : slave.getTracks()) {
             master.addTrack(slaveTrack);
@@ -128,6 +132,10 @@ public class Map {
         return intersections;
     }
 
+    public ArrayList<Location> getLocations() {
+        return locations;
+    }
+
     public ArrayList<ArrayList<Track>> getRoutes(Location from, Location to) {
         return getRoutes(from.getPoint(), to.getPoint());
     }
@@ -140,6 +148,11 @@ public class Map {
 
         // There is no track close enough that serves one of the points
         if (startingTrack == null || destinationTrack == null) {
+            return routes;
+        } else if (startingTrack == destinationTrack){
+            ArrayList<Track> route = new ArrayList<Track>();
+            route.add(startingTrack);
+            routes.add(route);
             return routes;
         }
 
@@ -197,6 +210,8 @@ public class Map {
 
     public ArrayList<Track> fastestRoute(Point from, Point to) {
         ArrayList<ArrayList<Track>> routes = getRoutes(from, to);
+        if (routes.isEmpty()) return new ArrayList<Track>();
+
         ArrayList<Track> fastestRoute = null;
         Double shortestDistance = null;
         for (ArrayList<Track> route : routes) {
