@@ -52,7 +52,9 @@ public class Track {
     }
 
     public Point getOtherPoint(Point point) {
-        return (points.get(0).equals(point)) ? points.get(1) : points.get(0);
+        if (points.contains(point)) {
+            return (points.get(0).equals(point)) ? points.get(1) : points.get(0);
+        } else return null;
     }
 
     public Intersection getIntersection(Point point) {
@@ -83,8 +85,12 @@ public class Track {
             if (to.equals(from)) return;
             // A track cannot have two points in the same place
             if (points.contains(to)) return;
-            points.remove(from);
-            points.add(to);
+
+            // We want to get the point that is part of the track,
+            // as the point "from" may actually be another point
+            // (from another track/intersection) with the same location.
+            points.remove(points.indexOf(from));
+            points.add(new Point(to));
         }
 
         // If there was an intersection at the point where we moved from, break the connection
@@ -101,13 +107,12 @@ public class Track {
     }
 
     public void nudge(Point awayFrom) {
-        // TODO: recursive nudge to prevent nudging into another track/intersection
-        ArrayList<Double> vector = getVector(awayFrom, getOtherPoint(awayFrom));
+        // only move the point closest to the point we want to move away from
+        Point closestPoint = closestPoint(awayFrom, points);
+        ArrayList<Double> vector = getVector(closestPoint, getOtherPoint(closestPoint));
         for (int i=0; i < vector.size(); i++) {
             vector.set(i, vector.get(i) * nudgeStrength);
         }
-        // only move the point closest to the point we want to move away from
-        Point closestPoint = closestPoint(awayFrom, points);
         closestPoint.translate(vector.get(0), vector.get(1));
     }
 
@@ -120,26 +125,39 @@ public class Track {
         return null;
     }
 
-    public ArrayList<Track> getValidNextTracks() {
-        ArrayList<Track> validNextTracks = new ArrayList<Track>();
-        for (Intersection intersection : intersections) {
-            if (intersection.getValidNextTracks(this) != null) {
-                validNextTracks.addAll(intersection.getValidNextTracks(this));
-            }
-        }
-        return validNextTracks;
-    }
-
     public ArrayList<Track> getConnectedTracks() {
         ArrayList<Track> connectedTracks = new ArrayList<Track>();
         for (Intersection intersection : intersections) {
-            connectedTracks.addAll(intersection.getTracks());
+            for (Track track : intersection.getTracks()) {
+                if (track.equals(this)) {
+                    continue;
+                } else if (!connectedTracks.contains(track)){
+                    connectedTracks.add(track);
+                }
+            }
         }
         return connectedTracks;
     }
 
     public ArrayList<Track> getActiveNextTracks() {
         return activeNextTracks;
+    }
+
+    public ArrayList<Track> getValidNextTracks() {
+        ArrayList<Track> validNextTracks = new ArrayList<Track>();
+        for (Point point : points) {
+            validNextTracks.addAll(getValidNextTracks(point));
+        }
+        return validNextTracks;
+    }
+
+    public ArrayList<Track> getValidNextTracks(Point towards) {
+        Intersection intersection = getIntersection(towards);
+        if (intersection != null) {
+            return getIntersection(towards).getValidNextTracks(this);
+        } else {
+            return new ArrayList<Track>();
+        }
     }
 
     public void removeActiveNextTrack(Track track) {

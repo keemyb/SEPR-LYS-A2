@@ -15,7 +15,7 @@ public class Intersection {
     private HashMap<Track,ArrayList<Track>> validNextTracks = new HashMap<Track,ArrayList<Track>>();
 
     Intersection(Point point, Track a, Track b) {
-        this.point = point;
+        this.point = new Point(point);
 
         tracks.add(a);
         tracks.add(b);
@@ -40,6 +40,7 @@ public class Intersection {
         */
         validNextTracks = new HashMap<Track,ArrayList<Track>>();
         for (Track track1 : tracks) {
+            ArrayList<Track> validNextTracksList = new ArrayList<Track>();
             ArrayList<Double> vector1 = getVector(track1.getOtherPoint(point), point);
             for (Track track2 : tracks) {
                 if (track1 == track2) continue;
@@ -48,12 +49,10 @@ public class Intersection {
                 double angle = crossProduct(vector1, vector2);
 
                 if (validAngle(angle)) {
-                    if (validNextTracks.get(track1) == null) {
-                        validNextTracks.put(track1, new ArrayList<Track>());
-                    }
-                    validNextTracks.get(track1).add(track2);
+                    validNextTracksList.add(track2);
                 }
             }
+            validNextTracks.put(track1, validNextTracksList);
         }
         setDefaultNextTracks();
     }
@@ -75,7 +74,7 @@ public class Intersection {
             }
 
             // Set the first valid next track, if there is one
-            if (getValidNextTracks(track) != null) {
+            if (!getValidNextTracks(track).isEmpty()) {
                 track.setNextTrack(this, getValidNextTracks(track).get(0));
             }
         }
@@ -118,6 +117,7 @@ public class Intersection {
             Track remainingTrack = tracks.get(0);
             remainingTrack.removeIntersection(this);
             tracks.remove(remainingTrack);
+            remainingTrack.nudge(getPoint());
         } else {
             updateValidTracks();
         }

@@ -111,4 +111,41 @@ public class TrackTest {
         // We don't want to move a point onto itself.
         assertEquals(new Point(0, 0), track1.getOtherPoint(new Point(100, 100)));
     }
+
+    @Test
+    public void testConnectedTrackNoDuplicateNoSelf() throws Exception {
+        Track track1 = new Track(new Point(100,100), new Point(150,200));
+        Track track2 = new Track(new Point(200,100), new Point(150,200));
+        Track track3 = new Track(new Point(100,100), new Point(200,100));
+
+        Map map = new Map();
+
+        map.addTrack(track1);
+        map.addTrack(track2);
+        map.addTrack(track3);
+
+        ArrayList<Track> expectedConnections1 = new ArrayList<Track>();
+        expectedConnections1.add(track2);
+        expectedConnections1.add(track3);
+
+        ArrayList<Track> expectedConnections2 = new ArrayList<Track>();
+        expectedConnections2.add(track1);
+        expectedConnections2.add(track3);
+
+        ArrayList<Track> expectedConnections3 = new ArrayList<Track>();
+        expectedConnections3.add(track1);
+        expectedConnections3.add(track2);
+
+        assertEquals(expectedConnections1, track1.getConnectedTracks());
+        assertEquals(expectedConnections2, track2.getConnectedTracks());
+        assertEquals(expectedConnections3, track3.getConnectedTracks());
+    }
+
+    @Test
+    public void testGetIntersections() throws Exception {
+        map.addTrack(track1);
+        map.addTrack(track2);
+        assertEquals(null, track1.getIntersection(new Point(0,0)));
+        assertNotEquals(null, track1.getIntersection(new Point(100,100)));
+    }
 }
