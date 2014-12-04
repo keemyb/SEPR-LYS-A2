@@ -85,8 +85,10 @@ public class Map {
                 return;
             }
         }
+        // looking for unconnected tracks to consume.
         for (Track track : tracks) {
-            if (track.getPoints().contains(to)){
+            if (track.getPoints().contains(to) &&
+                    !intersection.getTracks().contains(track)){
                 intersection.move(to);
                 intersection.addTrack(track);
                 return;

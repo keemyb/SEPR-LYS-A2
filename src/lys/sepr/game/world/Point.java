@@ -12,6 +12,11 @@ public class Point {
         setY(y);
     }
 
+    Point(Point point) {
+        setX(point.getX());
+        setY(point.getY());
+    }
+
     public double getX() {
         return x;
     }
