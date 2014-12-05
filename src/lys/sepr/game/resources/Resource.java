@@ -3,31 +3,31 @@ package lys.sepr.game.resources;
 public abstract class Resource {
 
     public String name;
-    public Integer price;
-    public Integer reqReputation;
-    public Integer maxAllowed;
+    public int price;
+    public int reqReputation;
+    public int maxAllowed;
 
-    public Integer getPrice() {
+    public int getPrice() {
         return price;
     }
 
-    public void setPrice(Integer price) {
+    public void setPrice(int price) {
         this.price = price;
     }
 
-    public Integer getReqReputation() {
+    public int getReqReputation() {
         return reqReputation;
     }
 
-    public void setReqReputation(Integer reqReputation) {
+    public void setReqReputation(int reqReputation) {
         this.reqReputation = reqReputation;
     }
 
-    public Integer getMaxAllowed() {
+    public int getMaxAllowed() {
         return maxAllowed;
     }
 
-    public void setMaxAllowed(Integer maxAllowed) {
+    public void setMaxAllowed(int maxAllowed) {
         this.maxAllowed = maxAllowed;
     }
 
