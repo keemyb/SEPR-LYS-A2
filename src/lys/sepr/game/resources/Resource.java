@@ -6,16 +6,6 @@ public abstract class Resource {
     public Integer price;
     public Integer reqReputation;
     public Integer maxAllowed;
-    public Integer quantity;
-
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
 
     public Integer getPrice() {
         return price;

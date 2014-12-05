@@ -1,7 +1,6 @@
 package lys.sepr.game.resources;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Inventory {
 //trains, power-ups, fuel
@@ -37,12 +36,12 @@ public class Inventory {
 
     }
 
-    public Boolean checkResource (Resource resource) {
+    public Boolean containsResource(Resource resource) {
         return contents.contains(resource);
     }
 
     public void applyResource (Resource resource) {
-        if (!checkResource(resource)) {
+        if (!containsResource(resource)) {
             resourceNotInInventoryError("use");
         } else {
             resource.useResource(resource);                  //how specify specific resource if two of same???  index??
@@ -50,36 +49,63 @@ public class Inventory {
     }
 
     public void discardResource (Resource resource) {
-        if (!checkResource(resource)) {
+        if (!containsResource(resource)) {
             resourceNotInInventoryError("remove");
         } else {
             contents.remove(resource);                      //how specify specific resource if two of same???  index??
         }
     }
 
+    public int getOccurrencesOfResource(Resource resource) {
+        // Checking how many of the same item are in the inventory,
+        // where resources are classed as the same if they have the same name.
+        // This is necessary since two trains of the same model are distinct,
+        // but not the same object.
+
+        if (contents.contains(resource)) {
+            int Occurrences = 0;
+            for (Resource currentResources : contents) {
+                if (currentResources.getName().equals(resource.getName())) {
+                    Occurrences += 1;
+                }
+            }
+            return Occurrences;
+        } else return 0;
+    }
+
     public void addNewResource (Resource resource) {
         if (resource instanceof Fuel) {
-            if (checkResource(resource)) {
-                if ((resource.quantity).equals(resource.maxAllowed)) {
-                    maximumResourceError(resource);
-                } else {
-                    resource.quantity += ((Fuel) resource).getValue();   //value is the quantity of fuel bought at once
-                }
-            } else if (contents.size() == MAX_CAPACITY) {
-                inventoryFullError();
+            // casting resource to fuel
+            addNewResource((Fuel) resource);
+        } else if (contents.size() == MAX_CAPACITY) {
+            inventoryFullError();
+        } else {
+            int occurrences = getOccurrencesOfResource(resource);
+            if (occurrences >= resource.getMaxAllowed()) {
+                maximumResourceError(resource);
             } else {
                 contents.add(resource);
-                resource.quantity += ((Fuel) resource).getValue();
+            }
+        }
+    }
+
+    public void addNewResource (Fuel fuel) {
+        if (containsResource(fuel)) {
+            Fuel existingFuel = (Fuel) contents.get(contents.indexOf(fuel));
+            int newQuantity = existingFuel.getQuantity() + fuel.getQuantity();
+            if (existingFuel.getQuantity() >= fuel.maxAllowed) {
+                existingFuel.setQuantity(existingFuel.getMaxAllowed());
+                maximumResourceError(fuel);
+            } else {
+                existingFuel.setQuantity(newQuantity);
             }
         } else if (contents.size() == MAX_CAPACITY) {
             inventoryFullError();
         } else {
-            if ((resource.quantity).equals(resource.maxAllowed)) {
-                maximumResourceError(resource);
-            } else {
-                contents.add(resource);
-                resource.quantity += 1;
+            if (fuel.getQuantity() >= fuel.getMaxAllowed()) {
+                fuel.setQuantity(fuel.getMaxAllowed());
             }
+            contents.add(fuel);
         }
     }
 
