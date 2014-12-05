@@ -4,6 +4,11 @@ public class Fuel extends Resource {
 
     public int quantity;
 
+    Fuel(String name, int price, int reqReputation, int maxAllowed, int quantity) {
+        super(name, price, reqReputation, maxAllowed);
+        this.quantity = quantity;
+    }
+
     public int getQuantity() {
         return quantity;
     }

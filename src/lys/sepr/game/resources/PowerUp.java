@@ -1,9 +1,8 @@
 package lys.sepr.game.resources;
 
-import java.util.ArrayList;
-
 public class PowerUp extends Resource {
 
-    public ArrayList<PowerUp> allPowerUps = new ArrayList<PowerUp>();
-
+    PowerUp(String name, int price, int reqReputation, int maxAllowed) {
+        super(name, price, reqReputation, maxAllowed);
+    }
 }

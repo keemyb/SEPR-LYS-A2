@@ -7,6 +7,13 @@ public abstract class Resource {
     public int reqReputation;
     public int maxAllowed;
 
+    Resource(String name, int price, int reqReputation, int maxAllowed) {
+        this.name = name;
+        this.price = price;
+        this.reqReputation = reqReputation;
+        this.maxAllowed = maxAllowed;
+    }
+
     public int getPrice() {
         return price;
     }

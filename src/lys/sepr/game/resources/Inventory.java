@@ -28,14 +28,6 @@ public class Inventory {
         //display error message on GUI  -- I'm sorry, but you already own the maximum number of (resource.name)
     }
 
-    public void createInventory () {
-
-    }
-
-    public void initialiseInventory () {
-
-    }
-
     public Boolean containsResource(Resource resource) {
         return contents.contains(resource);
     }
