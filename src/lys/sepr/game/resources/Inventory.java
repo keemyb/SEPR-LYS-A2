@@ -27,15 +27,15 @@ public class Inventory {
         } else return 0;
     }
 
-    public void inventoryFullError(){
+    private void inventoryFullError(){
         //display error message on GUI  -- I'm sorry, but your inventory is already full
     }
 
-    public void resourceNotInInventoryError(String message){
+    private void resourceNotInInventoryError(String message){
         //display error message on GUI  -- I'm sorry, but you cannot remove/use a resource that you do not have
     }
 
-    public void maximumResourceError(Resource resource){
+    private void maximumResourceError(Resource resource){
         //display error message on GUI  -- I'm sorry, but you already own the maximum number of (resource.name)
     }
 
@@ -96,7 +96,7 @@ public class Inventory {
         if (containsResource(fuel)) {
             Fuel existingFuel = (Fuel) contents.get(contents.indexOf(fuel));
             int newQuantity = existingFuel.getQuantity() + fuel.getQuantity();
-            if (existingFuel.getQuantity() >= fuel.maxAllowed) {
+            if (existingFuel.getQuantity() >= fuel.getMaxAllowed()) {
                 existingFuel.setQuantity(existingFuel.getMaxAllowed());
                 maximumResourceError(fuel);
             } else {

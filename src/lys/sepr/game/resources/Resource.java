@@ -3,10 +3,10 @@ package lys.sepr.game.resources;
 public abstract class Resource {
 
     // Resources are considered equal if they have the same name
-    public String name;
-    public int price;
-    public int reqReputation;
-    public int maxAllowed;
+    private String name;
+    private int price;
+    private int reqReputation;
+    private int maxAllowed;
 
     Resource(String name, int price, int reqReputation, int maxAllowed) {
         this.name = name;

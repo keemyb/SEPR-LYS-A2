@@ -2,7 +2,7 @@ package lys.sepr.game.resources;
 
 public class Fuel extends Resource {
 
-    public int quantity;
+    private int quantity;
 
     Fuel(String name, int price, int reqReputation, int maxAllowed, int quantity) {
         super(name, price, reqReputation, maxAllowed);
