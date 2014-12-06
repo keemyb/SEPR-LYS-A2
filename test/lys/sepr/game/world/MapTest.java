@@ -474,6 +474,7 @@ public class MapTest {
             }
         }
 
+        assertFalse(map.getTracks().contains(track2));
         assertTrue(track1.getConnectedTracks().contains(splitTrack1));
         assertTrue(track3.getConnectedTracks().contains(splitTrack2));
     }

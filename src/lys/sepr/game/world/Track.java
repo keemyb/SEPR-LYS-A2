@@ -15,8 +15,8 @@ public class Track {
     private Boolean broken = false;
 
     Track(Point a, Point b) {
-        points.add(a);
-        points.add(b);
+        points.add(new Point(a));
+        points.add(new Point(b));
     }
 
     public ArrayList<Point> getPoints() {
