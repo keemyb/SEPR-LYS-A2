@@ -228,4 +228,14 @@ public class Map {
         }
         return fastestRoute;
     }
+
+    public void breakTrack(Track track, Point where) {
+        if (track.getConnectedTracks().isEmpty()) {
+            tracks.remove(track);
+            for (Point existingPoint : track.getPoints()) {
+                Track splitTrack = new Track(existingPoint, where);
+                addTrack(splitTrack);
+            }
+        }
+    }
 }
