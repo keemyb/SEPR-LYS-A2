@@ -401,4 +401,44 @@ public class MapTest {
         assertEquals(new HashSet(expectedConnections4), new HashSet(track4.getConnectedTracks()));
         assertEquals(new HashSet(expectedConnections5), new HashSet(track5.getConnectedTracks()));
     }
+
+    @Test
+    public void testBreakTrackSolo() throws Exception {
+        Track track1 = new Track(new Point(0,0), new Point(100,100));
+        Track splitTrack1 = new Track(new Point(0, 0), new Point(50, 50));
+        Track splitTrack2 = new Track(new Point(50, 50), new Point(100, 100));
+
+        map.addTrack(track1);
+
+        map.breakTrack(track1, new Point(50,50));
+
+        Intersection intersection = map.getIntersections().get(0);
+
+        assertEquals(2, map.getTracks().size());
+        assertTrue(map.getTracks().contains(splitTrack1));
+        assertTrue(map.getTracks().contains(splitTrack2));
+        assertEquals(1, map.getIntersections().size());
+        assertTrue(intersection.getTracks().contains(splitTrack1));
+        assertTrue(intersection.getTracks().contains(splitTrack2));
+        assertTrue(map.getTracks().get(map.getTracks().indexOf(splitTrack1)).getConnectedTracks().contains(splitTrack2));
+        assertTrue(map.getTracks().get(map.getTracks().indexOf(splitTrack2)).getConnectedTracks().contains(splitTrack1));
+    }
+
+    @Test
+    public void testBreakTrackInIntersection() throws Exception {
+        map.addTrack(track1);
+        map.addTrack(track2);
+
+        Track splitTrack1 = new Track(new Point(0, 0), new Point(50, 50));
+        Track splitTrack2 = new Track(new Point(50, 50), new Point(100, 100));
+
+        map.breakTrack(track1, new Point(50,50));
+
+        Intersection oldIntersection = map.getIntersections().get(0);
+
+        assertTrue(oldIntersection.getTracks().contains(splitTrack2));
+        assertFalse(oldIntersection.getTracks().contains(splitTrack1));
+        assertTrue(splitTrack2.getConnectedTracks().contains(track2));
+        assertTrue(track2.getConnectedTracks().contains(splitTrack2));
+    }
 }
