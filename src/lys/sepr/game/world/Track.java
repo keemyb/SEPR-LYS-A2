@@ -1,6 +1,8 @@
 package lys.sepr.game.world;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+
 import static lys.sepr.game.world.Utilities.closestPoint;
 import static lys.sepr.game.world.Utilities.getVector;
 
@@ -13,8 +15,8 @@ public class Track {
     private Boolean broken = false;
 
     Track(Point a, Point b) {
-        points.add(a);
-        points.add(b);
+        points.add(new Point(a));
+        points.add(new Point(b));
     }
 
     public ArrayList<Point> getPoints() {
@@ -170,5 +172,23 @@ public class Track {
 
     public void setBroken(Boolean broken) {
         this.broken = broken;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Track track = (Track) o;
+
+        // Hashset as we don't care about the order of the points
+        if (points != null ? !new HashSet(points).equals(new HashSet(track.points)) : track.points != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return points != null ? points.hashCode() : 0;
     }
 }

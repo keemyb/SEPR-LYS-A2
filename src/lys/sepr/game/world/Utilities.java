@@ -35,6 +35,10 @@ public final class Utilities {
         return sqrt(magnitude);
     }
 
+    public static ArrayList<Double> getVector(Track track) {
+        return getVector(track.getPoints().get(0), track.getPoints().get(1));
+    }
+
     public static ArrayList<Double> getVector(Point from, Point towards) {
         ArrayList<Double> vector = new ArrayList<Double>(2);
         vector.add(towards.getX() - from.getX());
