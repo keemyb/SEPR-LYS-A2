@@ -21,6 +21,7 @@ public class MapCreator extends JFrame {
     public static final int CREATE_TRACK_MODE = 5;
     public static final int CREATE_LOCATION_MODE = 6;
     public static final int INSPECT_ROUTE_MODE = 7;
+    public static final int BREAK_TRACK_MODE = 8;
 
     public int mode = INSPECT_TRACK_MODE;
 
@@ -80,6 +81,7 @@ public class MapCreator extends JFrame {
     JRadioButton deleteIntersectionModeButton = new JRadioButton("Delete Intersection");
     JRadioButton createLocationModeButton = new JRadioButton("Create Location");
     JRadioButton inspectRouteModeButton = new JRadioButton("Inspect Route");
+    JRadioButton breakTrackModeButton = new JRadioButton("Break Track");
 
     ButtonGroup modeButtons = new ButtonGroup();
 
@@ -117,6 +119,7 @@ public class MapCreator extends JFrame {
         modeButtons.add(deleteIntersectionModeButton);
         modeButtons.add(createLocationModeButton);
         modeButtons.add(inspectRouteModeButton);
+        modeButtons.add(breakTrackModeButton);
 
         inspectTrackModeButton.setSelected(true);
 
@@ -183,6 +186,14 @@ public class MapCreator extends JFrame {
             }
         });
 
+        breakTrackModeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                clearCreateNew();
+                dropHeldLocationTrackIntersection();
+                mode = BREAK_TRACK_MODE;
+            }
+        });
+
         JPanel buttonPanel = new JPanel();
 
         buttonPanel.add(inspectTrackModeButton);
@@ -193,6 +204,7 @@ public class MapCreator extends JFrame {
         buttonPanel.add(deleteLocationModeButton);
         buttonPanel.add(deleteTrackModeButton);
         buttonPanel.add(deleteIntersectionModeButton);
+        buttonPanel.add(breakTrackModeButton);
 
         buttonPanel.setSize(1280, 100);
 
@@ -257,6 +269,9 @@ public class MapCreator extends JFrame {
                     break;
                 case DELETE_INTERSECTION_MODE:
                     removeIntersection(clickPoint);
+                    break;
+                case BREAK_TRACK_MODE:
+                    breakTrack(clickPoint);
                     break;
             }
         }
@@ -456,6 +471,17 @@ public class MapCreator extends JFrame {
             repaint();
         }
         startedNewTrack = !startedNewTrack;
+    }
+
+    private void breakTrack(Point clickPoint) {
+        System.out.println("Break Track");
+        Track closestTrack = closestTrack(clickPoint, map.getTracks(), minPickUpDistance);
+        if (closestTrack != null) {
+            // Not Perfect, we should ideally get the closestpoint to the clickpoint that is on the line
+            // Currently if the click is not on the line the track will move slightly when broken.
+            map.breakTrack(closestTrack, clickPoint);
+            repaint();
+        }
     }
 
     private void pickupOrMoveLocationTrackIntersection(Point clickPoint) {
