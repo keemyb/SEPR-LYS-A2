@@ -5,8 +5,8 @@ import java.util.ArrayList;
 public class Inventory {
 //trains, power-ups, fuel
 
-    public static final int MAX_CAPACITY = 12;
-    public ArrayList<Resource> contents= new ArrayList<Resource>();
+    private static final int MAX_CAPACITY = 12;
+    private ArrayList<Resource> contents= new ArrayList<Resource>();
 
     public ArrayList<Resource> getContents() {
         return contents;
@@ -14,6 +14,17 @@ public class Inventory {
 
     public void setContents(ArrayList<Resource> contents) {
         this.contents = contents;
+    }
+
+    public int getSize() {
+        return contents.size();
+    }
+
+    public int getQuantity(Fuel fuel) {
+        if (containsResource(fuel)) {
+            Fuel existingFuel = (Fuel) contents.get(contents.indexOf(fuel));
+            return existingFuel.getQuantity();
+        } else return 0;
     }
 
     public void inventoryFullError(){
@@ -69,7 +80,7 @@ public class Inventory {
         if (resource instanceof Fuel) {
             // casting resource to fuel
             addNewResource((Fuel) resource);
-        } else if (contents.size() == MAX_CAPACITY) {
+        } else if (getSize() == MAX_CAPACITY) {
             inventoryFullError();
         } else {
             int occurrences = getOccurrencesOfResource(resource);
@@ -91,7 +102,7 @@ public class Inventory {
             } else {
                 existingFuel.setQuantity(newQuantity);
             }
-        } else if (contents.size() == MAX_CAPACITY) {
+        } else if (getSize() == MAX_CAPACITY) {
             inventoryFullError();
         } else {
             if (fuel.getQuantity() >= fuel.getMaxAllowed()) {

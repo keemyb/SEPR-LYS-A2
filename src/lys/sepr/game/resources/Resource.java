@@ -2,6 +2,7 @@ package lys.sepr.game.resources;
 
 public abstract class Resource {
 
+    // Resources are considered equal if they have the same name
     public String name;
     public int price;
     public int reqReputation;
@@ -50,4 +51,20 @@ public abstract class Resource {
 
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Resource resource = (Resource) o;
+
+        if (name != null ? !name.equals(resource.name) : resource.name != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return name != null ? name.hashCode() : 0;
+    }
 }
