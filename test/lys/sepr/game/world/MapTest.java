@@ -415,9 +415,9 @@ public class MapTest {
         Intersection intersection = map.getIntersections().get(0);
 
         assertEquals(2, map.getTracks().size());
+        assertEquals(1, map.getIntersections().size());
         assertTrue(map.getTracks().contains(splitTrack1));
         assertTrue(map.getTracks().contains(splitTrack2));
-        assertEquals(1, map.getIntersections().size());
         assertTrue(intersection.getTracks().contains(splitTrack1));
         assertTrue(intersection.getTracks().contains(splitTrack2));
         assertTrue(map.getTracks().get(map.getTracks().indexOf(splitTrack1)).getConnectedTracks().contains(splitTrack2));
@@ -425,20 +425,56 @@ public class MapTest {
     }
 
     @Test
-    public void testBreakTrackInIntersection() throws Exception {
+    public void testBreakTrackInOneIntersection() throws Exception {
         map.addTrack(track1);
         map.addTrack(track2);
 
         Track splitTrack1 = new Track(new Point(0, 0), new Point(50, 50));
-        Track splitTrack2 = new Track(new Point(50, 50), new Point(100, 100));
+        Track splitTrack2 = new Track(new Point(50, 50), new Point(100, 100)); // The part connected to the intersection
 
         map.breakTrack(track1, new Point(50,50));
 
-        Intersection oldIntersection = map.getIntersections().get(0);
+        assertEquals(2, map.getIntersections().size());
 
-        assertTrue(oldIntersection.getTracks().contains(splitTrack2));
-        assertFalse(oldIntersection.getTracks().contains(splitTrack1));
-        assertTrue(splitTrack2.getConnectedTracks().contains(track2));
+        for (Intersection intersection : map.getIntersections()) {
+            assertEquals(2, intersection.getTracks().size());
+            if (intersection.getTracks().contains(splitTrack1)) {
+                assertFalse(intersection.getTracks().contains(track2));
+            } else if (intersection.getTracks().contains(track2)){
+                assertFalse(intersection.getTracks().contains(splitTrack1));
+            }
+        }
+
+        assertTrue(map.getTracks().get(map.getTracks().indexOf(splitTrack2)).getConnectedTracks().contains(track2));
         assertTrue(track2.getConnectedTracks().contains(splitTrack2));
+    }
+
+    @Test
+    public void testBreakTrackInTwoIntersections() throws Exception {
+        Track track3 = new Track(new Point(200, 200), new Point(300, 300));
+
+        map.addTrack(track1);
+        map.addTrack(track2);
+        map.addTrack(track3);
+
+        Track splitTrack1 = new Track(new Point(100, 100), new Point(150, 150));
+        Track splitTrack2 = new Track(new Point(150, 150), new Point(200, 200));
+
+        map.breakTrack(track2, new Point(150, 150));
+
+        assertEquals(3, map.getIntersections().size());
+
+        for (Intersection intersection : map.getIntersections()) {
+            if (intersection.getTracks().contains(splitTrack1)
+                    && !intersection.getTracks().contains(splitTrack2)) {
+                assertTrue(intersection.getTracks().contains(track1));
+            } else if (intersection.getTracks().contains(splitTrack2)
+                        && !intersection.getTracks().contains(splitTrack1)) {
+                assertTrue(intersection.getTracks().contains(track3));
+            }
+        }
+
+        assertTrue(track1.getConnectedTracks().contains(splitTrack1));
+        assertTrue(track3.getConnectedTracks().contains(splitTrack2));
     }
 }

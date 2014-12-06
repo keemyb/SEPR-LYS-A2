@@ -230,12 +230,39 @@ public class Map {
     }
 
     public void breakTrack(Track track, Point where) {
-        if (track.getConnectedTracks().isEmpty()) {
-            tracks.remove(track);
+        // Here, the old track should be removed before the new tracks are added.
+        // This is because otherwise the old track will form an intersection
+        // with the new tracks, forming an intersection which will be broken
+        // by the removal of the old track.
+        // Dissolving an intersection moves all tracks in it slightly, so the
+        // ends of the track will not be where they should be.
+        if (track.getIntersections().isEmpty()) {
+            removeTrack(track);
             for (Point existingPoint : track.getPoints()) {
                 Track splitTrack = new Track(existingPoint, where);
                 addTrack(splitTrack);
             }
+        } else if (track.getIntersections().size() == 1) {
+            Intersection intersection = track.getIntersections().get(0);
+            Point pointOfIntersection = intersection.getPoint();
+            Point otherPoint = track.getOtherPoint(pointOfIntersection);
+            Track splitTrack1 = new Track(pointOfIntersection, where);
+            Track splitTrack2 = new Track(otherPoint, where);
+            addTrack(splitTrack1);
+            removeTrack(track);
+            addTrack(splitTrack2);
+        } else {
+            for (Point existingPoint : track.getPoints()) {
+                Track splitTrack = new Track(existingPoint, where);
+                addTrack(splitTrack);
+            }
+            removeTrack(track);
         }
+        // Here, the old track should be removed after the new tracks are added.
+        // This is because the track may have been part of an intersection
+        // with only one other track, meaning that the connecting track will
+        // have been moved slightly from it's original location as the
+        // intersection dissolves, meaning the split track will no longer be
+        // connected.
     }
 }
