@@ -411,11 +411,13 @@ public class MapCreator extends JFrame {
     private void inspectRoute(Point clickPoint) {
         Location location = selectLocation(clickPoint);
         if (!startedRouteInspect) {
+            // Clearing the second location so that only the first one is highlighted
+            location2 = null;
             location1 = location;
         } else {
             location2 = location;
-            repaint();
         }
+        repaint();
         startedRouteInspect = !startedRouteInspect;
     }
 
@@ -559,7 +561,12 @@ public class MapCreator extends JFrame {
         }
         for (Location location : map.getLocations()) {
             Rectangle2D.Double rectangle = locationToRect2D(location, 10d, this);
-            g2.setColor(randomColor());
+            if (location1 == location) {
+                // highlight the first location selected when inspecting track
+                g2.setColor(Color.GREEN);
+            } else {
+                g2.setColor(randomColor());
+            }
             g2.draw(rectangle);
         }
     }
