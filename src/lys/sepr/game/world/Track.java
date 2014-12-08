@@ -14,7 +14,7 @@ public class Track {
     private ArrayList<Track> activeNextTracks = new ArrayList<Track>();
     private Boolean broken = false;
 
-    Track(Point a, Point b) {
+    public Track(Point a, Point b) {
         points.add(new Point(a));
         points.add(new Point(b));
     }

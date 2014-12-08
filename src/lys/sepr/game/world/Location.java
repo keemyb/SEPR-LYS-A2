@@ -5,7 +5,7 @@ public class Location{
     private Point point;
     private String name;
 
-    Location(Point point, String name) {
+    public Location(Point point, String name) {
         this.point = point;
         this.name = name;
     }
