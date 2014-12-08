@@ -2,10 +2,13 @@ package lys.sepr.mapCreator;
 
 import lys.sepr.game.world.Map;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 import static lys.sepr.game.world.Utilities.clickPointToTrackPoint;
 
@@ -25,15 +28,30 @@ public class MapView {
     private Map map;
     private State state;
 
+    BufferedImage background;
+
+    JScrollPane scrollPane = new JScrollPane();
+
     JPanel mapPanel = new JPanel() {
         @Override
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
+            g.drawImage(background, 0, 0, null);
             Actions.drawMap(map, state, mapView, g);
         }
     };
 
     MapView(Map map, State state) {
+        try {
+            background = ImageIO.read(getClass().getResourceAsStream("/europe.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // Setting the size of the map panel to that of the image so that it can be scrolled if
+        // necessary.
+        mapPanel.setPreferredSize(new Dimension(background.getWidth(), background.getHeight()));
+        scrollPane.setViewportView(mapPanel);
+
         this.map = map;
         this.state = state;
         mapPanel.addMouseListener(mouseHandler);
@@ -41,6 +59,9 @@ public class MapView {
 
     public JPanel getMapPanel() {
         return mapPanel;
+    }
+    public JScrollPane getScrollPane() {
+        return scrollPane;
     }
 
     private class MouseHandler extends MouseAdapter {

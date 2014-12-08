@@ -18,7 +18,7 @@ public class MapCreator {
         JFrame MainFrame = new JFrame();
         MainFrame.setSize(1280,720);
         MainFrame.getContentPane().add(keyInfo.getKeyPanel(), BorderLayout.NORTH);
-        MainFrame.getContentPane().add(mapView.getMapPanel(), BorderLayout.CENTER);
+        MainFrame.getContentPane().add(mapView.getScrollPane(), BorderLayout.CENTER);
         MainFrame.getContentPane().add(buttons.getButtonPanel(), BorderLayout.SOUTH);
 
         MainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
