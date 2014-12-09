@@ -41,7 +41,24 @@ public class MapView {
         }
     };
 
-    MapView(Map map, State state) {
+    MapView(State state) {
+        setDefaultBackground();
+
+        map = new Map();
+
+        this.state = state;
+        mapPanel.addMouseListener(mouseHandler);
+    }
+
+    public Map getMap() {
+        return map;
+    }
+    public void setMap(Map map) {
+        this.map = map;
+        mapPanel.repaint();
+    }
+
+    public void setDefaultBackground() {
         try {
             background = ImageIO.read(getClass().getResourceAsStream("/europe.png"));
         } catch (IOException e) {
@@ -51,27 +68,18 @@ public class MapView {
         // necessary.
         mapPanel.setPreferredSize(new Dimension(background.getWidth(), background.getHeight()));
         scrollPane.setViewportView(mapPanel);
-
-        this.map = map;
-        this.state = state;
-        mapPanel.addMouseListener(mouseHandler);
-    }
-
-    public JPanel getMapPanel() {
-        return mapPanel;
-    }
-    public Map getMap() {
-        return map;
-    }
-    public void setMap(Map map) {
-        this.map = map;
     }
     public void setBackground(BufferedImage background) {
         this.background = background;
         mapPanel.setPreferredSize(new Dimension(background.getWidth(), background.getHeight()));
+        mapPanel.repaint();
     }
+
     public JScrollPane getScrollPane() {
         return scrollPane;
+    }
+    public JPanel getMapPanel() {
+        return mapPanel;
     }
 
     private class MouseHandler extends MouseAdapter {

@@ -293,8 +293,8 @@ public final class Actions {
         XStream xstream = new XStream();
 
         JFileChooser chooser = new JFileChooser();
-        FileFilter mapFileFilter = new FileNameExtensionFilter("Map Files", "trmp");
-        chooser.setFileFilter(mapFileFilter);
+        FileFilter fileFilter = new FileNameExtensionFilter("Map Files", "trmp");
+        chooser.setFileFilter(fileFilter);
         chooser.setDialogTitle("Load map");
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         int resultMap = chooser.showOpenDialog(jPanel);
@@ -305,8 +305,9 @@ public final class Actions {
             mapView.setMap(map);
         } else return;
 
-        FileFilter imageFileFilter = new FileNameExtensionFilter("Images", ImageIO.getReaderFileSuffixes());
-        chooser.setFileFilter(imageFileFilter);
+        chooser = new JFileChooser();
+        fileFilter = new FileNameExtensionFilter("Images", ImageIO.getReaderFileSuffixes());
+        chooser.setFileFilter(fileFilter);
         chooser.setDialogTitle("Load background");
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         int resultBackground = chooser.showOpenDialog(jPanel);

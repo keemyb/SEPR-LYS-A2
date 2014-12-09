@@ -16,6 +16,8 @@ public class Buttons {
     JRadioButton createLocationModeButton = new JRadioButton("Create Location");
     JRadioButton inspectRouteModeButton = new JRadioButton("Inspect Route");
     JRadioButton breakTrackModeButton = new JRadioButton("Break Track");
+    JButton saveMapButton = new JButton("Save Map");
+    JButton loadMapButton = new JButton("Load Map");
 
     private JPanel buttonPanel = new JPanel();
 
@@ -25,7 +27,7 @@ public class Buttons {
         return buttonPanel;
     }
 
-    Buttons(final State state) {
+    Buttons(final State state, final MapView mapView) {
         buttonGroup.add(inspectTrackModeButton);
         buttonGroup.add(createTrackModeButton);
         buttonGroup.add(moveModeButton);
@@ -45,6 +47,8 @@ public class Buttons {
         buttonPanel.add(deleteTrackModeButton);
         buttonPanel.add(deleteIntersectionModeButton);
         buttonPanel.add(breakTrackModeButton);
+        buttonPanel.add(loadMapButton);
+        buttonPanel.add(saveMapButton);
 
         inspectTrackModeButton.setSelected(true);
 
@@ -116,6 +120,18 @@ public class Buttons {
                 actions.clearCreateNew(state);
                 actions.dropHeldLocationTrackIntersection(state);
                 state.setMode(state.BREAK_TRACK_MODE);
+            }
+        });
+
+        saveMapButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                actions.saveMap(mapView.getMap(), mapView.getMapPanel());
+            }
+        });
+
+        loadMapButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                actions.loadMapAndBackground(mapView, mapView.getMapPanel());
             }
         });
     }
