@@ -1,11 +1,15 @@
 package lys.sepr.mapCreator;
 
+import com.thoughtworks.xstream.XStream;
 import lys.sepr.game.world.*;
 import lys.sepr.game.world.Point;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 
 import static lys.sepr.game.world.Utilities.*;
@@ -277,6 +281,32 @@ public final class Actions {
                 g2.setColor(randomColor());
             }
             g2.draw(rectangle);
+        }
+    }
+
+    public static void saveMap(Map map, JPanel jPanel) {
+        XStream xstream = new XStream();
+        String mapXml = xstream.toXML(map);
+
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Save map");
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        int result = chooser.showSaveDialog(jPanel);
+
+        File file = null;
+        if (result == chooser.APPROVE_OPTION) {
+            file = chooser.getSelectedFile();
+        }
+
+        if (file != null) {
+            try {
+                FileWriter fw = new FileWriter(chooser.getSelectedFile()+".trmp");
+                fw.write(mapXml);
+                fw.flush();
+                fw.close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 }
