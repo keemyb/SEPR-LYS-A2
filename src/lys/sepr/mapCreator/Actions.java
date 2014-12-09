@@ -4,12 +4,17 @@ import com.thoughtworks.xstream.XStream;
 import lys.sepr.game.world.*;
 import lys.sepr.game.world.Point;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static lys.sepr.game.world.Utilities.*;
@@ -281,6 +286,38 @@ public final class Actions {
                 g2.setColor(randomColor());
             }
             g2.draw(rectangle);
+        }
+    }
+
+    public static void loadMapAndBackground(MapView mapView, JPanel jPanel) {
+        XStream xstream = new XStream();
+
+        JFileChooser chooser = new JFileChooser();
+        FileFilter mapFileFilter = new FileNameExtensionFilter("Map Files", "trmp");
+        chooser.setFileFilter(mapFileFilter);
+        chooser.setDialogTitle("Load map");
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        int resultMap = chooser.showOpenDialog(jPanel);
+
+        if (resultMap == chooser.APPROVE_OPTION) {
+            File mapXml = chooser.getSelectedFile();
+            Map map = (Map) xstream.fromXML(mapXml);
+            mapView.setMap(map);
+        } else return;
+
+        FileFilter imageFileFilter = new FileNameExtensionFilter("Images", ImageIO.getReaderFileSuffixes());
+        chooser.setFileFilter(imageFileFilter);
+        chooser.setDialogTitle("Load background");
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        int resultBackground = chooser.showOpenDialog(jPanel);
+
+        if (resultBackground == chooser.APPROVE_OPTION) {
+            try {
+                BufferedImage background = ImageIO.read(chooser.getSelectedFile());
+                mapView.setBackground(background);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

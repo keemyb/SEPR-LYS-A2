@@ -60,6 +60,16 @@ public class MapView {
     public JPanel getMapPanel() {
         return mapPanel;
     }
+    public Map getMap() {
+        return map;
+    }
+    public void setMap(Map map) {
+        this.map = map;
+    }
+    public void setBackground(BufferedImage background) {
+        this.background = background;
+        mapPanel.setPreferredSize(new Dimension(background.getWidth(), background.getHeight()));
+    }
     public JScrollPane getScrollPane() {
         return scrollPane;
     }
