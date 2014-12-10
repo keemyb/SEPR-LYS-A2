@@ -10,8 +10,6 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-import static lys.sepr.game.world.Utilities.clickPointToTrackPoint;
-
 public class MapView {
     java.awt.Color selectedTrackColour = Color.ORANGE;
     java.awt.Color activeNextTrackColour = Color.GREEN;
@@ -84,7 +82,7 @@ public class MapView {
 
     private class MouseHandler extends MouseAdapter {
         public void mousePressed(MouseEvent e) {
-            lys.sepr.game.world.Point clickPoint = clickPointToTrackPoint(e.getPoint(), mapPanel);
+            lys.sepr.game.world.Point clickPoint = Actions.clickPointToTrackPoint(e.getPoint(), mapPanel);
             switch(state.mode) {
                 case State.INSPECT_TRACK_MODE:
                     Actions.inspectTrack(map, clickPoint, minPickupDistance, state);

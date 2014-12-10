@@ -16,10 +16,49 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 import static lys.sepr.game.world.Utilities.*;
 
 public final class Actions {
+
+    public static Point clickPointToTrackPoint(java.awt.Point clickPoint, JPanel jPanel) {
+        /* y axis points have been inverted as the window coordinates start from the top left
+        where as the points start from the bottom left
+        */
+        double clickPointX = clickPoint.x;
+        double clickPointY = jPanel.getHeight() - clickPoint.y;
+        return new Point(clickPointX, clickPointY);
+    }
+
+    public static java.awt.Point trackPointToClickPoint(Point point, JPanel jPanel) {
+        /* y axis points have been inverted as the window coordinates start from the top left
+        where as the points start from the bottom left
+        */
+        double pointX = point.getX();
+        double pointY = jPanel.getHeight() - point.getY();
+        return new java.awt.Point((int) pointX, (int) pointY);
+    }
+
+    public static Line2D.Double trackToLine2D(Track track, JPanel jPanel) {
+        double pointX1 = track.getPoints().get(0).getX();
+        double pointY1 = jPanel.getHeight() - track.getPoints().get(0).getY();
+        double pointX2 = track.getPoints().get(1).getX();
+        double pointY2 = jPanel.getHeight() - track.getPoints().get(1).getY();
+        return new Line2D.Double(pointX1, pointY1, pointX2, pointY2);
+    }
+
+    public static Rectangle2D.Double locationToRect2D(Location location, Double size, JPanel jPanel) {
+        double pointX1 = location.getPoint().getX() - size/2;
+        double pointY1 = jPanel.getHeight() - location.getPoint().getY() - size/2;
+        return new Rectangle2D.Double(pointX1, pointY1, size, size);
+    }
+
+    public static Color randomColor() {
+        Random r = new Random();
+        int rgb = Color.HSBtoRGB(r.nextFloat(),0.5f,0.5f);
+        return new Color(rgb);
+    }
 
     public static void clearCreateNew(State state) {
         state.startedNewTrack = false;
