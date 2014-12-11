@@ -56,7 +56,7 @@ public final class Actions {
 
     public static Color randomColor() {
         Random r = new Random();
-        int rgb = Color.HSBtoRGB(r.nextFloat(),0.5f,0.5f);
+        int rgb = Color.HSBtoRGB(r.nextFloat(),0.9f,1.0f);
         return new Color(rgb);
     }
 
