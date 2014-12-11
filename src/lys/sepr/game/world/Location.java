@@ -1,19 +1,36 @@
 package lys.sepr.game.world;
 
+/**
+ * The Location Class represents some Point of Interest.
+ */
 public class Location{
 
     private Point point;
     private String name;
 
+    /**
+     * Constructor
+     * @param point The point where the Location will lie.
+     * @param name The name of the location.
+     */
     public Location(Point point, String name) {
         this.point = point;
         this.name = name;
     }
 
+    /**
+     * Returns the point where the location lies.
+     * @return the point where the location lies.
+     */
     public Point getPoint() {
         return point;
     }
 
+    /**
+     * @param o The object to be compared.
+     * @return Two locations are considered equal if they have the same point
+     * and name.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -6,6 +6,10 @@ import java.util.HashMap;
 import static lys.sepr.game.world.Utilities.crossProduct;
 import static lys.sepr.game.world.Utilities.getVector;
 
+/**
+ * The Intersection Class governs the relations between two or more connected
+ * tracks.
+ */
 public class Intersection {
 
     // Tracks must be have at least this angle between them for trains to be able to move from one to another
@@ -14,6 +18,12 @@ public class Intersection {
     private ArrayList<Track> tracks = new ArrayList<Track>();
     private HashMap<Track,ArrayList<Track>> validNextTracks = new HashMap<Track,ArrayList<Track>>();
 
+    /**
+     * Constructor
+     * @param point The point where the intersection lies.
+     * @param a One track that will be part of this intersection.
+     * @param b Another track that will be part of this intersection.
+     */
     Intersection(Point point, Track a, Track b) {
         this.point = new Point(point);
 
@@ -26,6 +36,10 @@ public class Intersection {
         updateValidTracks();
     }
 
+    /**
+     * Adds a track to this intersection.
+     * @param track The track to be added to the intersection.
+     */
     public void addTrack(Track track) {
         tracks.add(track);
         track.addIntersection(this);
@@ -33,6 +47,13 @@ public class Intersection {
         updateValidTracks();
     }
 
+    /**
+     * Updates the valid tracks of each track that is a part of this intersection.
+     * It will be called when a track in the intersection, or the intersection
+     * itself is moved.
+     * It is necessary to update the the validNextTracks HashMap as the angles
+     * between tracks may have changed.
+     */
     public void updateValidTracks() {
         /* Clear existing valid tracks as we will be regenerating them.
         As the angles between tracks change when an intersection is moved,
@@ -57,6 +78,12 @@ public class Intersection {
         setDefaultNextTracks();
     }
 
+    /**
+     * Sets the active next tracks for all tracks that are a part of this
+     * intersection.
+     * If a track has an active next track that is valid, it is left untouched,
+     * otherwise it is set to an arbitrary valid next track if one exists.
+     */
     private void setDefaultNextTracks() {
         for (Track track : tracks) {
             // We want the point that is not at this intersection so that we can find its current next track
@@ -80,22 +107,45 @@ public class Intersection {
         }
     }
 
+    /**
+     * Returns True or False depending on the angle provided.
+     * @param angle The angle to be checked.
+     * @return True if the angle is valid, otherwise False.
+     */
     private boolean validAngle(double angle) {
         return angle >= minAngle;
     }
 
+    /**
+     * Returns the point where the intersection lies.
+     * @return the point where the intersection lies.
+     */
     public Point getPoint() {
         return point;
     }
 
+    /**
+     * Returns the tracks that are part of the intersection.
+     * @return the list of tracks that are part of the intersection.
+     */
     public ArrayList<Track> getTracks() {
         return tracks;
     }
 
+    /**
+     * Returns the mapping of valid next tracks for all tracks in the intersection.
+     * @return the HashMap of valid next tracks.
+     */
     public ArrayList<Track> getValidNextTracks(Track track) {
         return validNextTracks.get(track);
     }
 
+    /**
+     * Removes a track from the intersection.
+     * The intersection will be dissolved when only one track remains after a
+     * track has been removed.
+     * @param track The track to be removed from the intersection.
+     */
     public void removeTrack(Track track) {
         track.removeIntersection(this);
         tracks.remove(track);
@@ -123,6 +173,9 @@ public class Intersection {
         }
     }
 
+    /**
+     * Removes all tracks from the intersection.
+     */
     public void dissolve() {
         for (int i=getTracks().size() - 1; i>=0; i--) {
             Track track = getTracks().get(i);
@@ -133,6 +186,12 @@ public class Intersection {
         }
     }
 
+    /**
+     * Moves the intersection from one point to another.
+     * All tracks in the intersection will be moved also (the point that the
+     * track and intersection have in common).
+     * @param to The point that the intersection will be moved to.
+     */
     public void move(Point to) {
         if (getPoint().equals(to)) return;
 

@@ -2,11 +2,21 @@ package lys.sepr.game.world;
 
 import java.util.InputMismatchException;
 
+/**
+ * The Point class defines an point in 2D space (x,y).
+ * Both x and y coordinates have double precision.
+ * Both x and y coordinates must be positive.
+ */
 public class Point {
 
     private double x;
     private double y;
 
+    /**
+     * Constructor
+     * @param x The value of the x coordinate.
+     * @param y The value of the y coordinate.
+     */
     public Point(double x, double y) {
         setX(x);
         setY(y);
@@ -72,6 +82,11 @@ public class Point {
         }
     }
 
+    /**
+     * @param o The object to be compared.
+     * @return Two points are considered equal if they have the same x and y
+     * coordinates.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
