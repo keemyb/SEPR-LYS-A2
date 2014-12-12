@@ -44,6 +44,8 @@ public class Map {
      * @param track The track to be added to the map.
      */
     public void addTrack(Track track) {
+        if (tracks.contains(track)) return;
+
         tracks.add(track);
 
         // If there is only one track there can be no intersections
