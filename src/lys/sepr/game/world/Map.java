@@ -146,6 +146,8 @@ public class Map {
      * @param to           Where the point of track will be moved to.
      */
     public void moveIntersection(Intersection intersection, Point to) {
+        if (to.equals(intersection.getPoint())) return;
+
         for (Intersection otherIntersections : intersections) {
             if (otherIntersections.getPoint().equals(to)) {
                 intersection.move(to);
