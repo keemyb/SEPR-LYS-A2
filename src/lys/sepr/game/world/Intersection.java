@@ -195,6 +195,13 @@ public class Intersection {
     public void move(Point to) {
         if (getPoint().equals(to)) return;
 
+        // We don't want to move an intersection to a point such that a track
+        // in the intersection "collapses" (has both points in the same place).
+        for (Track track : tracks) {
+            Point trackOtherPoint = track.getOtherPoint(getPoint());
+            if (trackOtherPoint.equals(to)) return;
+        }
+
         // Remove the reference to this intersection of every track,
         // before moving them, and then add the reference back
         for (int i=0; i < tracks.size(); i++) {
