@@ -174,8 +174,12 @@ public class Track {
         }
 
         // Update the valid tracks as the angle between tracks may have changed
-        for (Intersection intersection : intersections) {
-            intersection.updateValidTracks();
+        // Only doing this for the intersection which was at the end of the track
+        // that was not moved, as the other intersection will update itself (if it
+        // exists).
+        Intersection intersectionAtStationaryPoint = getIntersection(getOtherPoint(to));
+        if (intersectionAtStationaryPoint != null) {
+            intersectionAtStationaryPoint.updateValidTracks();
         }
     }
 
