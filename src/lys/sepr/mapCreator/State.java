@@ -35,6 +35,31 @@ public class State {
     public Location routeLocation1;
     public Location routeLocation2;
 
+    private double zoom = 1d;
+    private final double zoomLevels = 4;
+    private double maxZoom = Math.pow(zoom, zoomLevels);
+    private double minZoom = Math.pow(zoom, -zoomLevels);
+
+    public void zoomIn() {
+        if (zoom != maxZoom) {
+            zoom *= 1.5;
+        }
+    }
+
+    public void zoomOut() {
+        if (zoom != minZoom) {
+            zoom /= 1.5;
+        }
+    }
+
+    public void resetZoom() {
+        zoom = 1d;
+    }
+
+    public double getZoom() {
+        return zoom;
+    }
+
     public void setMode(int mode) {
         this.mode = mode;
     }
