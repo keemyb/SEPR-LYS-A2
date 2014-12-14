@@ -40,6 +40,7 @@ public class MapView {
     };
 
     MapView(State state) {
+        scrollPane.setViewportView(mapPanel);
         setDefaultBackground();
 
         map = new Map();
@@ -62,10 +63,8 @@ public class MapView {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        // Setting the size of the map panel to that of the image so that it can be scrolled if
-        // necessary.
-        mapPanel.setPreferredSize(new Dimension(background.getWidth(), background.getHeight()));
-        scrollPane.setViewportView(mapPanel);
+
+        setBackground(background);
     }
     public void setBackground(BufferedImage background) {
         this.background = background;
