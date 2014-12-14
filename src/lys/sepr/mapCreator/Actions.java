@@ -386,4 +386,20 @@ public final class Actions {
             }
         }
     }
+
+    public static void zoomIn(State state) {
+        state.zoomIn();
+    }
+
+    public static void zoomOut(State state) {
+        state.zoomOut();
+    }
+
+    public static void resetZoom(State state) {
+        state.resetZoom();
+    }
+
+    public static double getZoom(State state) {
+        return state.getZoom();
+    }
 }
