@@ -96,7 +96,7 @@ public class Inventory {
         if (containsResource(fuel)) {
             Fuel existingFuel = (Fuel) contents.get(contents.indexOf(fuel));
             int newQuantity = existingFuel.getQuantity() + fuel.getQuantity();
-            if (existingFuel.getQuantity() >= fuel.getMaxAllowed()) {
+            if (newQuantity >= fuel.getMaxAllowed()) {
                 existingFuel.setQuantity(existingFuel.getMaxAllowed());
                 maximumResourceError(fuel);
             } else {
