@@ -31,12 +31,29 @@ public final class Actions {
         return new Point(clickPointX, clickPointY);
     }
 
-    public static java.awt.Point trackPointToClickPoint(Point point, JPanel jPanel) {
-        /* y axis points have been inverted as the window coordinates start from the top left
-        where as the points start from the bottom left
-        */
-        double pointX = point.getX();
-        double pointY = jPanel.getHeight() - point.getY();
+    public static Point screenPointToMapPoint(java.awt.Point clickPoint, MapView mapView, State state) {
+        double jScrollOffsetX = mapView.getScrollPane().getX();
+        double jScrollOffsetY = mapView.getScrollPane().getY();
+        double clickPointX = clickPoint.x - jScrollOffsetX;
+        double clickPointY = clickPoint.y - jScrollOffsetY;
+        clickPointX /= state.getZoom();
+        clickPointY /= state.getZoom();
+        clickPointX += jScrollOffsetX;
+        clickPointY += jScrollOffsetY;
+        clickPointY = mapView.getMapPanel().getHeight() - clickPointY;
+        return new Point(clickPointX, clickPointY);
+    }
+
+    public static java.awt.Point mapPointToScreenPoint(Point point, MapView mapView, State state) {
+        double jScrollOffsetX = mapView.getScrollPane().getX();
+        double jScrollOffsetY = mapView.getScrollPane().getY();
+        double pointX = point.getX() + jScrollOffsetX;
+        double pointY = point.getY() + jScrollOffsetY;
+        pointX *= state.getZoom();
+        pointY *= state.getZoom();
+        pointX -= jScrollOffsetX;
+        pointY -= jScrollOffsetY;
+        pointY = mapView.getMapPanel().getHeight() - pointY;
         return new java.awt.Point((int) pointX, (int) pointY);
     }
 

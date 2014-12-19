@@ -35,6 +35,8 @@ public class MapView {
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
             Graphics2D g2 = (Graphics2D) g;
+            double zoom = state.getZoom();
+            g2.scale(zoom, zoom);
             g2.drawImage(background, 0, 0, null);
             Actions.drawMap(map, state, mapView, g2);
         }
@@ -83,7 +85,7 @@ public class MapView {
 
     private class MouseHandler extends MouseAdapter {
         public void mousePressed(MouseEvent e) {
-            lys.sepr.game.world.Point clickPoint = Actions.clickPointToTrackPoint(e.getPoint(), mapPanel);
+            lys.sepr.game.world.Point clickPoint = Actions.screenPointToMapPoint(e.getPoint(), mapView, state);
             switch(state.mode) {
                 case State.INSPECT_TRACK_MODE:
                     Actions.inspectTrack(map, clickPoint, minPickupDistance, state);
