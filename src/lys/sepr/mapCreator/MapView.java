@@ -34,6 +34,7 @@ public class MapView {
         @Override
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
+            setMapPanelSize();
             Graphics2D g2 = (Graphics2D) g;
             double zoom = state.getZoom();
             g2.scale(zoom, zoom);
@@ -43,6 +44,7 @@ public class MapView {
     };
 
     MapView(State state) {
+        this.state = state;
         scrollPane.setViewportView(mapPanel);
         setDefaultBackground();
 
@@ -51,8 +53,14 @@ public class MapView {
 
         map = new Map();
 
-        this.state = state;
         mapPanel.addMouseListener(mouseHandler);
+    }
+
+    public void setMapPanelSize() {
+        double zoom = state.getZoom();
+        int width = (int) (background.getWidth() * zoom);
+        int height = (int) (background.getHeight() * zoom);
+        mapPanel.setPreferredSize(new Dimension(width, height));
     }
 
     public Map getMap() {
@@ -74,7 +82,7 @@ public class MapView {
     }
     public void setBackground(BufferedImage background) {
         this.background = background;
-        mapPanel.setPreferredSize(new Dimension(background.getWidth(), background.getHeight()));
+        setMapPanelSize();
         mapPanel.repaint();
     }
 
