@@ -37,18 +37,19 @@ public class State {
 
     private double zoom = 1d;
     private final double zoomLevels = 4;
-    private double maxZoom = Math.pow(zoom, zoomLevels);
-    private double minZoom = Math.pow(zoom, -zoomLevels);
+    private final double zoomConstant = 1.5;
+    private final double maxZoom = Math.pow(zoomConstant, zoomLevels - 1);
+    private final double minZoom = Math.pow(zoomConstant, -(zoomLevels - 1));
 
     public void zoomIn() {
         if (zoom != maxZoom) {
-            zoom *= 1.5;
+            zoom *= zoomConstant;
         }
     }
 
     public void zoomOut() {
         if (zoom != minZoom) {
-            zoom /= 1.5;
+            zoom /= zoomConstant;
         }
     }
 
