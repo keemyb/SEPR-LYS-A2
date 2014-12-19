@@ -18,6 +18,9 @@ public class Buttons {
     JRadioButton breakTrackModeButton = new JRadioButton("Break Track");
     JButton saveMapButton = new JButton("Save Map");
     JButton loadMapButton = new JButton("Load Map");
+    JButton zoomInButton = new JButton("Zoom In");
+    JButton zoomOutButton = new JButton("Zoom Out");
+    JButton zoomResetButton = new JButton("Reset Zoom");
 
     private JPanel buttonPanel = new JPanel();
 
@@ -49,6 +52,9 @@ public class Buttons {
         buttonPanel.add(breakTrackModeButton);
         buttonPanel.add(loadMapButton);
         buttonPanel.add(saveMapButton);
+        buttonPanel.add(zoomInButton);
+        buttonPanel.add(zoomOutButton);
+        buttonPanel.add(zoomResetButton);
 
         inspectTrackModeButton.setSelected(true);
 
@@ -132,6 +138,27 @@ public class Buttons {
         loadMapButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 actions.loadMapAndBackground(mapView, mapView.getMapPanel());
+            }
+        });
+
+        zoomInButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                actions.zoomIn(state);
+                mapView.getMapPanel().repaint();
+            }
+        });
+
+        zoomOutButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                actions.zoomOut(state);
+                mapView.getMapPanel().repaint();
+            }
+        });
+
+        zoomResetButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                actions.resetZoom(state);
+                mapView.getMapPanel().repaint();
             }
         });
     }
