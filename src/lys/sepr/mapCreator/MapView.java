@@ -45,6 +45,9 @@ public class MapView {
     MapView(State state) {
         setDefaultBackground();
 
+        scrollPane.getHorizontalScrollBar().setUnitIncrement(16);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+
         map = new Map();
 
         this.state = state;
