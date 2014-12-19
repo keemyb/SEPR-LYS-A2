@@ -251,8 +251,7 @@ public final class Actions {
         }
     }
 
-    public static void drawMap(Map map, State state, MapView mapView, Graphics g) {
-        Graphics2D g2 = (Graphics2D) g;
+    public static void drawMap(Map map, State state, MapView mapView, Graphics2D g2) {
         g2.setStroke(new BasicStroke(5));
         if (state.routeLocation2 != null) {
             drawRoute(map, state, mapView, g2);

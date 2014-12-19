@@ -34,8 +34,9 @@ public class MapView {
         @Override
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
-            g.drawImage(background, 0, 0, null);
-            Actions.drawMap(map, state, mapView, g);
+            Graphics2D g2 = (Graphics2D) g;
+            g2.drawImage(background, 0, 0, null);
+            Actions.drawMap(map, state, mapView, g2);
         }
     };
 
