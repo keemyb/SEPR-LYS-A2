@@ -34,14 +34,20 @@ public class MapView {
         @Override
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
-            g.drawImage(background, 0, 0, null);
-            Actions.drawMap(map, state, mapView, g);
+            Graphics2D g2 = (Graphics2D) g;
+            double zoom = state.getZoom();
+            g2.scale(zoom, zoom);
+            g2.drawImage(background, 0, 0, null);
+            Actions.drawMap(map, state, mapView, g2);
         }
     };
 
     MapView(State state) {
         scrollPane.setViewportView(mapPanel);
         setDefaultBackground();
+
+        scrollPane.getHorizontalScrollBar().setUnitIncrement(16);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
         map = new Map();
 
@@ -81,7 +87,7 @@ public class MapView {
 
     private class MouseHandler extends MouseAdapter {
         public void mousePressed(MouseEvent e) {
-            lys.sepr.game.world.Point clickPoint = Actions.clickPointToTrackPoint(e.getPoint(), mapPanel);
+            lys.sepr.game.world.Point clickPoint = Actions.screenPointToMapPoint(e.getPoint(), mapView, state);
             switch(state.mode) {
                 case State.INSPECT_TRACK_MODE:
                     Actions.inspectTrack(map, clickPoint, minPickupDistance, state);

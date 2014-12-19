@@ -31,12 +31,29 @@ public final class Actions {
         return new Point(clickPointX, clickPointY);
     }
 
-    public static java.awt.Point trackPointToClickPoint(Point point, JPanel jPanel) {
-        /* y axis points have been inverted as the window coordinates start from the top left
-        where as the points start from the bottom left
-        */
-        double pointX = point.getX();
-        double pointY = jPanel.getHeight() - point.getY();
+    public static Point screenPointToMapPoint(java.awt.Point clickPoint, MapView mapView, State state) {
+        double jScrollOffsetX = mapView.getScrollPane().getX();
+        double jScrollOffsetY = mapView.getScrollPane().getY();
+        double clickPointX = clickPoint.x - jScrollOffsetX;
+        double clickPointY = clickPoint.y - jScrollOffsetY;
+        clickPointX /= state.getZoom();
+        clickPointY /= state.getZoom();
+        clickPointX += jScrollOffsetX;
+        clickPointY += jScrollOffsetY;
+        clickPointY = mapView.getMapPanel().getHeight() - clickPointY;
+        return new Point(clickPointX, clickPointY);
+    }
+
+    public static java.awt.Point mapPointToScreenPoint(Point point, MapView mapView, State state) {
+        double jScrollOffsetX = mapView.getScrollPane().getX();
+        double jScrollOffsetY = mapView.getScrollPane().getY();
+        double pointX = point.getX() + jScrollOffsetX;
+        double pointY = point.getY() + jScrollOffsetY;
+        pointX *= state.getZoom();
+        pointY *= state.getZoom();
+        pointX -= jScrollOffsetX;
+        pointY -= jScrollOffsetY;
+        pointY = mapView.getMapPanel().getHeight() - pointY;
         return new java.awt.Point((int) pointX, (int) pointY);
     }
 
@@ -251,8 +268,7 @@ public final class Actions {
         }
     }
 
-    public static void drawMap(Map map, State state, MapView mapView, Graphics g) {
-        Graphics2D g2 = (Graphics2D) g;
+    public static void drawMap(Map map, State state, MapView mapView, Graphics2D g2) {
         g2.setStroke(new BasicStroke(5));
         if (state.routeLocation2 != null) {
             drawRoute(map, state, mapView, g2);
@@ -385,5 +401,21 @@ public final class Actions {
                 ex.printStackTrace();
             }
         }
+    }
+
+    public static void zoomIn(State state) {
+        state.zoomIn();
+    }
+
+    public static void zoomOut(State state) {
+        state.zoomOut();
+    }
+
+    public static void resetZoom(State state) {
+        state.resetZoom();
+    }
+
+    public static double getZoom(State state) {
+        return state.getZoom();
     }
 }
