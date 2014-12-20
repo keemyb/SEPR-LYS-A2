@@ -369,19 +369,8 @@ public class Map {
         ArrayList<ArrayList<Track>> routes = getRoutes(from, to);
         if (routes.isEmpty()) return new ArrayList<Track>();
 
-        ArrayList<Track> fastestRoute = null;
-        Double shortestDistance = null;
-        for (ArrayList<Track> route : routes) {
-            Double distance = 0d;
-            for (Track track : route) {
-                distance += Utilities.length(track);
-            }
-            if (shortestDistance == null || distance < shortestDistance) {
-                shortestDistance = distance;
-                fastestRoute = route;
-            }
-        }
-        return fastestRoute;
+        // Routes are sorted
+        return routes.get(0);
     }
 
     /**
