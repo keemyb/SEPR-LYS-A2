@@ -409,6 +409,14 @@ public final class Actions {
         }
     }
 
+    public static void nameLocation(Location location, JPanel jPanel) {
+        String newName = JOptionPane.showInputDialog(jPanel,
+                "New location name", location.getName());
+        if (newName != null) {
+            location.setName(newName);
+        }
+    }
+
     public static void zoomIn(State state) {
         state.zoomIn();
     }
