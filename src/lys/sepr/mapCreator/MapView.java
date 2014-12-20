@@ -17,6 +17,8 @@ public class MapView {
     java.awt.Color connectedTrackColour = Color.RED;
     java.awt.Color unconnectedTrackColour = Color.BLACK;
 
+    private final double locationSize = 10d;
+
     private MouseHandler mouseHandler = new MouseHandler();
 
     private Double minPickupDistance = 20d;
@@ -42,7 +44,7 @@ public class MapView {
             setMapPanelSize();
             g2.drawImage(background, 0, 0, null);
             g2.scale(1/zoom, 1/zoom);
-            Actions.drawMap(map, state, mapView, g2);
+            Actions.drawMap(map, locationSize, state, mapView, g2);
         }
     };
 
@@ -124,7 +126,7 @@ public class MapView {
                     Actions.createTrack(map, clickPoint, scaledPickupDistance, state);
                     break;
                 case State.CREATE_LOCATION_MODE:
-                    Actions.createLocation(map, clickPoint, scaledPickupDistance);
+                    Actions.createLocation(map, clickPoint, scaledPickupDistance, mapView);
                     break;
                 case State.MOVE_MODE:
                     Actions.pickupOrMoveLocationTrackIntersection(map, clickPoint, scaledPickupDistance, state);
@@ -140,6 +142,9 @@ public class MapView {
                     break;
                 case State.BREAK_TRACK_MODE:
                     Actions.breakTrack(map, clickPoint, scaledPickupDistance);
+                    break;
+                case State.RENAME_LOCATION_MODE:
+                    Actions.renameLocation(map, clickPoint, scaledPickupDistance, mapPanel);
                     break;
             }
             mapPanel.repaint();

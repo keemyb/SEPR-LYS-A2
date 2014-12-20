@@ -246,4 +246,16 @@ public final class Utilities {
         }
         return length;
     }
+
+    public static String titleCase(String input) {
+        String[] parts = input.split(" ");
+        StringBuilder newString = new StringBuilder();
+        for (String part : parts) {
+            char[] chars = part.toLowerCase().toCharArray();
+            chars[0] = Character.toUpperCase(chars[0]);
+
+            newString.append(new String(chars)).append(" ");
+        }
+        return newString.toString();
+    }
 }

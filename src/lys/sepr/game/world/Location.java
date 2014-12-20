@@ -15,7 +15,7 @@ public class Location{
      */
     public Location(Point point, String name) {
         this.point = point;
-        this.name = name;
+        setName(name);
     }
 
     /**
@@ -24,6 +24,23 @@ public class Location{
      */
     public Point getPoint() {
         return point;
+    }
+
+    /**
+     * Gets the name of a location.
+     * @return The name of the location
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Changes the name of a location.
+     * @param name the new name of the location.
+     */
+    public void setName(String name) {
+        String properCase = Utilities.titleCase(name);
+        this.name = properCase;
     }
 
     /**
