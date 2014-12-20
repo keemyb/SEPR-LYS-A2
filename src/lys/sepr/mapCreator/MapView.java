@@ -124,7 +124,7 @@ public class MapView {
                     Actions.createTrack(map, clickPoint, scaledPickupDistance, state);
                     break;
                 case State.CREATE_LOCATION_MODE:
-                    Actions.createLocation(map, clickPoint, scaledPickupDistance);
+                    Actions.createLocation(map, clickPoint, scaledPickupDistance, mapView);
                     break;
                 case State.MOVE_MODE:
                     Actions.pickupOrMoveLocationTrackIntersection(map, clickPoint, scaledPickupDistance, state);

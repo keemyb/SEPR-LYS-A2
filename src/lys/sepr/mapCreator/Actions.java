@@ -205,12 +205,13 @@ public final class Actions {
         state.setHoldingLocationTrackIntersection(false);
     }
 
-    public static void createLocation(Map map, Point clickPoint, Double minPickUpDistance) {
+    public static void createLocation(Map map, Point clickPoint, Double minPickUpDistance, MapView mapView) {
         System.out.println("Create Location");
         for (Location existingLocation : map.getLocations()) {
             if (distance(existingLocation.getPoint(), clickPoint) < minPickUpDistance) return;
         }
         Location location = new Location(clickPoint, "location");
+        nameLocation(location, mapView.getMapPanel());
         map.addLocation(location);
     }
 
