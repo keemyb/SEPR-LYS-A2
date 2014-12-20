@@ -266,6 +266,9 @@ public final class Actions {
         } else {
             drawNormal(map, state, mapView, g2);
         }
+        for (Location location : map.getLocations()) {
+            drawLocationName(location, state, g2);
+        }
     }
 
     public static void drawRoute(Map map, State state, MapView mapView, Graphics2D g2) {
@@ -349,6 +352,11 @@ public final class Actions {
             }
             g2.draw(rectangle);
         }
+    }
+
+    public static void drawLocationName(Location location, State state, Graphics2D g2) {
+        java.awt.Point locationPoint = mapPointToScreenPoint(location.getPoint(), state);
+        g2.drawString(location.getName(), (float) locationPoint.getX(), (float) locationPoint.getY());
     }
 
     public static void loadMapAndBackground(MapView mapView, JPanel jPanel) {
