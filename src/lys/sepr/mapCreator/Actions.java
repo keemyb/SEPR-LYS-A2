@@ -66,23 +66,23 @@ public final class Actions {
     }
 
     public static void clearCreateNew(State state) {
-        state.startedNewTrack = false;
-        state.newTrackPoint1 = null;
-        state.newTrackPoint2 = null;
+        state.setStartedNewTrack(false);
+        state.setNewTrackPoint1(null);
+        state.setNewTrackPoint2(null);
     }
 
     public static void dropHeldLocationTrackIntersection(State state) {
-        state.holdingLocationTrackIntersection = false;
-        state.intersectionPickedUp = null;
-        state.trackPointPickedUp = null;
-        state.trackPickedUp = null;
-        state.locationPickedUp = null;
+        state.setHoldingLocationTrackIntersection(false);
+        state.setIntersectionPickedUp(null);
+        state.setTrackPointPickedUp(null);
+        state.setTrackPickedUp(null);
+        state.setLocationPickedUp(null);
     }
 
     public static void clearInspect(State state) {
-        state.startedRouteInspect = false;
-        state.routeLocation1 = null;
-        state.routeLocation2 = null;
+        state.setStartedRouteInspect(false);
+        state.setRouteLocation1(null);
+        state.setRouteLocation2(null);
     }
 
     public static Intersection selectIntersection(Map map, Point clickPoint, Double minPickUpDistance) {
@@ -123,25 +123,25 @@ public final class Actions {
         Location location = selectLocation(map, clickPoint, minPickUpDistance);
         if (location != null) {
             dropHeldLocationTrackIntersection(state);
-            state.locationPickedUp = location;
-            state.holdingLocationTrackIntersection = true;
+            state.setLocationPickedUp(location);
+            state.setHoldingLocationTrackIntersection(true);
             return;
         }
 
         Intersection intersection = selectIntersection(map, clickPoint, minPickUpDistance);
         if (intersection != null) {
             dropHeldLocationTrackIntersection(state);
-            state.intersectionPickedUp = intersection;
-            state.holdingLocationTrackIntersection = true;
+            state.setIntersectionPickedUp(intersection);
+            state.setHoldingLocationTrackIntersection(true);
             return;
         }
 
         ArrayList<Object> trackAndPoint = (ArrayList<Object>) selectCloseTrackEnd(map, clickPoint, minPickUpDistance);
         if (trackAndPoint != null) {
             dropHeldLocationTrackIntersection(state);
-            state.trackPickedUp = (Track) trackAndPoint.get(0);
-            state.trackPointPickedUp = (Point) trackAndPoint.get(1);
-            state.holdingLocationTrackIntersection = true;
+            state.setTrackPickedUp((Track) trackAndPoint.get(0));
+            state.setTrackPointPickedUp((Point) trackAndPoint.get(1));
+            state.setHoldingLocationTrackIntersection(true);
         }
     }
 
@@ -168,23 +168,23 @@ public final class Actions {
 
     public static void inspectTrack(Map map, Point clickPoint, Double minPickUpDistance, State state) {
         Track track = selectTrack(map, clickPoint, minPickUpDistance);
-        if (track != null && track.equals(state.selectedTrack)) {
-            state.selectedTrack = null;
+        if (track != null && track.equals(state.getSelectedTrack())) {
+            state.setSelectedTrack(null);
         } else if (track != null) {
-            state.selectedTrack = track;
-        } else state.selectedTrack = null;
+            state.setSelectedTrack(track);
+        } else state.setSelectedTrack(null);
     }
 
     public static void inspectRoute(Map map, Point clickPoint, Double minPickUpDistance, State state) {
         Location location = selectLocation(map, clickPoint, minPickUpDistance);
-        if (!state.startedRouteInspect) {
+        if (!state.isStartedRouteInspect()) {
             // Clearing the second location so that only the first one is highlighted
-            state.routeLocation2 = null;
-            state.routeLocation1 = location;
+            state.setRouteLocation2(null);
+            state.setRouteLocation1(location);
         } else {
-            state.routeLocation2 = location;
+            state.setRouteLocation2(location);
         }
-        state.startedRouteInspect = !state.startedRouteInspect;
+        state.setStartedRouteInspect(!state.isStartedRouteInspect());
     }
 
     public static void moveLocationIntersectionTrackEnd(Map map, Point clickPoint, Double minPickUpDistance, State state) {
@@ -195,14 +195,14 @@ public final class Actions {
         if (trackAndPoint != null) {
             clickPoint = (Point) trackAndPoint.get(1);
         }
-        if (state.locationPickedUp != null) {
-            map.moveLocation(state.locationPickedUp, clickPoint);
-        } else if (state.trackPickedUp != null && state.trackPointPickedUp != null) {
-            map.moveTrack(state.trackPickedUp, state.trackPointPickedUp, clickPoint);
+        if (state.getLocationPickedUp() != null) {
+            map.moveLocation(state.getLocationPickedUp(), clickPoint);
+        } else if (state.getTrackPickedUp() != null && state.getTrackPointPickedUp() != null) {
+            map.moveTrack(state.getTrackPickedUp(), state.getTrackPointPickedUp(), clickPoint);
         } else {
-            map.moveIntersection(state.intersectionPickedUp, clickPoint);
+            map.moveIntersection(state.getIntersectionPickedUp(), clickPoint);
         }
-        state.holdingLocationTrackIntersection = false;
+        state.setHoldingLocationTrackIntersection(false);
     }
 
     public static void createLocation(Map map, Point clickPoint, Double minPickUpDistance) {
@@ -216,26 +216,26 @@ public final class Actions {
 
     public static void createTrack(Map map, Point clickPoint, Double minPickUpDistance, State state) {
         System.out.println("Create Track");
-        if (!state.startedNewTrack) {
-            state.newTrackPoint1 = clickPoint;
+        if (!state.isStartedNewTrack()) {
+            state.setNewTrackPoint1(clickPoint);
         } else {
-            state.newTrackPoint2 = clickPoint;
-            Track track = new Track(state.newTrackPoint1, state.newTrackPoint2);
+            state.setNewTrackPoint2(clickPoint);
+            Track track = new Track(state.getNewTrackPoint1(), state.getNewTrackPoint2());
             // Finding a close existing point for each point in the new track
             // so that we can change the coordinates to match (and thus make an intersection).
-            ArrayList<Object> trackAndPoint1 = (ArrayList<Object>) selectCloseTrackEnd(map, state.newTrackPoint1, minPickUpDistance);
+            ArrayList<Object> trackAndPoint1 = (ArrayList<Object>) selectCloseTrackEnd(map, state.getNewTrackPoint1(), minPickUpDistance);
             if (trackAndPoint1 != null) {
                 Point closePoint = (Point) trackAndPoint1.get(1);
-                track.move(state.newTrackPoint1, closePoint);
+                track.move(state.getNewTrackPoint1(), closePoint);
             }
-            ArrayList<Object> trackAndPoint2 = (ArrayList<Object>) selectCloseTrackEnd(map, state.newTrackPoint2, minPickUpDistance);
+            ArrayList<Object> trackAndPoint2 = (ArrayList<Object>) selectCloseTrackEnd(map, state.getNewTrackPoint2(), minPickUpDistance);
             if (trackAndPoint2 != null) {
                 Point closePoint = (Point) trackAndPoint2.get(1);
-                track.move(state.newTrackPoint2, closePoint);
+                track.move(state.getNewTrackPoint2(), closePoint);
             }
             map.addTrack(track);
         }
-        state.startedNewTrack = !state.startedNewTrack;
+        state.setStartedNewTrack(!state.isStartedNewTrack());
     }
 
     public static void breakTrack(Map map, Point clickPoint, Double minPickUpDistance) {
@@ -249,7 +249,7 @@ public final class Actions {
     }
 
     public static void pickupOrMoveLocationTrackIntersection(Map map, Point clickPoint, Double minPickUpDistance, State state) {
-        if (state.holdingLocationTrackIntersection) {
+        if (state.isHoldingLocationTrackIntersection()) {
             moveLocationIntersectionTrackEnd(map, clickPoint, minPickUpDistance, state);
         } else {
             pickUpLocationIntersectionTrackEnd(map, clickPoint, minPickUpDistance, state);
@@ -258,9 +258,9 @@ public final class Actions {
 
     public static void drawMap(Map map, State state, MapView mapView, Graphics2D g2) {
         g2.setStroke(new BasicStroke(5));
-        if (state.routeLocation2 != null) {
+        if (state.getRouteLocation2() != null) {
             drawRoute(map, state, mapView, g2);
-        } else if (state.selectedTrack != null) {
+        } else if (state.getSelectedTrack() != null) {
             drawNextTracks(map, state, mapView, g2);
         } else {
             drawNormal(map, state, mapView, g2);
@@ -270,7 +270,7 @@ public final class Actions {
     public static void drawRoute(Map map, State state, MapView mapView, Graphics2D g2) {
         java.awt.Color lineColour;
         java.awt.Color locationColour;
-        ArrayList<Track> fastestRoute = map.fastestRoute(state.routeLocation1, state.routeLocation2);
+        ArrayList<Track> fastestRoute = map.fastestRoute(state.getRouteLocation1(), state.getRouteLocation2());
         for (Track track : map.getTracks()) {
             Line2D.Double line = trackToLine2D(track, state);
             if (fastestRoute.contains(track)) {
@@ -281,7 +281,7 @@ public final class Actions {
             g2.draw(line);
         }
         for (Location location : map.getLocations()) {
-            if (location.equals(state.routeLocation1) || location.equals(state.routeLocation2)) {
+            if (location.equals(state.getRouteLocation1()) || location.equals(state.getRouteLocation2())) {
                 locationColour = mapView.selectedTrackColour;
             } else locationColour = mapView.unconnectedTrackColour;
             Rectangle2D.Double rectangle = locationToRect2D(location, 10d, state);
@@ -294,13 +294,13 @@ public final class Actions {
         java.awt.Color lineColour;
         for (Track track : map.getTracks()) {
             Line2D.Double line = trackToLine2D(track, state);
-            if (track.equals(state.selectedTrack)) {
+            if (track.equals(state.getSelectedTrack())) {
                 lineColour = mapView.selectedTrackColour;
-            } else if (state.selectedTrack.getActiveNextTracks().contains(track)) {
+            } else if (state.getSelectedTrack().getActiveNextTracks().contains(track)) {
                 lineColour = mapView.activeNextTrackColour;
-            } else if (state.selectedTrack.getValidNextTracks().contains(track)) {
+            } else if (state.getSelectedTrack().getValidNextTracks().contains(track)) {
                 lineColour = mapView.validNextTrackColour;
-            } else if (state.selectedTrack.getConnectedTracks().contains(track)) {
+            } else if (state.getSelectedTrack().getConnectedTracks().contains(track)) {
                 lineColour = mapView.connectedTrackColour;
             } else lineColour = mapView.unconnectedTrackColour;
 
@@ -322,7 +322,7 @@ public final class Actions {
         }
         for (Location location : map.getLocations()) {
             Rectangle2D.Double rectangle = locationToRect2D(location, 10d, state);
-            if (state.routeLocation1 == location) {
+            if (state.getRouteLocation1() == location) {
                 // highlight the first location selected when inspecting track
                 g2.setColor(Color.GREEN);
             } else {

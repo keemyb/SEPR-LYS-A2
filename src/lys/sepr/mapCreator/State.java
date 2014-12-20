@@ -17,23 +17,23 @@ public class State {
     public static final int INSPECT_ROUTE_MODE = 7;
     public static final int BREAK_TRACK_MODE = 8;
 
-    public int mode = INSPECT_TRACK_MODE;
+    private int mode = INSPECT_TRACK_MODE;
 
-    public Track selectedTrack;
-    public boolean startedNewTrack = false;
+    private Track selectedTrack;
+    private boolean startedNewTrack = false;
 
-    public Point newTrackPoint1;
-    public Point newTrackPoint2;
+    private Point newTrackPoint1;
+    private Point newTrackPoint2;
 
-    public boolean holdingLocationTrackIntersection = false;
-    public Intersection intersectionPickedUp;
-    public Point trackPointPickedUp;
-    public Track trackPickedUp;
-    public Location locationPickedUp;
+    private boolean holdingLocationTrackIntersection = false;
+    private Intersection intersectionPickedUp;
+    private Point trackPointPickedUp;
+    private Track trackPickedUp;
+    private Location locationPickedUp;
 
-    public boolean startedRouteInspect = false;
-    public Location routeLocation1;
-    public Location routeLocation2;
+    private boolean startedRouteInspect = false;
+    private Location routeLocation1;
+    private Location routeLocation2;
 
     private double zoom = 1d;
     private final double zoomLevels = 4;
@@ -65,4 +65,103 @@ public class State {
         this.mode = mode;
     }
 
+    public Track getSelectedTrack() {
+        return selectedTrack;
+    }
+
+    public void setSelectedTrack(Track selectedTrack) {
+        this.selectedTrack = selectedTrack;
+    }
+
+    public boolean isStartedNewTrack() {
+        return startedNewTrack;
+    }
+
+    public void setStartedNewTrack(boolean startedNewTrack) {
+        this.startedNewTrack = startedNewTrack;
+    }
+
+    public Point getNewTrackPoint1() {
+        return newTrackPoint1;
+    }
+
+    public void setNewTrackPoint1(Point newTrackPoint1) {
+        this.newTrackPoint1 = newTrackPoint1;
+    }
+
+    public Point getNewTrackPoint2() {
+        return newTrackPoint2;
+    }
+
+    public void setNewTrackPoint2(Point newTrackPoint2) {
+        this.newTrackPoint2 = newTrackPoint2;
+    }
+
+    public boolean isHoldingLocationTrackIntersection() {
+        return holdingLocationTrackIntersection;
+    }
+
+    public void setHoldingLocationTrackIntersection(boolean holdingLocationTrackIntersection) {
+        this.holdingLocationTrackIntersection = holdingLocationTrackIntersection;
+    }
+
+    public Intersection getIntersectionPickedUp() {
+        return intersectionPickedUp;
+    }
+
+    public void setIntersectionPickedUp(Intersection intersectionPickedUp) {
+        this.intersectionPickedUp = intersectionPickedUp;
+    }
+
+    public Point getTrackPointPickedUp() {
+        return trackPointPickedUp;
+    }
+
+    public void setTrackPointPickedUp(Point trackPointPickedUp) {
+        this.trackPointPickedUp = trackPointPickedUp;
+    }
+
+    public Track getTrackPickedUp() {
+        return trackPickedUp;
+    }
+
+    public void setTrackPickedUp(Track trackPickedUp) {
+        this.trackPickedUp = trackPickedUp;
+    }
+
+    public Location getLocationPickedUp() {
+        return locationPickedUp;
+    }
+
+    public void setLocationPickedUp(Location locationPickedUp) {
+        this.locationPickedUp = locationPickedUp;
+    }
+
+    public boolean isStartedRouteInspect() {
+        return startedRouteInspect;
+    }
+
+    public void setStartedRouteInspect(boolean startedRouteInspect) {
+        this.startedRouteInspect = startedRouteInspect;
+    }
+
+    public Location getRouteLocation1() {
+        return routeLocation1;
+    }
+
+    public void setRouteLocation1(Location routeLocation1) {
+        this.routeLocation1 = routeLocation1;
+    }
+
+    public Location getRouteLocation2() {
+        return routeLocation2;
+    }
+
+    public void setRouteLocation2(Location routeLocation2) {
+        this.routeLocation2 = routeLocation2;
+    }
+
+    public int getMode() {
+        return mode;
+    }
 }

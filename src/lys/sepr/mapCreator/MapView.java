@@ -111,7 +111,7 @@ public class MapView {
     private class MouseHandler extends MouseAdapter {
         public void mousePressed(MouseEvent e) {
             lys.sepr.game.world.Point clickPoint = Actions.screenPointToMapPoint(e.getPoint(), state);
-            switch(state.mode) {
+            switch(state.getMode()) {
                 case State.INSPECT_TRACK_MODE:
                     Actions.inspectTrack(map, clickPoint, minPickupDistance, state);
                     break;
