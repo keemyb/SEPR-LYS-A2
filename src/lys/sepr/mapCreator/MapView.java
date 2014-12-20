@@ -50,6 +50,7 @@ public class MapView {
         this.state = state;
 
         scrollPane.setViewportView(mapPanel);
+        scrollPane.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
         setDefaultBackground();
 
         scrollPane.getHorizontalScrollBar().setUnitIncrement(16);
@@ -109,7 +110,7 @@ public class MapView {
 
     private class MouseHandler extends MouseAdapter {
         public void mousePressed(MouseEvent e) {
-            lys.sepr.game.world.Point clickPoint = Actions.screenPointToMapPoint(e.getPoint(), mapView, state);
+            lys.sepr.game.world.Point clickPoint = Actions.screenPointToMapPoint(e.getPoint(), state);
             switch(state.mode) {
                 case State.INSPECT_TRACK_MODE:
                     Actions.inspectTrack(map, clickPoint, minPickupDistance, state);
