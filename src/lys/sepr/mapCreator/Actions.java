@@ -210,7 +210,7 @@ public final class Actions {
         for (Location existingLocation : map.getLocations()) {
             if (distance(existingLocation.getPoint(), clickPoint) < minPickUpDistance) return;
         }
-        Location location = new Location(clickPoint, "location");
+        Location location = new Location(clickPoint, "location " + map.getLocations().size());
         nameLocation(location, mapView.getMapPanel());
         map.addLocation(location);
     }
