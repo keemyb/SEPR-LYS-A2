@@ -111,33 +111,34 @@ public class MapView {
     private class MouseHandler extends MouseAdapter {
         public void mousePressed(MouseEvent e) {
             lys.sepr.game.world.Point clickPoint = Actions.screenPointToMapPoint(e.getPoint(), state);
+            double scaledPickupDistance = minPickupDistance * state.getZoom();
             switch(state.getMode()) {
                 case State.INSPECT_TRACK_MODE:
-                    Actions.inspectTrack(map, clickPoint, minPickupDistance, state);
+                    Actions.inspectTrack(map, clickPoint, scaledPickupDistance, state);
                     break;
                 case State.INSPECT_ROUTE_MODE:
-                    Actions.inspectRoute(map, clickPoint, minPickupDistance, state);
+                    Actions.inspectRoute(map, clickPoint, scaledPickupDistance, state);
                     break;
                 case State.CREATE_TRACK_MODE:
-                    Actions.createTrack(map, clickPoint, minPickupDistance, state);
+                    Actions.createTrack(map, clickPoint, scaledPickupDistance, state);
                     break;
                 case State.CREATE_LOCATION_MODE:
-                    Actions.createLocation(map, clickPoint, minPickupDistance);
+                    Actions.createLocation(map, clickPoint, scaledPickupDistance);
                     break;
                 case State.MOVE_MODE:
-                    Actions.pickupOrMoveLocationTrackIntersection(map, clickPoint, minPickupDistance, state);
+                    Actions.pickupOrMoveLocationTrackIntersection(map, clickPoint, scaledPickupDistance, state);
                     break;
                 case State.DELETE_LOCATION_MODE:
-                    Actions.removeLocation(map, clickPoint, minPickupDistance);
+                    Actions.removeLocation(map, clickPoint, scaledPickupDistance);
                     break;
                 case State.DELETE_TRACK_MODE:
-                    Actions.removeTrack(map, clickPoint, minPickupDistance);
+                    Actions.removeTrack(map, clickPoint, scaledPickupDistance);
                     break;
                 case State.DELETE_INTERSECTION_MODE:
-                    Actions.removeIntersection(map, clickPoint, minPickupDistance);
+                    Actions.removeIntersection(map, clickPoint, scaledPickupDistance);
                     break;
                 case State.BREAK_TRACK_MODE:
-                    Actions.breakTrack(map, clickPoint, minPickupDistance);
+                    Actions.breakTrack(map, clickPoint, scaledPickupDistance);
                     break;
             }
             mapPanel.repaint();
