@@ -242,10 +242,9 @@ public final class Actions {
     public static void breakTrack(Map map, Point clickPoint, Double minPickUpDistance) {
         System.out.println("Break Track");
         Track closestTrack = closestTrack(clickPoint, map.getTracks(), minPickUpDistance);
+        Point closestPoint = closestPoint(clickPoint, closestTrack);
         if (closestTrack != null) {
-            // Not Perfect, we should ideally get the closestpoint to the clickpoint that is on the line
-            // Currently if the click is not on the line the track will move slightly when broken.
-            map.breakTrack(closestTrack, clickPoint);
+            map.breakTrack(closestTrack, closestPoint);
         }
     }
 
