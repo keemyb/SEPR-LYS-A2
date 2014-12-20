@@ -275,13 +275,12 @@ public final class Actions {
 
     public static void drawRoute(Map map, State state, double locationSize, MapView mapView, Graphics2D g2) {
         java.awt.Color lineColour;
-        java.awt.Color locationColour;
         ArrayList<ArrayList<Track>> routes = map.getRoutes(state.getRouteLocation1(), state.getRouteLocation2());
+
+        // drawing the tracks not part of a route.
         for (Track track : map.getTracks()) {
             lineColour = mapView.unconnectedTrackColour;
-            Line2D.Double line = trackToLine2D(track, state);
-            g2.setColor(lineColour);
-            g2.draw(line);
+            drawTrack(track, lineColour, state, g2);
         }
 
 //        Random r = new Random();
@@ -300,10 +299,10 @@ public final class Actions {
 
             ArrayList<Track> route = routes.get(i);
             for (Track track : route) {
-                Line2D.Double line = trackToLine2D(track, state);
-                g2.draw(line);
+                drawTrack(track, lineColour, state, g2);
             }
         }
+
         for (Location location : map.getLocations()) {
             if (location.equals(state.getRouteLocation1()) || location.equals(state.getRouteLocation2())) {
                 drawLocation(location, locationSize, mapView.selectedTrackColour, state, g2);
@@ -316,7 +315,6 @@ public final class Actions {
     public static void drawNextTracks(Map map, State state, double locationSize, MapView mapView, Graphics2D g2) {
         java.awt.Color lineColour;
         for (Track track : map.getTracks()) {
-            Line2D.Double line = trackToLine2D(track, state);
             if (track.equals(state.getSelectedTrack())) {
                 lineColour = mapView.selectedTrackColour;
             } else if (state.getSelectedTrack().getActiveNextTracks().contains(track)) {
@@ -327,8 +325,7 @@ public final class Actions {
                 lineColour = mapView.connectedTrackColour;
             } else lineColour = mapView.unconnectedTrackColour;
 
-            g2.setColor(lineColour);
-            g2.draw(line);
+            drawTrack(track, lineColour, state, g2);
         }
         for (Location location : map.getLocations()) {
             drawLocation(location, locationSize, randomColor(), state, g2);
@@ -337,9 +334,7 @@ public final class Actions {
 
     public static void drawNormal(Map map, State state, double locationSize, MapView mapView, Graphics2D g2) {
         for (Track track : map.getTracks()) {
-            Line2D.Double line = trackToLine2D(track, state);
-            g2.setColor(randomColor());
-            g2.draw(line);
+            drawTrack(track, randomColor(), state, g2);
         }
         for (Location location : map.getLocations()) {
             if (state.getRouteLocation1() == location) {
@@ -349,6 +344,12 @@ public final class Actions {
                 drawLocation(location, locationSize, randomColor(), state, g2);
             }
         }
+    }
+
+    public static void drawTrack(Track track, java.awt.Color color, State state, Graphics2D g2) {
+        Line2D.Double line = trackToLine2D(track, state);
+        g2.setColor(color);
+        g2.draw(line);
     }
 
     public static void drawLocation(Location location, double locationSize, java.awt.Color color, State state, Graphics2D g2) {
