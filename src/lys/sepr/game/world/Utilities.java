@@ -153,31 +153,41 @@ public final class Utilities {
         Track closestTrack = null;
         Double closestDistance = null;
         for (Track track : tracks) {
-            Point trackPoint1 = track.getPoints().get(0);
-            Point trackPoint2 = track.getPoints().get(1);
-            ArrayList<Double> trackVector = getVector(trackPoint1, trackPoint2);
-            ArrayList<Double> unitTrackVector = unitVector(trackVector);
-            ArrayList<Double> trackPointToClickPointVector = getVector(trackPoint1, to);
-            double lengthProjectedVector = dotProduct(trackPointToClickPointVector, unitTrackVector);
-            ArrayList<Double> projectedVector = multiply(unitTrackVector, lengthProjectedVector);
-            ArrayList<Double> closestPoint = new ArrayList<Double>();
-            if (lengthProjectedVector < 0) {
-                closestPoint.add(trackPoint1.getX());
-                closestPoint.add(trackPoint1.getY());
-            } else if (lengthProjectedVector > magnitude(trackVector)) {
-                closestPoint.add(trackPoint2.getX());
-                closestPoint.add(trackPoint2.getY());
-            } else {
-                closestPoint.add(trackPoint1.getX() + projectedVector.get(0));
-                closestPoint.add(trackPoint1.getY() + projectedVector.get(1));
-            }
-            double distance = magnitude(getVector(new Point(closestPoint.get(0), closestPoint.get(1)), to));
+            double distance = closestDistance(to, track);
             if (distance < range && (closestDistance == null || distance < closestDistance)) {
                 closestDistance = distance;
                 closestTrack = track;
             }
         }
         return closestTrack;
+    }
+
+    /**
+     * Computes the closest distance from a track to a certain point.
+     * @param to
+     * @param track The track which the closest distance will be found.
+     * @return The closest distance from the track to the specified point.
+     */
+    public static double closestDistance(Point to, Track track) {
+        Point trackPoint1 = track.getPoints().get(0);
+        Point trackPoint2 = track.getPoints().get(1);
+        ArrayList<Double> trackVector = getVector(trackPoint1, trackPoint2);
+        ArrayList<Double> unitTrackVector = unitVector(trackVector);
+        ArrayList<Double> trackPointToClickPointVector = getVector(trackPoint1, to);
+        double lengthProjectedVector = dotProduct(trackPointToClickPointVector, unitTrackVector);
+        ArrayList<Double> projectedVector = multiply(unitTrackVector, lengthProjectedVector);
+        ArrayList<Double> closestPoint = new ArrayList<Double>();
+        if (lengthProjectedVector < 0) {
+            closestPoint.add(trackPoint1.getX());
+            closestPoint.add(trackPoint1.getY());
+        } else if (lengthProjectedVector > magnitude(trackVector)) {
+            closestPoint.add(trackPoint2.getX());
+            closestPoint.add(trackPoint2.getY());
+        } else {
+            closestPoint.add(trackPoint1.getX() + projectedVector.get(0));
+            closestPoint.add(trackPoint1.getY() + projectedVector.get(1));
+        }
+        return magnitude(getVector(new Point(closestPoint.get(0), closestPoint.get(1)), to));
     }
 
     //TODO rewrite the closestLocation JavaDoc
