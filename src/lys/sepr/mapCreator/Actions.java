@@ -260,18 +260,18 @@ public final class Actions {
     public static void drawMap(Map map, double locationSize, State state, MapView mapView, Graphics2D g2) {
         g2.setStroke(new BasicStroke(5));
         if (state.getRouteLocation2() != null) {
-            drawRoute(map, state, mapView, g2);
+            drawRoute(map, state, locationSize, mapView, g2);
         } else if (state.getSelectedTrack() != null) {
-            drawNextTracks(map, state, mapView, g2);
+            drawNextTracks(map, state, locationSize, mapView, g2);
         } else {
-            drawNormal(map, state, mapView, g2);
+            drawNormal(map, state, locationSize, mapView, g2);
         }
         for (Location location : map.getLocations()) {
             drawLocationName(location, locationSize, state, g2);
         }
     }
 
-    public static void drawRoute(Map map, State state, MapView mapView, Graphics2D g2) {
+    public static void drawRoute(Map map, State state, double locationSize, MapView mapView, Graphics2D g2) {
         java.awt.Color lineColour;
         java.awt.Color locationColour;
         ArrayList<ArrayList<Track>> routes = map.getRoutes(state.getRouteLocation1(), state.getRouteLocation2());
@@ -304,15 +304,14 @@ public final class Actions {
         }
         for (Location location : map.getLocations()) {
             if (location.equals(state.getRouteLocation1()) || location.equals(state.getRouteLocation2())) {
-                locationColour = mapView.selectedTrackColour;
-            } else locationColour = mapView.unconnectedTrackColour;
-            Rectangle2D.Double rectangle = locationToRect2D(location, 10d, state);
-            g2.setColor(locationColour);
-            g2.draw(rectangle);
+                drawLocation(location, locationSize, mapView.selectedTrackColour, state, g2);
+            } else {
+                drawLocation(location, locationSize, mapView.unconnectedTrackColour, state, g2);
+            }
         }
     }
 
-    public static void drawNextTracks(Map map, State state, MapView mapView, Graphics2D g2) {
+    public static void drawNextTracks(Map map, State state, double locationSize, MapView mapView, Graphics2D g2) {
         java.awt.Color lineColour;
         for (Track track : map.getTracks()) {
             Line2D.Double line = trackToLine2D(track, state);
@@ -330,28 +329,30 @@ public final class Actions {
             g2.draw(line);
         }
         for (Location location : map.getLocations()) {
-            Rectangle2D.Double rectangle = locationToRect2D(location, 10d, state);
-            g2.setColor(randomColor());
-            g2.draw(rectangle);
+            drawLocation(location, locationSize, randomColor(), state, g2);
         }
     }
 
-    public static void drawNormal(Map map, State state, MapView mapView, Graphics2D g2) {
+    public static void drawNormal(Map map, State state, double locationSize, MapView mapView, Graphics2D g2) {
         for (Track track : map.getTracks()) {
             Line2D.Double line = trackToLine2D(track, state);
             g2.setColor(randomColor());
             g2.draw(line);
         }
         for (Location location : map.getLocations()) {
-            Rectangle2D.Double rectangle = locationToRect2D(location, 10d, state);
             if (state.getRouteLocation1() == location) {
                 // highlight the first location selected when inspecting track
-                g2.setColor(Color.GREEN);
+                drawLocation(location, locationSize, Color.GREEN, state, g2);
             } else {
-                g2.setColor(randomColor());
+                drawLocation(location, locationSize, randomColor(), state, g2);
             }
-            g2.draw(rectangle);
         }
+    }
+
+    public static void drawLocation(Location location, double locationSize, java.awt.Color color, State state, Graphics2D g2) {
+        Rectangle2D.Double rectangle = locationToRect2D(location, locationSize, state);
+        g2.setColor(color);
+        g2.draw(rectangle);
     }
 
     public static void drawLocationName(Location location, double locationSize, State state, Graphics2D g2) {
