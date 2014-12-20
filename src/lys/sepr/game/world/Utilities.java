@@ -150,7 +150,6 @@ public final class Utilities {
      * @return The closest track to the specified point.
      */
     public static Track closestTrack(Point to, ArrayList<Track> tracks, double range) {
-        // With help from http://doswa.com/2009/07/13/circle-segment-intersectioncollision.html
         Track closestTrack = null;
         Double closestDistance = null;
         for (Track track : tracks) {
@@ -170,6 +169,18 @@ public final class Utilities {
      * @return The closest distance from the track to the specified point.
      */
     public static double closestDistance(Point to, Track track) {
+        Point point = closestPoint(to, track);
+        return magnitude(getVector(point, to));
+    }
+
+    /**
+     * Gets the closest point from a track to a certain point.
+     * @param to
+     * @param track The track which the closest point will be found.
+     * @return The closest point from the track to the specified point.
+     */
+    public static Point closestPoint(Point to, Track track) {
+        // With help from http://doswa.com/2009/07/13/circle-segment-intersectioncollision.html
         Point trackPoint1 = track.getPoints().get(0);
         Point trackPoint2 = track.getPoints().get(1);
         ArrayList<Double> trackVector = getVector(trackPoint1, trackPoint2);
@@ -177,18 +188,16 @@ public final class Utilities {
         ArrayList<Double> trackPointToClickPointVector = getVector(trackPoint1, to);
         double lengthProjectedVector = dotProduct(trackPointToClickPointVector, unitTrackVector);
         ArrayList<Double> projectedVector = multiply(unitTrackVector, lengthProjectedVector);
-        ArrayList<Double> closestPoint = new ArrayList<Double>();
+        Point closestPoint;
         if (lengthProjectedVector < 0) {
-            closestPoint.add(trackPoint1.getX());
-            closestPoint.add(trackPoint1.getY());
+            closestPoint = new Point(trackPoint1.getX(), trackPoint1.getY());
         } else if (lengthProjectedVector > magnitude(trackVector)) {
-            closestPoint.add(trackPoint2.getX());
-            closestPoint.add(trackPoint2.getY());
+            closestPoint = new Point(trackPoint2.getX(), trackPoint2.getY());
         } else {
-            closestPoint.add(trackPoint1.getX() + projectedVector.get(0));
-            closestPoint.add(trackPoint1.getY() + projectedVector.get(1));
+            closestPoint = new Point(trackPoint1.getX() + projectedVector.get(0),
+                    trackPoint1.getY() + projectedVector.get(1));
         }
-        return magnitude(getVector(new Point(closestPoint.get(0), closestPoint.get(1)), to));
+        return closestPoint;
     }
 
     //TODO rewrite the closestLocation JavaDoc
