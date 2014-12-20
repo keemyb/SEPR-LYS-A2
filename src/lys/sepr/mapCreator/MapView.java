@@ -17,6 +17,8 @@ public class MapView {
     java.awt.Color connectedTrackColour = Color.RED;
     java.awt.Color unconnectedTrackColour = Color.BLACK;
 
+    private final double locationSize = 10d;
+
     private MouseHandler mouseHandler = new MouseHandler();
 
     private Double minPickupDistance = 20d;
@@ -42,7 +44,7 @@ public class MapView {
             setMapPanelSize();
             g2.drawImage(background, 0, 0, null);
             g2.scale(1/zoom, 1/zoom);
-            Actions.drawMap(map, state, mapView, g2);
+            Actions.drawMap(map, locationSize, state, mapView, g2);
         }
     };
 

@@ -257,7 +257,7 @@ public final class Actions {
         }
     }
 
-    public static void drawMap(Map map, State state, MapView mapView, Graphics2D g2) {
+    public static void drawMap(Map map, double locationSize, State state, MapView mapView, Graphics2D g2) {
         g2.setStroke(new BasicStroke(5));
         if (state.getRouteLocation2() != null) {
             drawRoute(map, state, mapView, g2);
@@ -267,7 +267,7 @@ public final class Actions {
             drawNormal(map, state, mapView, g2);
         }
         for (Location location : map.getLocations()) {
-            drawLocationName(location, state, g2);
+            drawLocationName(location, locationSize, state, g2);
         }
     }
 
@@ -354,9 +354,11 @@ public final class Actions {
         }
     }
 
-    public static void drawLocationName(Location location, State state, Graphics2D g2) {
+    public static void drawLocationName(Location location, double locationSize, State state, Graphics2D g2) {
         java.awt.Point locationPoint = mapPointToScreenPoint(location.getPoint(), state);
-        g2.drawString(location.getName(), (float) locationPoint.getX(), (float) locationPoint.getY());
+        double offset = locationSize / 2;
+        g2.drawString(location.getName(), (float) (locationPoint.getX() + locationSize),
+                (float) (locationPoint.getY() + offset));
     }
 
     public static void loadMapAndBackground(MapView mapView, JPanel jPanel) {
