@@ -27,6 +27,22 @@ public class Location{
     }
 
     /**
+     * Gets the name of a location.
+     * @return The name of the location
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Changes the name of a location.
+     * @param name the new name of the location.
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
      * @param o The object to be compared.
      * @return Two locations are considered equal if they have the same point
      * and name.
