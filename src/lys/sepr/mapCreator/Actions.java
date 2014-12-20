@@ -270,15 +270,33 @@ public final class Actions {
     public static void drawRoute(Map map, State state, MapView mapView, Graphics2D g2) {
         java.awt.Color lineColour;
         java.awt.Color locationColour;
-        ArrayList<Track> fastestRoute = map.fastestRoute(state.getRouteLocation1(), state.getRouteLocation2());
+        ArrayList<ArrayList<Track>> routes = map.getRoutes(state.getRouteLocation1(), state.getRouteLocation2());
         for (Track track : map.getTracks()) {
+            lineColour = mapView.unconnectedTrackColour;
             Line2D.Double line = trackToLine2D(track, state);
-            if (fastestRoute.contains(track)) {
-                lineColour = mapView.selectedTrackColour;
-            } else lineColour = mapView.unconnectedTrackColour;
-
             g2.setColor(lineColour);
             g2.draw(line);
+        }
+
+//        Random r = new Random();
+//        float routesHue = r.nextFloat();
+        float routesHue = 126f/360f;
+
+        for (int i=0; i < routes.size(); i++) {
+            if (i == 0){
+                lineColour = mapView.selectedTrackColour;
+            } else {
+                // The shorter the route, the more saturation it has.
+                lineColour = new Color(Color.HSBtoRGB(routesHue,
+                        (routes.size() - i) / (float) routes.size(), 0.9f));
+            }
+            g2.setColor(lineColour);
+
+            ArrayList<Track> route = routes.get(i);
+            for (Track track : route) {
+                Line2D.Double line = trackToLine2D(track, state);
+                g2.draw(line);
+            }
         }
         for (Location location : map.getLocations()) {
             if (location.equals(state.getRouteLocation1()) || location.equals(state.getRouteLocation2())) {
