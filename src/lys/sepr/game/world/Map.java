@@ -1,6 +1,7 @@
 package lys.sepr.game.world;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Map Class represents a collection of Tracks, Intersection and Locations,
@@ -261,25 +262,29 @@ public class Map {
      * @return The list of the routes between the two points.
      */
     public ArrayList<ArrayList<Track>> getRoutes(Point from, Point to) {
-        Track startingTrack = Utilities.closestTrack(from, tracks, 10);
-        Track destinationTrack = Utilities.closestTrack(to, tracks, 10);
+        List<Track> startingTracks = Utilities.tracksWithinRange(from, tracks, 10);
+        List<Track> destinationTracks = Utilities.tracksWithinRange(to, tracks, 10);
 
         ArrayList<ArrayList<Track>> routes = new ArrayList<ArrayList<Track>>();
 
         // There is no track close enough that serves one of the points
-        if (startingTrack == null || destinationTrack == null) {
-            return routes;
-        } else if (startingTrack == destinationTrack){
-            ArrayList<Track> route = new ArrayList<Track>();
-            route.add(startingTrack);
-            routes.add(route);
+        if (startingTracks.isEmpty() || destinationTracks.isEmpty()) {
             return routes;
         }
 
-        ArrayList<Track> currentRoute = new ArrayList<Track>();
-        currentRoute.add(startingTrack);
-
-        getRoutes(destinationTrack, currentRoute, new ArrayList<Track>(), routes);
+        for (Track startingTrack : startingTracks) {
+            for (Track destinationTrack : destinationTracks) {
+                ArrayList<Track> currentRoute = new ArrayList<Track>();
+                currentRoute.add(startingTrack);
+                if (startingTrack.equals(destinationTrack)){
+                    if (!routes.contains(currentRoute)){
+                        routes.add(currentRoute);
+                    }
+                } else {
+                    getRoutes(destinationTrack, currentRoute, new ArrayList<Track>(), routes);
+                }
+            }
+        }
 
         return routes;
     }
