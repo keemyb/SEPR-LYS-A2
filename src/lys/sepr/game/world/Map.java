@@ -1,6 +1,9 @@
 package lys.sepr.game.world;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * The Map Class represents a collection of Tracks, Intersection and Locations,
@@ -11,6 +14,9 @@ public class Map {
     private ArrayList<Track> tracks = new ArrayList<Track>();
     private ArrayList<Intersection> intersections = new ArrayList<Intersection>();
     private ArrayList<Location> locations = new ArrayList<Location>();
+
+    // how close a point has to be to a track to be considered close/connected.
+    private final double pointTrackThreshold = 10d;
 
     /**
      * Adds a location to the map.
@@ -261,26 +267,37 @@ public class Map {
      * @return The list of the routes between the two points.
      */
     public ArrayList<ArrayList<Track>> getRoutes(Point from, Point to) {
-        Track startingTrack = Utilities.closestTrack(from, tracks, 10);
-        Track destinationTrack = Utilities.closestTrack(to, tracks, 10);
+        List<Track> startingTracks = Utilities.tracksWithinRange(from, tracks, pointTrackThreshold);
+        List<Track> destinationTracks = Utilities.tracksWithinRange(to, tracks, pointTrackThreshold);
 
         ArrayList<ArrayList<Track>> routes = new ArrayList<ArrayList<Track>>();
 
         // There is no track close enough that serves one of the points
-        if (startingTrack == null || destinationTrack == null) {
-            return routes;
-        } else if (startingTrack == destinationTrack){
-            ArrayList<Track> route = new ArrayList<Track>();
-            route.add(startingTrack);
-            routes.add(route);
+        if (startingTracks.isEmpty() || destinationTracks.isEmpty()) {
             return routes;
         }
 
-        ArrayList<Track> currentRoute = new ArrayList<Track>();
-        currentRoute.add(startingTrack);
+        for (Track startingTrack : startingTracks) {
+            for (Track destinationTrack : destinationTracks) {
+                ArrayList<Track> currentRoute = new ArrayList<Track>();
+                currentRoute.add(startingTrack);
+                if (startingTrack.equals(destinationTrack)){
+                    if (!routes.contains(currentRoute)){
+                        routes.add(currentRoute);
+                    }
+                } else {
+                    getRoutes(destinationTrack, currentRoute, new ArrayList<Track>(), routes);
+                }
+            }
+        }
 
-        getRoutes(destinationTrack, currentRoute, new ArrayList<Track>(), routes);
-
+        Collections.sort(routes, new Comparator<List<Track>>() {
+            public int compare(List route1, List route2) {
+                double route1Length = Utilities.routeLength(route1);
+                double route2Length = Utilities.routeLength(route2);
+                return Double.valueOf(route1Length).compareTo(Double.valueOf(route2Length));
+            }
+        });
         return routes;
     }
 
@@ -352,19 +369,8 @@ public class Map {
         ArrayList<ArrayList<Track>> routes = getRoutes(from, to);
         if (routes.isEmpty()) return new ArrayList<Track>();
 
-        ArrayList<Track> fastestRoute = null;
-        Double shortestDistance = null;
-        for (ArrayList<Track> route : routes) {
-            Double distance = 0d;
-            for (Track track : route) {
-                distance += Utilities.length(track);
-            }
-            if (shortestDistance == null || distance < shortestDistance) {
-                shortestDistance = distance;
-                fastestRoute = route;
-            }
-        }
-        return fastestRoute;
+        // Routes are sorted
+        return routes.get(0);
     }
 
     /**
