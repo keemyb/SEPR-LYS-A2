@@ -1,6 +1,7 @@
 package lys.sepr.game.world;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static java.lang.Math.*;
 
@@ -214,5 +215,22 @@ public final class Utilities {
 
     public static Location closestLocation(Point to, ArrayList<Location> locations) {
         return closestLocation(to, locations, Double.POSITIVE_INFINITY);
+    }
+
+    /**
+     * Computes the tracks within a range of a certain point, out of a list of tracks.
+     * @param to
+     * @param tracks
+     * @param range  The maximum distance allowed between the track and point.
+     * @return The list of tracks within range of the specified point.
+     */
+    public static List<Track> tracksWithinRange(Point to, List<Track> tracks, double range) {
+        ArrayList<Track> tracksWithinRange = new ArrayList<Track>();
+        for (Track track : tracks) {
+            if (closestDistance(to, track) <= range) {
+                tracksWithinRange.add(track);
+            }
+        }
+        return tracksWithinRange;
     }
 }
