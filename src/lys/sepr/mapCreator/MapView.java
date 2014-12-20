@@ -34,11 +34,12 @@ public class MapView {
         @Override
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
-            setMapPanelSize();
             Graphics2D g2 = (Graphics2D) g;
             double zoom = state.getZoom();
             g2.scale(zoom, zoom);
+            setMapPanelSize();
             g2.drawImage(background, 0, 0, null);
+            g2.scale(1/zoom, 1/zoom);
             Actions.drawMap(map, state, mapView, g2);
         }
     };

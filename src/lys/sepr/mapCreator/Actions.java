@@ -32,43 +32,33 @@ public final class Actions {
     }
 
     public static Point screenPointToMapPoint(java.awt.Point clickPoint, MapView mapView, State state) {
-        double jScrollOffsetX = mapView.getScrollPane().getX();
-        double jScrollOffsetY = mapView.getScrollPane().getY();
-        double clickPointX = clickPoint.x - jScrollOffsetX;
-        double clickPointY = clickPoint.y - jScrollOffsetY;
+        double clickPointX = clickPoint.x;
+        double clickPointY = clickPoint.y;
         clickPointX /= state.getZoom();
         clickPointY /= state.getZoom();
-        clickPointX += jScrollOffsetX;
-        clickPointY += jScrollOffsetY;
-        clickPointY = mapView.getMapPanel().getHeight() - clickPointY;
+        clickPointY = mapView.getMapPanel().getHeight() / state.getZoom() - clickPointY;
         return new Point(clickPointX, clickPointY);
     }
 
     public static java.awt.Point mapPointToScreenPoint(Point point, MapView mapView, State state) {
-        double jScrollOffsetX = mapView.getScrollPane().getX();
-        double jScrollOffsetY = mapView.getScrollPane().getY();
-        double pointX = point.getX() + jScrollOffsetX;
-        double pointY = point.getY() + jScrollOffsetY;
+        double pointX = point.getX();
+        double pointY = point.getY();
+        pointY = mapView.getMapPanel().getHeight() / state.getZoom() - pointY;
         pointX *= state.getZoom();
         pointY *= state.getZoom();
-        pointX -= jScrollOffsetX;
-        pointY -= jScrollOffsetY;
-        pointY = mapView.getMapPanel().getHeight() - pointY;
         return new java.awt.Point((int) pointX, (int) pointY);
     }
 
-    public static Line2D.Double trackToLine2D(Track track, JPanel jPanel) {
-        double pointX1 = track.getPoints().get(0).getX();
-        double pointY1 = jPanel.getHeight() - track.getPoints().get(0).getY();
-        double pointX2 = track.getPoints().get(1).getX();
-        double pointY2 = jPanel.getHeight() - track.getPoints().get(1).getY();
-        return new Line2D.Double(pointX1, pointY1, pointX2, pointY2);
+    public static Line2D.Double trackToLine2D(Track track, MapView mapView, State state) {
+        java.awt.Point point1 = mapPointToScreenPoint(track.getPoints().get(0), mapView, state);
+        java.awt.Point point2 = mapPointToScreenPoint(track.getPoints().get(1), mapView, state);
+        return new Line2D.Double(point1, point2);
     }
 
-    public static Rectangle2D.Double locationToRect2D(Location location, Double size, JPanel jPanel) {
-        double pointX1 = location.getPoint().getX() - size/2;
-        double pointY1 = jPanel.getHeight() - location.getPoint().getY() - size/2;
-        return new Rectangle2D.Double(pointX1, pointY1, size, size);
+    public static Rectangle2D.Double locationToRect2D(Location location, Double size, MapView mapView, State state) {
+        size *= state.getZoom();
+        java.awt.Point point = mapPointToScreenPoint(location.getPoint(), mapView, state);
+        return new Rectangle2D.Double(point.getX() - size / 2, point.getY() - size /2, size, size);
     }
 
     public static Color randomColor() {
@@ -284,7 +274,7 @@ public final class Actions {
         java.awt.Color locationColour;
         ArrayList<Track> fastestRoute = map.fastestRoute(state.routeLocation1, state.routeLocation2);
         for (Track track : map.getTracks()) {
-            Line2D.Double line = trackToLine2D(track, mapView.getMapPanel());
+            Line2D.Double line = trackToLine2D(track, mapView, state);
             if (fastestRoute.contains(track)) {
                 lineColour = mapView.selectedTrackColour;
             } else lineColour = mapView.unconnectedTrackColour;
@@ -296,7 +286,7 @@ public final class Actions {
             if (location.equals(state.routeLocation1) || location.equals(state.routeLocation2)) {
                 locationColour = mapView.selectedTrackColour;
             } else locationColour = mapView.unconnectedTrackColour;
-            Rectangle2D.Double rectangle = locationToRect2D(location, 10d, mapView.getMapPanel());
+            Rectangle2D.Double rectangle = locationToRect2D(location, 10d, mapView, state);
             g2.setColor(locationColour);
             g2.draw(rectangle);
         }
@@ -305,7 +295,7 @@ public final class Actions {
     public static void drawNextTracks(Map map, State state, MapView mapView, Graphics2D g2) {
         java.awt.Color lineColour;
         for (Track track : map.getTracks()) {
-            Line2D.Double line = trackToLine2D(track, mapView.getMapPanel());
+            Line2D.Double line = trackToLine2D(track, mapView, state);
             if (track.equals(state.selectedTrack)) {
                 lineColour = mapView.selectedTrackColour;
             } else if (state.selectedTrack.getActiveNextTracks().contains(track)) {
@@ -320,7 +310,7 @@ public final class Actions {
             g2.draw(line);
         }
         for (Location location : map.getLocations()) {
-            Rectangle2D.Double rectangle = locationToRect2D(location, 10d, mapView.getMapPanel());
+            Rectangle2D.Double rectangle = locationToRect2D(location, 10d, mapView, state);
             g2.setColor(randomColor());
             g2.draw(rectangle);
         }
@@ -328,12 +318,12 @@ public final class Actions {
 
     public static void drawNormal(Map map, State state, MapView mapView, Graphics2D g2) {
         for (Track track : map.getTracks()) {
-            Line2D.Double line = trackToLine2D(track, mapView.getMapPanel());
+            Line2D.Double line = trackToLine2D(track, mapView, state);
             g2.setColor(randomColor());
             g2.draw(line);
         }
         for (Location location : map.getLocations()) {
-            Rectangle2D.Double rectangle = locationToRect2D(location, 10d, mapView.getMapPanel());
+            Rectangle2D.Double rectangle = locationToRect2D(location, 10d, mapView, state);
             if (state.routeLocation1 == location) {
                 // highlight the first location selected when inspecting track
                 g2.setColor(Color.GREEN);
