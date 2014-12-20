@@ -36,14 +36,14 @@ public final class Actions {
         double clickPointY = clickPoint.y;
         clickPointX /= state.getZoom();
         clickPointY /= state.getZoom();
-        clickPointY = mapView.getMapPanel().getHeight() / state.getZoom() - clickPointY;
+        clickPointY = mapView.getBackground().getHeight() - clickPointY;
         return new Point(clickPointX, clickPointY);
     }
 
     public static java.awt.Point mapPointToScreenPoint(Point point, MapView mapView, State state) {
         double pointX = point.getX();
         double pointY = point.getY();
-        pointY = mapView.getMapPanel().getHeight() / state.getZoom() - pointY;
+        pointY = mapView.getBackground().getHeight() - pointY;
         pointX *= state.getZoom();
         pointY *= state.getZoom();
         return new java.awt.Point((int) pointX, (int) pointY);

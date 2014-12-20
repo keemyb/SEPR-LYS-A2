@@ -26,6 +26,8 @@ public class MapView {
     private Map map;
     private State state;
 
+    private double lastZoom;
+
     BufferedImage background;
 
     JScrollPane scrollPane = new JScrollPane();
@@ -46,6 +48,7 @@ public class MapView {
 
     MapView(State state) {
         this.state = state;
+
         scrollPane.setViewportView(mapPanel);
         setDefaultBackground();
 
@@ -59,14 +62,24 @@ public class MapView {
 
     public void setMapPanelSize() {
         double zoom = state.getZoom();
-        int width = (int) (background.getWidth() * zoom);
-        int height = (int) (background.getHeight() * zoom);
-        mapPanel.setPreferredSize(new Dimension(width, height));
+        if (lastZoom != zoom) {
+            int width = (int) (background.getWidth() * zoom);
+            int height = (int) (background.getHeight() * zoom);
+            mapPanel.setPreferredSize(new Dimension(width, height));
+            scrollPane.getViewport().revalidate();
+            scrollPane.getViewport().repaint();
+            lastZoom = zoom;
+        }
     }
 
     public Map getMap() {
         return map;
     }
+
+    public BufferedImage getBackground() {
+        return background;
+    }
+
     public void setMap(Map map) {
         this.map = map;
         mapPanel.repaint();
