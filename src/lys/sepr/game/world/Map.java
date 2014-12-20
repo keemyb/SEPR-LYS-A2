@@ -13,6 +13,9 @@ public class Map {
     private ArrayList<Intersection> intersections = new ArrayList<Intersection>();
     private ArrayList<Location> locations = new ArrayList<Location>();
 
+    // how close a point has to be to a track to be considered close/connected.
+    private final double pointTrackThreshold = 10d;
+
     /**
      * Adds a location to the map.
      * @param location The location to be added to the map.
@@ -262,8 +265,8 @@ public class Map {
      * @return The list of the routes between the two points.
      */
     public ArrayList<ArrayList<Track>> getRoutes(Point from, Point to) {
-        List<Track> startingTracks = Utilities.tracksWithinRange(from, tracks, 10);
-        List<Track> destinationTracks = Utilities.tracksWithinRange(to, tracks, 10);
+        List<Track> startingTracks = Utilities.tracksWithinRange(from, tracks, pointTrackThreshold);
+        List<Track> destinationTracks = Utilities.tracksWithinRange(to, tracks, pointTrackThreshold);
 
         ArrayList<ArrayList<Track>> routes = new ArrayList<ArrayList<Track>>();
 
