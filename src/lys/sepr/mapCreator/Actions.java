@@ -418,6 +418,13 @@ public final class Actions {
         }
     }
 
+    public static void renameLocation(Map map, Point clickPoint, double minPickUpDistance, JPanel jPanel) {
+        Location location = closestLocation(clickPoint, map.getLocations(), minPickUpDistance);
+        if (location != null) {
+            nameLocation(location, jPanel);
+        }
+    }
+
     public static void zoomIn(State state) {
         state.zoomIn();
     }

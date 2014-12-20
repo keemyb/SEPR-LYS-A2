@@ -141,6 +141,9 @@ public class MapView {
                 case State.BREAK_TRACK_MODE:
                     Actions.breakTrack(map, clickPoint, scaledPickupDistance);
                     break;
+                case State.RENAME_LOCATION_MODE:
+                    Actions.renameLocation(map, clickPoint, scaledPickupDistance, mapPanel);
+                    break;
             }
             mapPanel.repaint();
         }

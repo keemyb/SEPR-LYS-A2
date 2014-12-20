@@ -16,6 +16,7 @@ public class Buttons {
     JRadioButton createLocationModeButton = new JRadioButton("Create Location");
     JRadioButton inspectRouteModeButton = new JRadioButton("Inspect Route");
     JRadioButton breakTrackModeButton = new JRadioButton("Break Track");
+    JRadioButton renameLocationButton = new JRadioButton("Rename Location");
     JButton saveMapButton = new JButton("Save Map");
     JButton loadMapButton = new JButton("Load Map");
     JButton zoomInButton = new JButton("Zoom In");
@@ -40,6 +41,7 @@ public class Buttons {
         buttonGroup.add(createLocationModeButton);
         buttonGroup.add(inspectRouteModeButton);
         buttonGroup.add(breakTrackModeButton);
+        buttonGroup.add(renameLocationButton);
 
         buttonPanel.add(inspectTrackModeButton);
         buttonPanel.add(inspectRouteModeButton);
@@ -50,6 +52,7 @@ public class Buttons {
         buttonPanel.add(deleteTrackModeButton);
         buttonPanel.add(deleteIntersectionModeButton);
         buttonPanel.add(breakTrackModeButton);
+        buttonPanel.add(renameLocationButton);
         buttonPanel.add(loadMapButton);
         buttonPanel.add(saveMapButton);
         buttonPanel.add(zoomInButton);
@@ -159,6 +162,12 @@ public class Buttons {
             public void actionPerformed(ActionEvent e) {
                 actions.resetZoom(state);
                 mapView.getMapPanel().repaint();
+            }
+        });
+
+        renameLocationButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                state.setMode(state.RENAME_LOCATION_MODE);
             }
         });
     }

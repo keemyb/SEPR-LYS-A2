@@ -16,6 +16,7 @@ public class State {
     public static final int CREATE_LOCATION_MODE = 6;
     public static final int INSPECT_ROUTE_MODE = 7;
     public static final int BREAK_TRACK_MODE = 8;
+    public static final int RENAME_LOCATION_MODE = 9;
 
     private int mode = INSPECT_TRACK_MODE;
 
