@@ -233,4 +233,17 @@ public final class Utilities {
         }
         return tracksWithinRange;
     }
+
+    /**
+     * Computes the length of a route.
+     * @param route A list of tracks representing a route.
+     * @return The total length of the route.
+     */
+    public static double routeLength(List<Track> route) {
+        double length = 0;
+        for (Track track : route) {
+            length += length(track);
+        }
+        return length;
+    }
 }
