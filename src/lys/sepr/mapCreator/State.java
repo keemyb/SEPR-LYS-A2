@@ -41,6 +41,22 @@ public class State {
     private final double maxZoom = Math.pow(zoomConstant, zoomLevels - 1);
     private final double minZoom = Math.pow(zoomConstant, -(zoomLevels - 1));
 
+    public void reset() {
+        selectedTrack = null;
+        startedNewTrack = false;
+        newTrackPoint1 = null;
+        newTrackPoint2 = null;
+        holdingLocationTrackIntersection = false;
+        intersectionPickedUp = null;
+        trackPointPickedUp = null;
+        trackPickedUp = null;
+        locationPickedUp = null;
+        startedRouteInspect = false;
+        routeLocation1 = null;
+        routeLocation2 = null;
+        zoom = 1d;
+    }
+
     public void zoomIn() {
         if (zoom != maxZoom) {
             zoom *= zoomConstant;

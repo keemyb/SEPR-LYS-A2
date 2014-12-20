@@ -84,6 +84,7 @@ public class MapView {
     public void setMap(Map map) {
         this.map = map;
         mapPanel.repaint();
+        state.reset();
     }
 
     public void setDefaultBackground() {
