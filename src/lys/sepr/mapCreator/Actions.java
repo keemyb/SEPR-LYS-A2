@@ -266,8 +266,10 @@ public final class Actions {
         } else {
             drawNormal(map, state, locationSize, mapView, g2);
         }
-        for (Location location : map.getLocations()) {
-            drawLocationName(location, locationSize, state, g2);
+        if (state.isShowingLocationNames()) {
+            for (Location location : map.getLocations()) {
+                drawLocationName(location, locationSize, state, g2);
+            }
         }
     }
 

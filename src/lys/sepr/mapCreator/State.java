@@ -42,6 +42,8 @@ public class State {
     private final double maxZoom = Math.pow(zoomConstant, zoomLevels - 1);
     private final double minZoom = Math.pow(zoomConstant, -(zoomLevels - 1));
 
+    private boolean showLocationNames = true;
+
     public void reset() {
         selectedTrack = null;
         startedNewTrack = false;
@@ -56,6 +58,14 @@ public class State {
         routeLocation1 = null;
         routeLocation2 = null;
         zoom = 1d;
+    }
+
+    public boolean isShowingLocationNames() {
+        return showLocationNames;
+    }
+
+    public void setShowLocationNames(boolean showLocationNames) {
+        this.showLocationNames = showLocationNames;
     }
 
     public void zoomIn() {

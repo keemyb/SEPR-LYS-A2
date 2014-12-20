@@ -22,6 +22,7 @@ public class Buttons {
     JButton zoomInButton = new JButton("Zoom In");
     JButton zoomOutButton = new JButton("Zoom Out");
     JButton zoomResetButton = new JButton("Reset Zoom");
+    JCheckBox showLocationNamesCheckBox = new JCheckBox("Show Location Names");
 
     private JPanel buttonPanel = new JPanel();
 
@@ -58,8 +59,11 @@ public class Buttons {
         buttonPanel.add(zoomInButton);
         buttonPanel.add(zoomOutButton);
         buttonPanel.add(zoomResetButton);
+        buttonPanel.add(showLocationNamesCheckBox);
 
         inspectTrackModeButton.setSelected(true);
+
+        showLocationNamesCheckBox.setSelected(true);
 
         createTrackModeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -168,6 +172,13 @@ public class Buttons {
         renameLocationButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 state.setMode(state.RENAME_LOCATION_MODE);
+            }
+        });
+
+        showLocationNamesCheckBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                state.setShowLocationNames(!state.isShowingLocationNames());
+                mapView.getMapPanel().repaint();
             }
         });
     }
