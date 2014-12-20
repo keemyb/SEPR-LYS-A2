@@ -1,6 +1,8 @@
 package lys.sepr.game.world;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -289,6 +291,13 @@ public class Map {
             }
         }
 
+        Collections.sort(routes, new Comparator<List<Track>>() {
+            public int compare(List route1, List route2) {
+                double route1Length = Utilities.routeLength(route1);
+                double route2Length = Utilities.routeLength(route2);
+                return Double.valueOf(route1Length).compareTo(Double.valueOf(route2Length));
+            }
+        });
         return routes;
     }
 
