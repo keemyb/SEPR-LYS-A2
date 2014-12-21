@@ -13,7 +13,7 @@ import static lys.sepr.game.world.Utilities.getVector;
  */
 public class Track {
 
-    private final double nudgeStrength = 0.1;
+    private static double nudgeStrength = 0.1;
     private ArrayList<Point> points = new ArrayList<Point>();
     private ArrayList<Intersection> intersections = new ArrayList<Intersection>();
     private ArrayList<Track> activeNextTracks = new ArrayList<Track>();
