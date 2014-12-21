@@ -9,6 +9,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -57,6 +58,12 @@ public final class Actions {
         size *= state.getZoom();
         java.awt.Point point = mapPointToScreenPoint(location.getPoint(), state);
         return new Rectangle2D.Double(point.getX() - size / 2, point.getY() - size /2, size, size);
+    }
+
+    public static Ellipse2D.Double intersectionToEllipse2D(Intersection intersection, Double size, State state) {
+        size *= state.getZoom();
+        java.awt.Point point = mapPointToScreenPoint(intersection.getPoint(), state);
+        return new Ellipse2D.Double(point.getX() - size / 2, point.getY() - size /2, size, size);
     }
 
     public static Color randomColor() {
@@ -270,6 +277,9 @@ public final class Actions {
                 drawLocationName(location, locationSize, state, g2);
             }
         }
+        for (Intersection intersection : map.getIntersections()) {
+            drawIntersection(intersection, locationSize / 2, Color.RED, state, g2);
+        }
     }
 
     public static void drawRoute(Map map, State state, double locationSize, MapView mapView, Graphics2D g2) {
@@ -348,6 +358,12 @@ public final class Actions {
         Line2D.Double line = trackToLine2D(track, state);
         g2.setColor(color);
         g2.draw(line);
+    }
+
+    public static void drawIntersection(Intersection intersection, double intersectionSize, java.awt.Color color, State state, Graphics2D g2) {
+        Ellipse2D.Double circle = intersectionToEllipse2D(intersection, intersectionSize, state);
+        g2.setColor(color);
+        g2.draw(circle);
     }
 
     public static void drawLocation(Location location, double locationSize, java.awt.Color color, State state, Graphics2D g2) {
