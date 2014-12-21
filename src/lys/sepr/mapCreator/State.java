@@ -43,6 +43,7 @@ public class State {
     private final double minZoom = Math.pow(zoomConstant, -(zoomLevels - 1));
 
     private boolean showLocationNames = true;
+    private boolean showIntersections = false;
 
     public void reset() {
         selectedTrack = null;
@@ -58,6 +59,14 @@ public class State {
         routeLocation1 = null;
         routeLocation2 = null;
         zoom = 1d;
+    }
+
+    public boolean isShowingIntersections() {
+        return showIntersections;
+    }
+
+    public void setShowIntersections(boolean showIntersections) {
+        this.showIntersections = showIntersections;
     }
 
     public boolean isShowingLocationNames() {

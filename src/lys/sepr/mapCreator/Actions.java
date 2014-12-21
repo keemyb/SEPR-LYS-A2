@@ -277,8 +277,10 @@ public final class Actions {
                 drawLocationName(location, locationSize, state, g2);
             }
         }
-        for (Intersection intersection : map.getIntersections()) {
-            drawIntersection(intersection, locationSize / 2, Color.RED, state, g2);
+        if (state.isShowingIntersections()) {
+            for (Intersection intersection : map.getIntersections()) {
+                drawIntersection(intersection, locationSize / 2, Color.RED, state, g2);
+            }
         }
     }
 

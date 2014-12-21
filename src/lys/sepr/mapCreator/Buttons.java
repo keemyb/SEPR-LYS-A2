@@ -23,6 +23,7 @@ public class Buttons {
     JButton zoomOutButton = new JButton("Zoom Out");
     JButton zoomResetButton = new JButton("Reset Zoom");
     JCheckBox showLocationNamesCheckBox = new JCheckBox("Show Location Names");
+    JCheckBox showIntersectionsCheckBox = new JCheckBox("Show Intersections");
 
     private JPanel buttonPanel = new JPanel();
 
@@ -60,6 +61,7 @@ public class Buttons {
         buttonPanel.add(zoomOutButton);
         buttonPanel.add(zoomResetButton);
         buttonPanel.add(showLocationNamesCheckBox);
+        buttonPanel.add(showIntersectionsCheckBox);
 
         inspectTrackModeButton.setSelected(true);
 
@@ -178,6 +180,13 @@ public class Buttons {
         showLocationNamesCheckBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 state.setShowLocationNames(!state.isShowingLocationNames());
+                mapView.getMapPanel().repaint();
+            }
+        });
+
+        showIntersectionsCheckBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                state.setShowIntersections(!state.isShowingIntersections());
                 mapView.getMapPanel().repaint();
             }
         });
