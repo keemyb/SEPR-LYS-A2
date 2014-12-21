@@ -286,7 +286,7 @@ public final class Actions {
 //        float routesHue = r.nextFloat();
         float routesHue = 126f/360f;
 
-        for (int i=0; i < routes.size(); i++) {
+        for (int i=routes.size()- 1; i>=0; i--) {
             if (i == 0){
                 lineColour = mapView.selectedTrackColour;
             } else {
@@ -294,7 +294,6 @@ public final class Actions {
                 lineColour = new Color(Color.HSBtoRGB(routesHue,
                         (routes.size() - i) / (float) routes.size(), 0.9f));
             }
-            g2.setColor(lineColour);
 
             ArrayList<Track> route = routes.get(i);
             for (Track track : route) {
