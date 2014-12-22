@@ -23,6 +23,7 @@ public class Route {
         this.to = to;
     }
 
+    @Override
     public Route clone() {
         return new Route(from, to, tracks);
     }
@@ -149,10 +150,30 @@ public class Route {
         }
     }
 
+    /**
+     * Returns true if all of the tracks in the route are not broken.
+     * @return true if all of the tracks in the route are unbroken, false otherwise.
+     */
     public boolean isTraversable() {
         for (Track track : tracks) {
             if (track.isBroken()) return false;
         }
         return true;
+    }
+
+    /**
+     * Returns true if all of the tracks in the route after the given track are not broken.
+     * Returns false if the given track is not in the route.
+     * @return true if all of the tracks in the route after the given track unbroken, false otherwise.
+     */
+    public boolean isTraversable(Track track) {
+        if (tracks.contains(track)) {
+            for (int i=tracks.indexOf(track); i<tracks.size(); i++) {
+                if (track.isBroken()) return false;
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 }
