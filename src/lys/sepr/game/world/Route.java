@@ -86,9 +86,9 @@ public class Route {
 
         Collections.sort(routes, new Comparator<Route>() {
             public int compare(Route route1, Route route2) {
-                double route1Length = Utilities.routeLength(route1.getTracks());
-                double route2Length = Utilities.routeLength(route2.getTracks());
-                return Double.valueOf(route1Length).compareTo(Double.valueOf(route2Length));
+                double route1Length = route1.length;
+                double route2Length = route2.length;
+                return Double.valueOf(route1Length).compareTo(route2Length);
             }
         });
 
