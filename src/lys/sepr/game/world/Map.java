@@ -15,6 +15,10 @@ public class Map {
     private ArrayList<Intersection> intersections = new ArrayList<Intersection>();
     private ArrayList<Location> locations = new ArrayList<Location>();
 
+    public double getPointTrackThreshold() {
+        return pointTrackThreshold;
+    }
+
     // how close a point has to be to a track to be considered close/connected.
     private final double pointTrackThreshold = 10d;
 
