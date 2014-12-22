@@ -11,14 +11,14 @@ public class Route {
     private Point from;
     private Point to;
 
-    Route(Point from, Point to, List<Track> tracks) {
+    private Route(Point from, Point to, List<Track> tracks) {
         this.from = from;
         this.to = to;
         this.tracks = tracks;
         updateLength();
     }
 
-    Route(Point from, Point to) {
+    private Route(Point from, Point to) {
         this.from = from;
         this.to = to;
     }
@@ -59,6 +59,12 @@ public class Route {
         return tracks;
     }
 
+    /**
+     * Returns valid routes from one point to another.
+     * @param from The starting point of the route.
+     * @param to   The finishing point of the route.
+     * @return The list of the routes between the two points.
+     */
     public static List<Route> getRoutes(Point from, Point to, Map map) {
         List<Track> startingTracks = Utilities.tracksWithinRange(from, map.getTracks(), map.getPointTrackThreshold());
         List<Track> destinationTracks = Utilities.tracksWithinRange(to, map.getTracks(), map.getPointTrackThreshold());
