@@ -37,7 +37,7 @@ public class Route {
         this.length = Utilities.routeLength(tracks);
     }
 
-    private void addTrack(Track track) {
+    protected void addTrack(Track track) {
         tracks.add(track);
         updateLength();
     }
@@ -128,11 +128,11 @@ public class Route {
                            Route currentRoute,
                            List<Track> visitedTracks,
                            List<Route> routes) {
+        Track lastTrackInCurrentRoute = currentRoute.getTracks().get(currentRoute.size() - 1);
+
         // If we have backtracked to the first track , and we have visited all its connected tracks,
         // there are no more solutions.
-        if (currentRoute.size() == 1 && visitedTracks.contains(currentRoute.getTracks().get(0).getValidNextTracks())) return;
-
-        Track lastTrackInCurrentRoute = currentRoute.getTracks().get(currentRoute.size() - 1);
+        if (currentRoute.size() == 1 && visitedTracks.containsAll(lastTrackInCurrentRoute.getValidNextTracks())) return;
 
         ArrayList<Track> validNextTracks;
         if (currentRoute.size() == 1) {
