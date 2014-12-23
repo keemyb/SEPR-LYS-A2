@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import static lys.sepr.game.world.Utilities.*;
@@ -286,7 +287,7 @@ public final class Actions {
 
     public static void drawRoute(Map map, State state, double locationSize, MapView mapView, Graphics2D g2) {
         java.awt.Color lineColour;
-        ArrayList<ArrayList<Track>> routes = map.getRoutes(state.getRouteLocation1(), state.getRouteLocation2());
+        List<Route> routes = map.getRoutes(state.getRouteLocation1(), state.getRouteLocation2());
 
         // drawing the tracks not part of a route.
         for (Track track : map.getTracks()) {
@@ -307,8 +308,8 @@ public final class Actions {
                         (routes.size() - i) / (float) routes.size(), 0.9f));
             }
 
-            ArrayList<Track> route = routes.get(i);
-            for (Track track : route) {
+            Route route = routes.get(i);
+            for (Track track : route.getTracks()) {
                 drawTrack(track, lineColour, state, g2);
             }
         }
