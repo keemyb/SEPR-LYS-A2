@@ -18,7 +18,7 @@ public class Route {
         updateLength();
     }
 
-    private Route(Point from, Point to) {
+    public Route(Point from, Point to) {
         this.from = from;
         this.to = to;
     }

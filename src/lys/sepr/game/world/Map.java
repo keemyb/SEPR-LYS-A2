@@ -1,8 +1,6 @@
 package lys.sepr.game.world;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -260,7 +258,7 @@ public class Map {
      * @param to   The finishing location of the route.
      * @return The list of the routes between the two locations.
      */
-    public ArrayList<ArrayList<Track>> getRoutes(Location from, Location to) {
+    public List<Route> getRoutes(Location from, Location to) {
         return getRoutes(from.getPoint(), to.getPoint());
     }
 
@@ -270,87 +268,8 @@ public class Map {
      * @param to   The finishing point of the route.
      * @return The list of the routes between the two points.
      */
-    public ArrayList<ArrayList<Track>> getRoutes(Point from, Point to) {
-        List<Track> startingTracks = Utilities.tracksWithinRange(from, tracks, pointTrackThreshold);
-        List<Track> destinationTracks = Utilities.tracksWithinRange(to, tracks, pointTrackThreshold);
-
-        ArrayList<ArrayList<Track>> routes = new ArrayList<ArrayList<Track>>();
-
-        // There is no track close enough that serves one of the points
-        if (startingTracks.isEmpty() || destinationTracks.isEmpty()) {
-            return routes;
-        }
-
-        for (Track startingTrack : startingTracks) {
-            for (Track destinationTrack : destinationTracks) {
-                ArrayList<Track> currentRoute = new ArrayList<Track>();
-                currentRoute.add(startingTrack);
-                if (startingTrack.equals(destinationTrack)){
-                    if (!routes.contains(currentRoute)){
-                        routes.add(currentRoute);
-                    }
-                } else {
-                    getRoutes(destinationTrack, currentRoute, new ArrayList<Track>(), routes);
-                }
-            }
-        }
-
-        Collections.sort(routes, new Comparator<List<Track>>() {
-            public int compare(List route1, List route2) {
-                double route1Length = Utilities.routeLength(route1);
-                double route2Length = Utilities.routeLength(route2);
-                return Double.valueOf(route1Length).compareTo(Double.valueOf(route2Length));
-            }
-        });
-        return routes;
-    }
-
-    /**
-     * Returns valid routes from one track to another.
-     * @param destination   The finishing point of the route.
-     * @param currentRoute  The route traversed so far.
-     * @param visitedTracks The tracks that have been visited so far.
-     * @param routes        The list of valid routes found so far.
-     * @return The list of the routes between the two points.
-     */
-    private void getRoutes(Track destination,
-                           ArrayList<Track> currentRoute,
-                           ArrayList<Track> visitedTracks,
-                           ArrayList<ArrayList<Track>> routes) {
-        // If we have backtracked to the first track , and we have visited all its connected tracks,
-        // there are no more solutions.
-        if (currentRoute.size() == 1 && visitedTracks.contains(currentRoute.get(0).getValidNextTracks())) return;
-
-        Track lastTrackInCurrentRoute = currentRoute.get(currentRoute.size() - 1);
-
-        ArrayList<Track> validNextTracks;
-        if (currentRoute.size() == 1) {
-            validNextTracks = lastTrackInCurrentRoute.getValidNextTracks();
-        } else {
-            // We have come from the point that the last two tracks meet
-            Point comingFrom = lastTrackInCurrentRoute.getCommonPoint(currentRoute.get(currentRoute.size()-2));
-            Point goingTowards = lastTrackInCurrentRoute.getOtherPoint(comingFrom);
-            validNextTracks = lastTrackInCurrentRoute.getValidNextTracks(goingTowards);
-        }
-
-        // Discard all visited tracks
-        validNextTracks.removeAll(visitedTracks);
-
-        // Recurse over all non visited valid tracks
-        for (Track nextTrack : validNextTracks){
-            currentRoute.add(nextTrack);
-            // If the last track visited is our destination, add the route
-            // and keep looking for more routes
-            if (nextTrack == destination) {
-                // Cloning the route as we don't want it to be mutated.
-                routes.add((ArrayList<Track>) currentRoute.clone());
-                currentRoute.remove(destination);
-            } else {
-                visitedTracks.add(nextTrack);
-                getRoutes(destination, currentRoute, visitedTracks, routes);
-                currentRoute.remove(nextTrack);
-            }
-        }
+    public List<Route> getRoutes(Point from, Point to) {
+        return Route.getRoutes(from, to, this);
     }
 
     /**
@@ -359,7 +278,7 @@ public class Map {
      * @param to   The finishing location of the route.
      * @return The fastest route between the two locations, if one exists.
      */
-    public ArrayList<Track> fastestRoute(Location from, Location to) {
+    public Route fastestRoute(Location from, Location to) {
         return fastestRoute(from.getPoint(), to.getPoint());
     }
 
@@ -369,9 +288,9 @@ public class Map {
      * @param to   The finishing point of the route.
      * @return The fastest route between the two points, if one exists.
      */
-    public ArrayList<Track> fastestRoute(Point from, Point to) {
-        ArrayList<ArrayList<Track>> routes = getRoutes(from, to);
-        if (routes.isEmpty()) return new ArrayList<Track>();
+    public Route fastestRoute(Point from, Point to) {
+        List<Route> routes = getRoutes(from, to);
+        if (routes.isEmpty()) return new Route(from, to);
 
         // Routes are sorted
         return routes.get(0);
