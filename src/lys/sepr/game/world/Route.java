@@ -46,6 +46,19 @@ public class Route {
         updateLength();
     }
 
+    public boolean contains(Track track) {
+        return tracks.contains(track);
+    }
+
+    public boolean containsAll(Route route) {
+        return containsAll(route.getTracks());
+    }
+
+    public boolean containsAll(List<Track> tracks) {
+        //TODO Use stronger assertion that the list of tracks should be in the same order.
+        return tracks.containsAll(tracks);
+    }
+
     public Route reverse() {
         List<Track> reversedTracks = new ArrayList<Track>();
 
