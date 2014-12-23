@@ -190,4 +190,26 @@ public class Route {
             return false;
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Route route = (Route) o;
+
+        if (from != null ? !from.equals(route.from) : route.from != null) return false;
+        if (to != null ? !to.equals(route.to) : route.to != null) return false;
+        if (tracks != null ? !tracks.equals(route.tracks) : route.tracks != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = tracks != null ? tracks.hashCode() : 0;
+        result = 31 * result + (from != null ? from.hashCode() : 0);
+        result = 31 * result + (to != null ? to.hashCode() : 0);
+        return result;
+    }
 }
