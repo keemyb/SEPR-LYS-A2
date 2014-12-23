@@ -292,8 +292,11 @@ public class Map {
         List<Route> routes = getRoutes(from, to);
         if (routes.isEmpty()) return new Route(from, to);
 
-        // Routes are sorted
-        return routes.get(0);
+        for (Route route : routes) {
+            if (route.isTraversable()) return route;
+        }
+
+        return new Route(from, to);
     }
 
     /**
