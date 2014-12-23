@@ -14,13 +14,14 @@ public class Route {
     private Route(Point from, Point to, List<Track> tracks) {
         this.from = from;
         this.to = to;
-        this.tracks = tracks;
+        this.tracks = new ArrayList(tracks);
         updateLength();
     }
 
     public Route(Point from, Point to) {
         this.from = from;
         this.to = to;
+        tracks = new ArrayList<Track>();
     }
 
     @Override
