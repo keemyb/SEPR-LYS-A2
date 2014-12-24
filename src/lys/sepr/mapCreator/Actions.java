@@ -24,15 +24,6 @@ import static lys.sepr.game.world.Utilities.*;
 
 public final class Actions {
 
-    public static Point clickPointToTrackPoint(java.awt.Point clickPoint, JPanel jPanel) {
-        /* y axis points have been inverted as the window coordinates start from the top left
-        where as the points start from the bottom left
-        */
-        double clickPointX = clickPoint.x;
-        double clickPointY = jPanel.getHeight() - clickPoint.y;
-        return new Point(clickPointX, clickPointY);
-    }
-
     public static Point screenPointToMapPoint(java.awt.Point clickPoint, State state) {
         double clickPointX = clickPoint.x;
         double clickPointY = clickPoint.y;
