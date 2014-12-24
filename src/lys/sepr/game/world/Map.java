@@ -372,6 +372,8 @@ public class Map {
                 // order for equality.
                 RouteKey routeKey = new RouteKey(pointOne, pointTwo);
 
+                // We don't want to regenerate the route if its reverse already
+                // exists, we can simply reverse every route found.
                 if (possibleRoutes.containsKey(routeKey.reverse())) {
                     List<Route> reversedRoutes = new ArrayList<Route>();
                     for (Route route : possibleRoutes.get(routeKey.reverse())) {
