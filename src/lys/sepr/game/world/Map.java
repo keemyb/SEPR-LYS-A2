@@ -13,7 +13,7 @@ public class Map {
     private ArrayList<Track> tracks = new ArrayList<Track>();
     private ArrayList<Intersection> intersections = new ArrayList<Intersection>();
     private ArrayList<Location> locations = new ArrayList<Location>();
-    private HashMap<List<Point>, List<Route>> possibleRoutes = new HashMap<List<Point>, List<Route>>();
+    private HashMap<RouteKey, List<Route>> possibleRoutes = new HashMap<RouteKey, List<Route>>();
 
     public double getPointTrackThreshold() {
         return pointTrackThreshold;
@@ -282,7 +282,9 @@ public class Map {
      * @return The list of the routes between the two points.
      */
     public List<Route> getRoutes(Point from, Point to) {
-        return Route.getRoutes(from, to, this);
+        RouteKey routeKey = new RouteKey(from, to);
+        if (possibleRoutes.isEmpty()) updatePossibleRoutes();
+        return possibleRoutes.get(routeKey);
     }
 
     /**
@@ -356,7 +358,7 @@ public class Map {
     }
 
     private void updatePossibleRoutes() {
-        possibleRoutes = new HashMap<List<Point>, List<Route>>();
+        possibleRoutes = new HashMap<RouteKey, List<Route>>();
 
         for (Location locationOne : locations) {
             for (Location locationTwo : locations) {
@@ -365,23 +367,55 @@ public class Map {
                 Point pointOne = locationOne.getPoint();
                 Point pointTwo = locationTwo.getPoint();
 
-                ArrayList<Point> points = new ArrayList<Point>();
-                points.add(pointOne);
-                points.add(pointTwo);
+                // Using funky routeKey class to get around the fact that
+                // I cannot use a simple list of points added in a reverse
+                // order for equality.
+                RouteKey routeKey = new RouteKey(pointOne, pointTwo);
 
-                ArrayList<Point> pointsReversed = new ArrayList<Point>();
-                pointsReversed.add(pointTwo);
-                pointsReversed.add(pointOne);
-
-                if (possibleRoutes.containsKey(pointsReversed)) {
+                if (possibleRoutes.containsKey(routeKey.reverse())) {
                     List<Route> reversedRoutes = new ArrayList<Route>();
-                    for (Route route : possibleRoutes.get(pointsReversed)) {
+                    for (Route route : possibleRoutes.get(routeKey.reverse())) {
                         reversedRoutes.add(route.reverse());
                     }
+                    possibleRoutes.put(routeKey, reversedRoutes);
                 } else {
-                    possibleRoutes.put(points, Route.getRoutes(pointOne, pointTwo, this));
+                    possibleRoutes.put(routeKey, Route.getRoutes(pointOne, pointTwo, this));
                 }
             }
+        }
+    }
+
+    class RouteKey {
+        private Point from;
+        private Point to;
+
+        RouteKey(Point from, Point to) {
+            this.from = from;
+            this.to = to;
+        }
+
+        RouteKey reverse() {
+            return new RouteKey(to, from);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            RouteKey routeKey = (RouteKey) o;
+
+            if (from != null ? !from.equals(routeKey.from) : routeKey.from != null) return false;
+            if (to != null ? !to.equals(routeKey.to) : routeKey.to != null) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = from != null ? from.hashCode() : 0;
+            result = 31 * result + (to != null ? to.hashCode() : 0);
+            return result;
         }
     }
 }
