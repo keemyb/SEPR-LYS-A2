@@ -1,6 +1,7 @@
 package lys.sepr.game.world;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -12,6 +13,7 @@ public class Map {
     private ArrayList<Track> tracks = new ArrayList<Track>();
     private ArrayList<Intersection> intersections = new ArrayList<Intersection>();
     private ArrayList<Location> locations = new ArrayList<Location>();
+    private HashMap<List<Point>, List<Route>> possibleRoutes = new HashMap<List<Point>, List<Route>>();
 
     public double getPointTrackThreshold() {
         return pointTrackThreshold;
@@ -31,6 +33,7 @@ public class Map {
             }
         }
         locations.add(location);
+        updatePossibleRoutes();
     }
 
     /**
@@ -39,6 +42,7 @@ public class Map {
      */
     public void removeLocation(Location location) {
         locations.remove(location);
+        updatePossibleRoutes();
     }
 
     /**
@@ -76,6 +80,7 @@ public class Map {
                 if (intersectionPoints.size() == 2) return;
             }
         }
+        updatePossibleRoutes();
     }
 
     /**
@@ -115,6 +120,7 @@ public class Map {
                 return;
             }
         }
+        updatePossibleRoutes();
     }
 
     /**
@@ -141,6 +147,7 @@ public class Map {
         } else {
             intersectionAtCommonPoint.addTrack(newTrack);
         }
+        updatePossibleRoutes();
     }
 
     /**
@@ -162,6 +169,7 @@ public class Map {
             if (otherIntersections.getPoint().equals(to)) {
                 intersection.move(to);
                 mergeIntersections(otherIntersections, intersection);
+                updatePossibleRoutes();
                 return;
             }
         }
@@ -171,10 +179,12 @@ public class Map {
                     !intersection.getTracks().contains(track)){
                 intersection.move(to);
                 intersection.addTrack(track);
+                updatePossibleRoutes();
                 return;
             }
         }
         intersection.move(to);
+        updatePossibleRoutes();
     }
 
     /**
@@ -184,6 +194,7 @@ public class Map {
      */
     public void moveLocation(Location location, Point to) {
         location.getPoint().move(to.getX(), to.getY());
+        updatePossibleRoutes();
     }
 
     /**
@@ -210,6 +221,7 @@ public class Map {
     public void removeIntersection(Intersection intersection) {
         intersection.dissolve();
         intersections.remove(intersection);
+        updatePossibleRoutes();
     }
 
     /**
@@ -226,6 +238,7 @@ public class Map {
             if (intersection.getTracks().size() == 0) intersections.remove(intersection);
         }
         tracks.remove(track);
+        updatePossibleRoutes();
     }
 
     /**
@@ -339,5 +352,36 @@ public class Map {
         // have been moved slightly from it's original location as the
         // intersection dissolves, meaning the split track will no longer be
         // connected.
+        updatePossibleRoutes();
+    }
+
+    private void updatePossibleRoutes() {
+        possibleRoutes = new HashMap<List<Point>, List<Route>>();
+
+        for (Location locationOne : locations) {
+            for (Location locationTwo : locations) {
+                if (locationOne == locationTwo) continue;
+
+                Point pointOne = locationOne.getPoint();
+                Point pointTwo = locationTwo.getPoint();
+
+                ArrayList<Point> points = new ArrayList<Point>();
+                points.add(pointOne);
+                points.add(pointTwo);
+
+                ArrayList<Point> pointsReversed = new ArrayList<Point>();
+                pointsReversed.add(pointTwo);
+                pointsReversed.add(pointOne);
+
+                if (possibleRoutes.containsKey(pointsReversed)) {
+                    List<Route> reversedRoutes = new ArrayList<Route>();
+                    for (Route route : possibleRoutes.get(pointsReversed)) {
+                        reversedRoutes.add(route.reverse());
+                    }
+                } else {
+                    possibleRoutes.put(points, Route.getRoutes(pointOne, pointTwo, this));
+                }
+            }
+        }
     }
 }
