@@ -97,13 +97,31 @@ public class Route {
                 currentRoute.addTrack(startingTrack);
                 if (startingTrack.equals(destinationTrack)){
                     if (!routes.contains(currentRoute)){
-                        routes.add(currentRoute);
+                        routes.add(currentRoute.clone());
                     }
                 } else {
                     getRoutes(destinationTrack, currentRoute, new ArrayList<Track>(), routes);
                 }
             }
         }
+
+        // If a route (1) contains all tracks in another route (2), then (1) is
+        // redundant. The reason why a redundant route is generated is because
+        // there are multiple starting and destination tracks, and a pair of
+        // starting or destination tracks that are connected may be selected as
+        // the start/end of a route. So removing routes with extraneous tracks
+        // means that all routes are unambiguous and as short as possible.
+        List<Route> redundantRoutes = new ArrayList<Route>();
+        for (Route route1 : routes) {
+            for (Route route2 : routes) {
+                if (route1 == route2) continue;
+                if (route1.getTracks().containsAll(route2.getTracks())) {
+                    redundantRoutes.add(route1);
+                }
+            }
+        }
+
+        routes.removeAll(redundantRoutes);
 
         Collections.sort(routes, new Comparator<Route>() {
             public int compare(Route route1, Route route2) {
