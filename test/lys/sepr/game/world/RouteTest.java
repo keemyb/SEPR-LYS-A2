@@ -203,4 +203,25 @@ public class RouteTest {
         assertTrue(map.getRoutes(locationOne, locationTwo).contains(expectedRoute));
         assertEquals(1, map.getRoutes(locationOne, locationTwo).size());
     }
+
+    @Test
+    public void testFilterRedundantRoute() throws Exception {
+        this.track1 = new Track(new Point(0, 0), new Point(100, 100));
+        this.track2 = new Track(new Point(100, 100), new Point(200, 200));
+        this.track3 = new Track(new Point(200, 200), new Point(300, 300));
+
+        map.addTrack(track1);
+        map.addTrack(track2);
+        map.addTrack(track3);
+
+        Route expectedRoute = new Route(new Point(100, 100), new Point(200, 200));
+        expectedRoute.addTrack(track2);
+
+        // A redundant route in this case would feature all 3 tracks.
+        // Or maybe even 2 tracks (1&2, 2&3).
+        List<Route> routes = Route.getRoutes(new Point(100, 100), new Point(200, 200), map);
+
+        assertEquals(1, routes.size());
+        assertEquals(expectedRoute, routes.get(0));
+    }
 }
