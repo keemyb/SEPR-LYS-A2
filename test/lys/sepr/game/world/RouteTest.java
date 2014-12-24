@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class RouteTest {
@@ -223,5 +224,33 @@ public class RouteTest {
 
         assertEquals(1, routes.size());
         assertEquals(expectedRoute, routes.get(0));
+    }
+
+    @Test
+    public void testTraversableRoute() throws Exception {
+        Route route = new Route(new Point(0, 0), new Point(200, 200));
+        route.addTrack(track1);
+        route.addTrack(track2);
+
+        track1.setBroken(true);
+
+        assertFalse(route.isTraversable());
+    }
+
+    @Test
+    public void testTraversableRouteTrack() throws Exception {
+        Route route = new Route(new Point(0, 0), new Point(300, 300));
+
+        Track track3 = new Track(new Point(200, 200), new Point(300, 300));
+
+        route.addTrack(track1);
+        route.addTrack(track2);
+        route.addTrack(track3);
+
+        track2.setBroken(true);
+
+        assertFalse(route.isTraversable(track1));
+        assertFalse(route.isTraversable(track2));
+        assertTrue(route.isTraversable(track3));
     }
 }

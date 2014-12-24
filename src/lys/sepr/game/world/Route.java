@@ -194,14 +194,14 @@ public class Route {
     }
 
     /**
-     * Returns true if all of the tracks in the route after the given track are not broken.
+     * Returns true if all of the tracks in the route after (and including) the given track are not broken.
      * Returns false if the given track is not in the route.
-     * @return true if all of the tracks in the route after the given track unbroken, false otherwise.
+     * @return true if all of the tracks in the route after the given track are unbroken, false otherwise.
      */
     public boolean isTraversable(Track track) {
         if (tracks.contains(track)) {
             for (int i=tracks.indexOf(track); i<tracks.size(); i++) {
-                if (track.isBroken()) return false;
+                if (tracks.get(i).isBroken()) return false;
             }
             return true;
         } else {
