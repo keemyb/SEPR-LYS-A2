@@ -183,7 +183,7 @@ public class IntersectionTest {
     }
 
     @Test
-    public void moveIntersection() throws Exception {
+    public void testMoveIntersection() throws Exception {
         setUp3Tracks();
 
         ArrayList<Track> expectedTracks = new ArrayList<Track>();

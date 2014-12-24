@@ -58,7 +58,7 @@ public class MapTest {
     }
 
     @Test
-    public void moveTrackCreateNewIntersection() throws Exception {
+    public void testMoveTrackCreateNewIntersection() throws Exception {
         Track track4 = new Track(new Point(0, 100), new Point(90, 100));
 
         ArrayList<Track> expectedTracks = new ArrayList<Track>();
@@ -74,7 +74,7 @@ public class MapTest {
     }
 
     @Test
-    public void moveTrackExistingIntersection() throws Exception {
+    public void testMoveTrackExistingIntersection() throws Exception {
         Track track4 = new Track(new Point(0, 100), new Point(90, 100));
 
         ArrayList<Track> expectedTracks = new ArrayList<Track>();
@@ -92,7 +92,7 @@ public class MapTest {
     }
 
     @Test
-    public void moveIntersectionConsumeSoloTrack() throws Exception {
+    public void testMoveIntersectionConsumeSoloTrack() throws Exception {
         Track track4 = new Track(new Point(0, 100), new Point(90, 100));
 
         ArrayList<Track> expectedTracks = new ArrayList<Track>();
@@ -114,7 +114,7 @@ public class MapTest {
     }
 
     @Test
-    public void moveIntersectionMergeIntersection() throws Exception {
+    public void testMoveIntersectionMergeIntersection() throws Exception {
         Track track4 = new Track(new Point(0, 100), new Point(90, 100));
         Track track5 = new Track(new Point(0, 200), new Point(90, 100));
 
@@ -140,7 +140,7 @@ public class MapTest {
     }
 
     @Test
-    public void removeIntersection() throws Exception {
+    public void testRemoveIntersection() throws Exception {
         map.addTrack(track1);
         map.addTrack(track2);
         map.addTrack(track3);
@@ -156,7 +156,7 @@ public class MapTest {
     }
 
     @Test
-    public void removeTrack() throws Exception {
+    public void testRemoveTrack() throws Exception {
         Track track4 = new Track(new Point(0, 100), new Point(90, 100));
 
         map.addTrack(track1);
@@ -188,7 +188,7 @@ public class MapTest {
     }
 
     @Test
-    public void removeFinalTrack() throws Exception {
+    public void testRemoveFinalTrack() throws Exception {
         map.addTrack(track1);
         map.addTrack(track2);
 
