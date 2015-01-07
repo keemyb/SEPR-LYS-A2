@@ -340,6 +340,7 @@ public final class Actions {
 
     public static void drawNormal(Map map, State state, double locationSize, MapView mapView, Graphics2D g2) {
         Track pickedUpTrack = state.getTrackPickedUp();
+        Intersection pickedUpIntersection = state.getIntersectionPickedUp();
 
         for (Track track : map.getTracks()) {
             if (state.getMode() == State.MOVE_MODE){
@@ -348,15 +349,24 @@ public final class Actions {
                 // according to the current mouse position.
                 if (track == pickedUpTrack) {
                     continue;
+                } else if (pickedUpIntersection != null &&
+                        pickedUpIntersection.getTracks().contains(track)) {
+                    continue;
                 }
             }
             drawTrack(track, randomColor(), state, g2);
         }
 
-        if (state.getMode() == State.MOVE_MODE){
+        if (state.getMode() == State.MOVE_MODE && state.isHoldingLocationTrackIntersection()){
             if (pickedUpTrack != null) {
                 Track temporaryMovedTrack = new Track(state.getTrackPointNotPickedUp(), state.getClickPoint());
                 drawTrack(temporaryMovedTrack, Color.orange, state, g2);
+            } else if (pickedUpIntersection != null) {
+                for (Track track : pickedUpIntersection.getTracks()) {
+                    Track temporaryMovedTrack = new Track(state.getClickPoint(),
+                            track.getOtherPoint(pickedUpIntersection.getPoint()));
+                    drawTrack(temporaryMovedTrack, Color.orange, state, g2);
+                }
             }
         }
 
