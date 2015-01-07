@@ -338,6 +338,15 @@ public final class Actions {
         for (Track track : map.getTracks()) {
             drawTrack(track, randomColor(), state, g2);
         }
+
+        if (state.getMode() == State.CREATE_TRACK_MODE && state.isStartedNewTrack()) {
+            drawTemporaryTrack(Color.orange, state, g2);
+        }
+
+        if (state.getMode() == State.CREATE_LOCATION_MODE) {
+            drawTemporaryLocation(locationSize, Color.orange, state, g2);
+        }
+
         for (Location location : map.getLocations()) {
             if (state.getRouteLocation1() == location) {
                 // highlight the first location selected when inspecting track
@@ -348,10 +357,20 @@ public final class Actions {
         }
     }
 
+    public static void drawTemporaryTrack(java.awt.Color color, State state, Graphics2D g2) {
+        Track tempTrack = new Track(state.getNewTrackPoint1(), state.getClickPoint());
+        drawTrack(tempTrack, color, state, g2);
+    }
+
     public static void drawTrack(Track track, java.awt.Color color, State state, Graphics2D g2) {
         Line2D.Double line = trackToLine2D(track, state);
         g2.setColor(color);
         g2.draw(line);
+    }
+
+    public static void drawTemporaryLocation(double locationSize, java.awt.Color color, State state, Graphics2D g2) {
+        Location tempLocation = new Location(state.getClickPoint(), "New Location");
+        drawLocation(tempLocation, locationSize, color, state, g2);
     }
 
     public static void drawIntersection(Intersection intersection, double intersectionSize, java.awt.Color color, State state, Graphics2D g2) {
