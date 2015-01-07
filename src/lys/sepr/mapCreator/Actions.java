@@ -74,6 +74,7 @@ public final class Actions {
         state.setHoldingLocationTrackIntersection(false);
         state.setIntersectionPickedUp(null);
         state.setTrackPointPickedUp(null);
+        state.setTrackPointNotPickedUp(null);
         state.setTrackPickedUp(null);
         state.setLocationPickedUp(null);
     }
@@ -137,9 +138,12 @@ public final class Actions {
 
         ArrayList<Object> trackAndPoint = (ArrayList<Object>) selectCloseTrackEnd(map, clickPoint, minPickUpDistance);
         if (trackAndPoint != null) {
+            Track trackPickedUp = (Track) trackAndPoint.get(0);
+            Point pointPickedUp = (Point) trackAndPoint.get(1);
             dropHeldLocationTrackIntersection(state);
-            state.setTrackPickedUp((Track) trackAndPoint.get(0));
-            state.setTrackPointPickedUp((Point) trackAndPoint.get(1));
+            state.setTrackPickedUp(trackPickedUp);
+            state.setTrackPointPickedUp(pointPickedUp);
+            state.setTrackPointNotPickedUp(trackPickedUp.getOtherPoint(pointPickedUp));
             state.setHoldingLocationTrackIntersection(true);
         }
     }
@@ -201,7 +205,7 @@ public final class Actions {
         } else {
             map.moveIntersection(state.getIntersectionPickedUp(), clickPoint);
         }
-        state.setHoldingLocationTrackIntersection(false);
+        Actions.dropHeldLocationTrackIntersection(state);
     }
 
     public static void createLocation(Map map, Point clickPoint, Double minPickUpDistance, MapView mapView) {
@@ -335,8 +339,25 @@ public final class Actions {
     }
 
     public static void drawNormal(Map map, State state, double locationSize, MapView mapView, Graphics2D g2) {
+        Track pickedUpTrack = state.getTrackPickedUp();
+
         for (Track track : map.getTracks()) {
+            if (state.getMode() == State.MOVE_MODE){
+                // If we are about to move a track or intersection we don't
+                // want to draw these tracks just yet, we will draw them
+                // according to the current mouse position.
+                if (track == pickedUpTrack) {
+                    continue;
+                }
+            }
             drawTrack(track, randomColor(), state, g2);
+        }
+
+        if (state.getMode() == State.MOVE_MODE){
+            if (pickedUpTrack != null) {
+                Track temporaryMovedTrack = new Track(state.getTrackPointNotPickedUp(), state.getClickPoint());
+                drawTrack(temporaryMovedTrack, Color.orange, state, g2);
+            }
         }
 
         if (state.getMode() == State.CREATE_TRACK_MODE && state.isStartedNewTrack()) {

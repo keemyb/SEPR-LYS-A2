@@ -29,6 +29,7 @@ public class State {
     private boolean holdingLocationTrackIntersection = false;
     private Intersection intersectionPickedUp;
     private Point trackPointPickedUp;
+    private Point trackPointNotPickedUp;
     private Track trackPickedUp;
     private Location locationPickedUp;
 
@@ -55,6 +56,7 @@ public class State {
         holdingLocationTrackIntersection = false;
         intersectionPickedUp = null;
         trackPointPickedUp = null;
+        trackPointNotPickedUp = null;
         trackPickedUp = null;
         locationPickedUp = null;
         startedRouteInspect = false;
@@ -165,6 +167,14 @@ public class State {
 
     public void setTrackPointPickedUp(Point trackPointPickedUp) {
         this.trackPointPickedUp = trackPointPickedUp;
+    }
+
+    public Point getTrackPointNotPickedUp() {
+        return trackPointNotPickedUp;
+    }
+
+    public void setTrackPointNotPickedUp(Point trackPointNotPickedUp) {
+        this.trackPointNotPickedUp = trackPointNotPickedUp;
     }
 
     public Track getTrackPickedUp() {
