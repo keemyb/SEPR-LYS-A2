@@ -9,6 +9,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.*;
+import java.util.List;
 
 public class MapView {
     java.awt.Color selectedTrackColour = Color.ORANGE;
@@ -29,6 +31,12 @@ public class MapView {
     private State state;
 
     private double lastZoom;
+
+    // This list represents the modes that the map will be redrawn in to
+    // show new objects based on the users current mouse location.
+    private List<Integer> liveUpdateModes = new ArrayList<Integer>(Arrays.asList(
+            State.CREATE_LOCATION_MODE, State.CREATE_TRACK_MODE, State.MOVE_MODE
+    ));
 
     BufferedImage background;
 
@@ -154,6 +162,8 @@ public class MapView {
         @Override
         public void mouseMoved(MouseEvent e) {
             super.mouseMoved(e);
+            if (!liveUpdateModes.contains(state.getMode())) return;
+
             state.setClickPoint(Actions.screenPointToMapPoint(e.getPoint(), state));
             mapPanel.repaint();
         }
