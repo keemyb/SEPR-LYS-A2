@@ -45,6 +45,8 @@ public class State {
     private boolean showLocationNames = true;
     private boolean showIntersections = false;
 
+    private lys.sepr.game.world.Point clickPoint;
+
     public void reset() {
         selectedTrack = null;
         startedNewTrack = false;
@@ -59,6 +61,14 @@ public class State {
         routeLocation1 = null;
         routeLocation2 = null;
         zoom = 1d;
+    }
+
+    public Point getClickPoint() {
+        return clickPoint;
+    }
+
+    public void setClickPoint(Point clickPoint) {
+        this.clickPoint = clickPoint;
     }
 
     public boolean isShowingIntersections() {

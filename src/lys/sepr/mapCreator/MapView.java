@@ -61,6 +61,7 @@ public class MapView {
         map = new Map();
 
         mapPanel.addMouseListener(mouseHandler);
+        mapPanel.addMouseMotionListener(mouseHandler);
     }
 
     public void setMapPanelSize() {
@@ -147,6 +148,13 @@ public class MapView {
                     Actions.renameLocation(map, clickPoint, scaledPickupDistance, mapPanel);
                     break;
             }
+            mapPanel.repaint();
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            super.mouseMoved(e);
+            state.setClickPoint(Actions.screenPointToMapPoint(e.getPoint(), state));
             mapPanel.repaint();
         }
     }
