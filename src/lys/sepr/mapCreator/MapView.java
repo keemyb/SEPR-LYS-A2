@@ -18,6 +18,7 @@ public class MapView {
     java.awt.Color validNextTrackColour = Color.BLUE;
     java.awt.Color connectedTrackColour = Color.RED;
     java.awt.Color unconnectedTrackColour = Color.BLACK;
+    java.awt.Color normalTrackColour = new Color(204, 0, 204); // Purple
 
     private final double locationSize = 10d;
 

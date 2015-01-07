@@ -355,7 +355,7 @@ public final class Actions {
                     continue;
                 }
             }
-            drawTrack(track, randomColor(), state, g2);
+            drawTrack(track, mapView.normalTrackColour, state, g2);
         }
 
         if (state.getMode() == State.MOVE_MODE && state.isHoldingLocationTrackIntersection()){
@@ -393,7 +393,7 @@ public final class Actions {
                 // highlight the first location selected when inspecting track
                 drawLocation(location, locationSize, Color.GREEN, state, g2);
             } else {
-                drawLocation(location, locationSize, randomColor(), state, g2);
+                drawLocation(location, locationSize, mapView.normalTrackColour, state, g2);
             }
         }
     }
@@ -427,6 +427,7 @@ public final class Actions {
     }
 
     public static void drawLocationName(Location location, double locationSize, State state, Graphics2D g2) {
+        g2.setColor(Color.orange);
         java.awt.Point locationPoint = mapPointToScreenPoint(location.getPoint(), state);
         double offset = locationSize / 2;
         g2.drawString(location.getName(), (float) (locationPoint.getX() + locationSize),
