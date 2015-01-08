@@ -238,6 +238,8 @@ public final class Actions {
                 track.move(state.getNewTrackPoint2(), closePoint);
             }
             map.addTrack(track);
+            state.setNewTrackPoint1(null);
+            state.setNewTrackPoint2(null);
         }
         state.setStartedNewTrack(!state.isStartedNewTrack());
     }
@@ -261,6 +263,7 @@ public final class Actions {
 
     public static void drawMap(Map map, double locationSize, State state, MapView mapView, Graphics2D g2) {
         g2.setStroke(new BasicStroke(5));
+
         if (state.getRouteLocation2() != null) {
             drawRoute(map, state, locationSize, mapView, g2);
         } else if (state.getSelectedTrack() != null) {
@@ -278,6 +281,11 @@ public final class Actions {
                 drawIntersection(intersection, locationSize / 2, Color.RED, state, g2);
             }
         }
+        if (state.getMode() == State.CREATE_TRACK_MODE) {
+            drawTemporaryTrack(mapView.selectedTrackColour, state, mapView, g2);
+        } else if (state.getMode() == State.CREATE_LOCATION_MODE) {
+            drawTemporaryLocation(locationSize, mapView.selectedTrackColour, state, mapView, g2);
+        }
     }
 
     public static void drawRoute(Map map, State state, double locationSize, MapView mapView, Graphics2D g2) {
@@ -285,9 +293,9 @@ public final class Actions {
         List<Route> routes = map.getRoutes(state.getRouteLocation1(), state.getRouteLocation2());
 
         // drawing the tracks not part of a route.
+        lineColour = mapView.unconnectedTrackColour;
         for (Track track : map.getTracks()) {
-            lineColour = mapView.unconnectedTrackColour;
-            drawTrack(track, lineColour, state, g2);
+            drawTrack(track, lineColour, state, mapView, g2);
         }
 
 //        Random r = new Random();
@@ -295,6 +303,7 @@ public final class Actions {
         float routesHue = 126f/360f;
 
         for (int i=routes.size()- 1; i>=0; i--) {
+            // fastest route
             if (i == 0){
                 lineColour = mapView.selectedTrackColour;
             } else {
@@ -305,15 +314,15 @@ public final class Actions {
 
             Route route = routes.get(i);
             for (Track track : route.getTracks()) {
-                drawTrack(track, lineColour, state, g2);
+                drawTrack(track, lineColour, state, mapView, g2);
             }
         }
 
         for (Location location : map.getLocations()) {
             if (location.equals(state.getRouteLocation1()) || location.equals(state.getRouteLocation2())) {
-                drawLocation(location, locationSize, mapView.selectedTrackColour, state, g2);
+                drawLocation(location, locationSize, mapView.selectedTrackColour, state, mapView, g2);
             } else {
-                drawLocation(location, locationSize, mapView.unconnectedTrackColour, state, g2);
+                drawLocation(location, locationSize, mapView.unconnectedTrackColour, state, mapView, g2);
             }
         }
     }
@@ -331,106 +340,92 @@ public final class Actions {
                 lineColour = mapView.connectedTrackColour;
             } else lineColour = mapView.unconnectedTrackColour;
 
-            drawTrack(track, lineColour, state, g2);
+            drawTrack(track, lineColour, state, mapView, g2);
         }
         for (Location location : map.getLocations()) {
-            drawLocation(location, locationSize, randomColor(), state, g2);
+            drawLocation(location, locationSize, randomColor(), state, mapView, g2);
         }
     }
 
     public static void drawNormal(Map map, State state, double locationSize, MapView mapView, Graphics2D g2) {
-        Track pickedUpTrack = state.getTrackPickedUp();
-        Intersection pickedUpIntersection = state.getIntersectionPickedUp();
-
         for (Track track : map.getTracks()) {
-            if (state.getMode() == State.MOVE_MODE) {
-                // If we are about to move a track or intersection we don't
-                // want to draw these tracks just yet, we will draw them
-                // according to the current mouse position.
-                if (track == pickedUpTrack) {
-                    continue;
-                } else if (pickedUpIntersection != null &&
-                        pickedUpIntersection.getTracks().contains(track)) {
-                    continue;
-                }
-            }
-            drawTrack(track, mapView.normalTrackColour, state, g2);
+            drawTrack(track, mapView.normalTrackColour, state, mapView, g2);
         }
 
         for (Location location : map.getLocations()) {
-            if (state.getMode() == State.MOVE_MODE){
-                if (location == state.getLocationPickedUp()) {
-                    continue;
-                }
-            }
             if (state.getRouteLocation1() == location) {
                 // highlight the first location selected when inspecting track
-                drawLocation(location, locationSize, Color.GREEN, state, g2);
+                drawLocation(location, locationSize, Color.GREEN, state, mapView, g2);
             } else {
-                drawLocation(location, locationSize, mapView.normalTrackColour, state, g2);
+                drawLocation(location, locationSize, mapView.normalTrackColour, state, mapView, g2);
             }
         }
-
-        drawAllTemporaryObjects(state, locationSize, mapView, g2);
     }
 
-    public static void drawAllTemporaryObjects(State state, double locationSize, MapView mapView, Graphics2D g2){
+    public static void drawTrack(Track track, java.awt.Color color, State state, MapView mapView, Graphics2D g2) {
         Track pickedUpTrack = state.getTrackPickedUp();
         Intersection pickedUpIntersection = state.getIntersectionPickedUp();
-        Location pickedUpLocation = state.getLocationPickedUp();
+        Track trackToDraw;
 
-        if (state.getMode() == State.MOVE_MODE && state.isHoldingLocationTrackIntersection()){
+        if (isTrackTemporary(track, state)){
+            g2.setColor(mapView.selectedTrackColour);
             if (pickedUpTrack != null) {
-                Track temporaryMovedTrack = new Track(state.getTrackPointNotPickedUp(), state.getClickPoint());
-                drawTrack(temporaryMovedTrack, mapView.selectedTrackColour, state, g2);
-            } else if (pickedUpIntersection != null) {
-                for (Track track : pickedUpIntersection.getTracks()) {
-                    Track temporaryMovedTrack = new Track(state.getClickPoint(),
-                            track.getOtherPoint(pickedUpIntersection.getPoint()));
-                    drawTrack(temporaryMovedTrack, mapView.selectedTrackColour, state, g2);
-                }
-            } else if (pickedUpLocation != null) {
-                Location temporaryMovedLocation = new Location(state.getClickPoint(),
-                        pickedUpLocation.getName());
-                drawLocation(temporaryMovedLocation, locationSize, mapView.selectedTrackColour, state, g2);
+                trackToDraw = new Track(state.getTrackPointNotPickedUp(), state.getClickPoint());
+            } else {
+                trackToDraw = new Track(state.getClickPoint(),
+                        track.getOtherPoint(pickedUpIntersection.getPoint()));
             }
+        } else {
+            g2.setColor(color);
+            trackToDraw = track;
         }
 
-        if (state.getMode() == State.CREATE_TRACK_MODE && state.isStartedNewTrack()) {
-            drawTemporaryTrack(mapView.selectedTrackColour, state, g2);
-        }
-
-        if (state.getMode() == State.CREATE_LOCATION_MODE) {
-            drawTemporaryLocation(locationSize, mapView.selectedTrackColour, state, g2);
-        }
-    }
-
-    public static void drawTemporaryTrack(java.awt.Color color, State state, Graphics2D g2) {
-        Track tempTrack = new Track(state.getNewTrackPoint1(), state.getClickPoint());
-        drawTrack(tempTrack, color, state, g2);
-    }
-
-    public static void drawTrack(Track track, java.awt.Color color, State state, Graphics2D g2) {
-        Line2D.Double line = trackToLine2D(track, state);
-        g2.setColor(color);
+        Line2D.Double line = trackToLine2D(trackToDraw, state);
         g2.draw(line);
     }
 
-    public static void drawTemporaryLocation(double locationSize, java.awt.Color color, State state, Graphics2D g2) {
-        Location tempLocation = new Location(state.getClickPoint(), "New Location");
-        drawLocation(tempLocation, locationSize, color, state, g2);
+    public static void drawTemporaryTrack(java.awt.Color color, State state, MapView mapView, Graphics2D g2) {
+        if (state.isStartedNewTrack()) {
+            Track tempTrack = new Track(state.getNewTrackPoint1(), state.getClickPoint());
+            drawTrack(tempTrack, color, state, mapView, g2);
+        }
     }
 
-    public static void drawIntersection(Intersection intersection, double intersectionSize, java.awt.Color color, State state, Graphics2D g2) {
-        Ellipse2D.Double circle = intersectionToEllipse2D(intersection, intersectionSize, state);
-        g2.setColor(color);
-        g2.draw(circle);
+    public static boolean isTrackTemporary(Track track, State state) {
+        Track pickedUpTrack = state.getTrackPickedUp();
+        Intersection pickedUpIntersection = state.getIntersectionPickedUp();
+        if (state.getMode() == State.MOVE_MODE) {
+            // If we are about to move a track or intersection we don't
+            // want to draw these tracks just yet, we will draw them
+            // according to the current mouse position.
+            if (track == pickedUpTrack) {
+                return true;
+            } else if (pickedUpIntersection != null &&
+                    pickedUpIntersection.getTracks().contains(track)) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public static void drawLocation(Location location, double locationSize, java.awt.Color color, State state, Graphics2D g2) {
-        Rectangle2D.Double rectangle = locationToRect2D(location, locationSize, state);
-        g2.setColor(color);
+    public static void drawLocation(Location location, double locationSize, java.awt.Color color, State state, MapView mapView, Graphics2D g2) {
+        Location locationToDraw;
+
+        if (state.getLocationPickedUp() == location) {
+            g2.setColor(mapView.selectedTrackColour);
+            locationToDraw = new Location(state.getClickPoint(), "New Location");
+        } else {
+            g2.setColor(color);
+            locationToDraw = location;
+        }
+
+        Rectangle2D.Double rectangle = locationToRect2D(locationToDraw, locationSize, state);
         g2.draw(rectangle);
+    }
+
+    public static void drawTemporaryLocation(double locationSize, java.awt.Color color, State state, MapView mapView, Graphics2D g2) {
+        Location tempLocation = new Location(state.getClickPoint(), "New Location");
+        drawLocation(tempLocation, locationSize, color, state, mapView, g2);
     }
 
     public static void drawLocationName(Location location, double locationSize, State state, Graphics2D g2) {
@@ -439,6 +434,12 @@ public final class Actions {
         double offset = locationSize / 2;
         g2.drawString(location.getName(), (float) (locationPoint.getX() + locationSize),
                 (float) (locationPoint.getY() + offset));
+    }
+
+    public static void drawIntersection(Intersection intersection, double intersectionSize, java.awt.Color color, State state, Graphics2D g2) {
+        Ellipse2D.Double circle = intersectionToEllipse2D(intersection, intersectionSize, state);
+        g2.setColor(color);
+        g2.draw(circle);
     }
 
     public static void loadMapAndBackground(MapView mapView, JPanel jPanel) {
