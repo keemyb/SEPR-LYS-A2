@@ -341,10 +341,9 @@ public final class Actions {
     public static void drawNormal(Map map, State state, double locationSize, MapView mapView, Graphics2D g2) {
         Track pickedUpTrack = state.getTrackPickedUp();
         Intersection pickedUpIntersection = state.getIntersectionPickedUp();
-        Location pickedUpLocation = state.getLocationPickedUp();
 
         for (Track track : map.getTracks()) {
-            if (state.getMode() == State.MOVE_MODE){
+            if (state.getMode() == State.MOVE_MODE) {
                 // If we are about to move a track or intersection we don't
                 // want to draw these tracks just yet, we will draw them
                 // according to the current mouse position.
@@ -357,6 +356,28 @@ public final class Actions {
             }
             drawTrack(track, mapView.normalTrackColour, state, g2);
         }
+
+        for (Location location : map.getLocations()) {
+            if (state.getMode() == State.MOVE_MODE){
+                if (location == state.getLocationPickedUp()) {
+                    continue;
+                }
+            }
+            if (state.getRouteLocation1() == location) {
+                // highlight the first location selected when inspecting track
+                drawLocation(location, locationSize, Color.GREEN, state, g2);
+            } else {
+                drawLocation(location, locationSize, mapView.normalTrackColour, state, g2);
+            }
+        }
+
+        drawAllTemporaryObjects(state, locationSize, mapView, g2);
+    }
+
+    public static void drawAllTemporaryObjects(State state, double locationSize, MapView mapView, Graphics2D g2){
+        Track pickedUpTrack = state.getTrackPickedUp();
+        Intersection pickedUpIntersection = state.getIntersectionPickedUp();
+        Location pickedUpLocation = state.getLocationPickedUp();
 
         if (state.getMode() == State.MOVE_MODE && state.isHoldingLocationTrackIntersection()){
             if (pickedUpTrack != null) {
@@ -381,20 +402,6 @@ public final class Actions {
 
         if (state.getMode() == State.CREATE_LOCATION_MODE) {
             drawTemporaryLocation(locationSize, mapView.selectedTrackColour, state, g2);
-        }
-
-        for (Location location : map.getLocations()) {
-            if (state.getMode() == State.MOVE_MODE){
-                if (location == state.getLocationPickedUp()) {
-                    continue;
-                }
-            }
-            if (state.getRouteLocation1() == location) {
-                // highlight the first location selected when inspecting track
-                drawLocation(location, locationSize, Color.GREEN, state, g2);
-            } else {
-                drawLocation(location, locationSize, mapView.normalTrackColour, state, g2);
-            }
         }
     }
 
