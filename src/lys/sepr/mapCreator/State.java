@@ -29,6 +29,7 @@ public class State {
     private boolean holdingLocationTrackIntersection = false;
     private Intersection intersectionPickedUp;
     private Point trackPointPickedUp;
+    private Point trackPointNotPickedUp;
     private Track trackPickedUp;
     private Location locationPickedUp;
 
@@ -45,6 +46,8 @@ public class State {
     private boolean showLocationNames = true;
     private boolean showIntersections = false;
 
+    private lys.sepr.game.world.Point clickPoint;
+
     public void reset() {
         selectedTrack = null;
         startedNewTrack = false;
@@ -53,12 +56,21 @@ public class State {
         holdingLocationTrackIntersection = false;
         intersectionPickedUp = null;
         trackPointPickedUp = null;
+        trackPointNotPickedUp = null;
         trackPickedUp = null;
         locationPickedUp = null;
         startedRouteInspect = false;
         routeLocation1 = null;
         routeLocation2 = null;
         zoom = 1d;
+    }
+
+    public Point getClickPoint() {
+        return clickPoint;
+    }
+
+    public void setClickPoint(Point clickPoint) {
+        this.clickPoint = clickPoint;
     }
 
     public boolean isShowingIntersections() {
@@ -155,6 +167,14 @@ public class State {
 
     public void setTrackPointPickedUp(Point trackPointPickedUp) {
         this.trackPointPickedUp = trackPointPickedUp;
+    }
+
+    public Point getTrackPointNotPickedUp() {
+        return trackPointNotPickedUp;
+    }
+
+    public void setTrackPointNotPickedUp(Point trackPointNotPickedUp) {
+        this.trackPointNotPickedUp = trackPointNotPickedUp;
     }
 
     public Track getTrackPickedUp() {

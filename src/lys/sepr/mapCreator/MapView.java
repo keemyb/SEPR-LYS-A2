@@ -9,6 +9,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.*;
+import java.util.List;
 
 public class MapView {
     java.awt.Color selectedTrackColour = Color.ORANGE;
@@ -16,6 +18,7 @@ public class MapView {
     java.awt.Color validNextTrackColour = Color.BLUE;
     java.awt.Color connectedTrackColour = Color.RED;
     java.awt.Color unconnectedTrackColour = Color.BLACK;
+    java.awt.Color normalTrackColour = new Color(204, 0, 204); // Purple
 
     private final double locationSize = 10d;
 
@@ -29,6 +32,12 @@ public class MapView {
     private State state;
 
     private double lastZoom;
+
+    // This list represents the modes that the map will be redrawn in to
+    // show new objects based on the users current mouse location.
+    private List<Integer> liveUpdateModes = new ArrayList<Integer>(Arrays.asList(
+            State.CREATE_LOCATION_MODE, State.CREATE_TRACK_MODE, State.MOVE_MODE
+    ));
 
     BufferedImage background;
 
@@ -61,6 +70,7 @@ public class MapView {
         map = new Map();
 
         mapPanel.addMouseListener(mouseHandler);
+        mapPanel.addMouseMotionListener(mouseHandler);
     }
 
     public void setMapPanelSize() {
@@ -147,6 +157,15 @@ public class MapView {
                     Actions.renameLocation(map, clickPoint, scaledPickupDistance, mapPanel);
                     break;
             }
+            mapPanel.repaint();
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            super.mouseMoved(e);
+            if (!liveUpdateModes.contains(state.getMode())) return;
+
+            state.setClickPoint(Actions.screenPointToMapPoint(e.getPoint(), state));
             mapPanel.repaint();
         }
     }
