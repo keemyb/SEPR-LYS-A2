@@ -59,6 +59,10 @@ public class ActiveTrain {
         return currentSpeed;
     }
 
+    public void setCurrentSpeed(Double newSpeed) {
+        currentSpeed = newSpeed;
+    }
+
     private void updateFacing() {
         Track currentTrack = remainderOfRoute.get(0);
         if (remainderOfRoute.size() > 1) {
@@ -72,5 +76,12 @@ public class ActiveTrain {
     private void updateOrientation() {
         orientation = Math.toDegrees(Math.atan2(facing.getY() - currentPosition.getY(),
                 facing.getX() - currentPosition.getX()));
+    }
+
+    public void move(long timePassed) {
+        List<Double> vector = Utilities.getVector(currentPosition, facing);
+        vector = Utilities.unitVector(vector);
+        List<Double> scaledVector = Utilities.multiply(vector, timePassed * currentSpeed);
+        currentPosition.translate(scaledVector.get(0), scaledVector.get(1));
     }
 }

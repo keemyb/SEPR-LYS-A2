@@ -73,4 +73,49 @@ public class ActiveTrainTest {
         assertEquals(point2, activeTrain.getFacing());
         assertEquals(point4, activeTrain.getDestination());
     }
+
+    /**
+     * Simulates passing time on an ActiveTrain, so you can test movement
+     * without having to wait realtime.
+     * @param activeTrain the Train that should be simulated
+     * @param intervals   the number of times that time should be simulated.
+     * @param time        the length of time to simulate each step.
+     */
+    private void advanceTime(ActiveTrain activeTrain, int intervals, long time) {
+        while (intervals > 0) {
+            activeTrain.move(time);
+            intervals--;
+        }
+    }
+
+    @Test
+    public void testMoveOnTrack() throws Exception {
+        ActiveTrain activeTrain = new ActiveTrain(train, shortRoute);
+        activeTrain.setCurrentSpeed(2d);
+
+        advanceTime(activeTrain, 2, 10);
+
+        assertEquals(new Point(40, 0), activeTrain.getCurrentPosition());
+
+    }
+
+    @Test
+    public void testChangeTrack() throws Exception {
+
+    }
+
+    @Test
+    public void testChangeTrackOvershoot() throws Exception {
+
+    }
+
+    @Test
+    public void testEndRoute() throws Exception {
+
+    }
+
+    @Test
+    public void testEndRouteOvershoot() throws Exception {
+
+    }
 }
