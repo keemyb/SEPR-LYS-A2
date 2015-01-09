@@ -31,6 +31,34 @@ public class ActiveTrain {
         updateOrientation();
     }
 
+    public Train getTrain() {
+        return train;
+    }
+
+    public Point getCurrentPosition() {
+        return currentPosition;
+    }
+
+    public Point getDestination() {
+        return destination;
+    }
+
+    public Point getFacing() {
+        return facing;
+    }
+
+    public List<Track> getRemainderOfRoute() {
+        return remainderOfRoute;
+    }
+
+    public Double getOrientation() {
+        return orientation;
+    }
+
+    public Double getCurrentSpeed() {
+        return currentSpeed;
+    }
+
     private void updateFacing() {
         Track currentTrack = remainderOfRoute.get(0);
         if (remainderOfRoute.size() > 1) {
