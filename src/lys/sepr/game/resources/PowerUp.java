@@ -4,15 +4,15 @@ import java.util.ArrayList;
 
 public class PowerUp extends Resource {
 
-    private static ArrayList<PowerUp> PowerUps = new ArrayList<PowerUp>();
+    private static ArrayList<PowerUp> powerUps = new ArrayList<PowerUp>();
     // public SOME_TYPE effect;
 
     public ArrayList<PowerUp> getPowerUps() {
-        return PowerUps;
+        return powerUps;
     }
 
     public void setPowerUps(ArrayList<PowerUp> powerUps) {
-        PowerUps = powerUps;
+        PowerUp.powerUps = powerUps;
     }
 
     PowerUp(String name, int price, int reqReputation, int maxAllowed) {

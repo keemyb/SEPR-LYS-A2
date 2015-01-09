@@ -1,6 +1,8 @@
 package lys.sepr.game;
 
 import lys.sepr.game.resources.Train;
+import lys.sepr.game.resources.TrainStore;
+import lys.sepr.game.resources.TrainType;
 import lys.sepr.game.world.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +34,9 @@ public class ActiveTrainTest {
 
     @Before
     public void setUp() throws Exception {
-        train = new Train("test train", 10, 0, 1);
+        train = new Train("test train", 10, 0, 1, TrainType.PASSENGER,
+                Integer.MAX_VALUE, Double.POSITIVE_INFINITY,
+                1d, 0, Integer.MAX_VALUE, Integer.MAX_VALUE, 0);
         train.setMaxSpeed(Integer.MAX_VALUE);
         train.setMaxFuelCapacity(Double.POSITIVE_INFINITY);
         train.setAmountOfFuel(Double.POSITIVE_INFINITY);

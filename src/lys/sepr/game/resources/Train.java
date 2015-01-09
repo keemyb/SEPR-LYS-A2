@@ -4,23 +4,22 @@ import java.util.ArrayList;
 
 public class Train extends Resource{
 
-    private static ArrayList<Train> TrainList = new ArrayList<Train>();
     private TrainType type;
-    private Integer maxSpeed;
-    private Double maxFuelCapacity;
-    private Double amountOfFuel;
-    private Float fuelEfficiency;
-    private Integer rateOfHealthReduction;
-    private Integer maxHealth;
-    private Integer health;
-    private Integer comfort;
-    private Integer repairUnitCost;
+    private int maxSpeed;
+    private double maxFuelCapacity;
+    private double amountOfFuel;
+    private double fuelEfficiency;
+    private int rateOfHealthReduction;
+    private int maxHealth;
+    private int health;
+    private int comfort;
+    private int repairUnitCost;
 
-    public Double getAmountOfFuel() {
+    public double getAmountOfFuel() {
         return amountOfFuel;
     }
 
-    public void setAmountOfFuel(Double amountOfFuel) {
+    public void setAmountOfFuel(double amountOfFuel) {
         this.amountOfFuel = amountOfFuel;
     }
 
@@ -32,83 +31,75 @@ public class Train extends Resource{
         this.type = type;
     }
 
-    public Integer getMaxSpeed() {
+    public int getMaxSpeed() {
         return maxSpeed;
     }
 
-    public void setMaxSpeed(Integer maxSpeed) {
+    public void setMaxSpeed(int maxSpeed) {
         this.maxSpeed = maxSpeed;
     }
 
-    public Double getMaxFuelCapacity() {
+    public double getMaxFuelCapacity() {
         return maxFuelCapacity;
     }
 
-    public void setMaxFuelCapacity(Double maxFuelCapacity) {
+    public void setMaxFuelCapacity(double maxFuelCapacity) {
         this.maxFuelCapacity = maxFuelCapacity;
     }
 
-    public Float getFuelEfficiency() {
+    public double getFuelEfficiency() {
         return fuelEfficiency;
     }
 
-    public void setFuelEfficiency(Float fuelEfficiency) {
+    public void setFuelEfficiency(double fuelEfficiency) {
         this.fuelEfficiency = fuelEfficiency;
     }
 
-    public Integer getRateOfHealthReduction() {
+    public int getRateOfHealthReduction() {
         return rateOfHealthReduction;
     }
 
-    public void setRateOfHealthReduction(Integer rateOfHealthReduction) {
+    public void setRateOfHealthReduction(int rateOfHealthReduction) {
         this.rateOfHealthReduction = rateOfHealthReduction;
     }
 
-    public Integer getMaxHealth() {
+    public int getMaxHealth() {
         return maxHealth;
     }
 
-    public void setMaxHealth(Integer maxHealth) {
+    public void setMaxHealth(int maxHealth) {
         this.maxHealth = maxHealth;
     }
 
-    public Integer getHealth() {
+    public int getHealth() {
         return health;
     }
 
-    public void setHealth(Integer health) {
+    public void setHealth(int health) {
         this.health = health;
     }
 
-    public Integer getComfort() {
+    public int getComfort() {
         return comfort;
     }
 
-    public void setComfort(Integer comfort) {
+    public void setComfort(int comfort) {
         this.comfort = comfort;
     }
 
-    public Integer getRepairUnitCost() {
+    public int getRepairUnitCost() {
         return repairUnitCost;
     }
 
-    public void setRepairUnitCost(Integer repairUnitCost) {
+    public void setRepairUnitCost(int repairUnitCost) {
         this.repairUnitCost = repairUnitCost;
     }
 
-    public ArrayList<Train> getTrainList() {
-        return TrainList;
-    }
-
-    public void setTrainList(ArrayList<Train> trainList) {
-        TrainList = trainList;
-    }
-
-    public void useFuel(Double distanceTravelled) {
+    public void useFuel(double distanceTravelled) {
         amountOfFuel -= getFuelRequired(distanceTravelled);
     }
 
-    public double getFuelRequired(Double distanceTravelled) {
+    public double getFuelRequired(double distanceTravelled) {
         return distanceTravelled / getFuelEfficiency();
     }
 
@@ -116,7 +107,7 @@ public class Train extends Resource{
         return getAmountOfFuel() * getFuelEfficiency();
     }
 
-    public void refill(Integer fuelQuantity){
+    public void refill(int fuelQuantity){
         if ((amountOfFuel + fuelQuantity) > maxFuelCapacity) {
             amountOfFuel = maxFuelCapacity;
         } else {
@@ -124,7 +115,7 @@ public class Train extends Resource{
         }
     }
 
-    public void repair(Integer unitsToRepair){
+    public void repair(int unitsToRepair){
         if ((health + unitsToRepair) > maxHealth) {
             health = maxHealth;
         } else {
@@ -132,7 +123,41 @@ public class Train extends Resource{
         }
     }
 
-    public Train(String name, int price, int reqReputation, int maxAllowed) {
+    public int getRating() {
+        int rating = 0;
+        rating += getMaxSpeed();
+        rating += getMaxHealth();
+        rating += getMaxFuelCapacity() * getFuelEfficiency();
+        rating += getComfort();
+        rating -= getRepairUnitCost();
+
+        return rating;
+    }
+
+    public Train(String name, int price, int reqReputation, int maxAllowed,
+                 TrainType trainType, int maxSpeed, double maxFuelCapacity,
+                 double fuelEfficiency, int rateOfHealthReduction,
+                 int maxHealth, int comfort, int repairUnitCost) {
+
         super(name, price, reqReputation, maxAllowed);
+
+        setType(trainType);
+        setMaxSpeed(maxSpeed);
+        setMaxFuelCapacity(maxFuelCapacity);
+        setAmountOfFuel(maxFuelCapacity);
+        setFuelEfficiency(fuelEfficiency);
+        setRateOfHealthReduction(rateOfHealthReduction);
+        setMaxHealth(maxHealth);
+        setHealth(maxHealth);
+        setComfort(comfort);
+        setRepairUnitCost(repairUnitCost);
+    }
+
+    public Train(Train train) {
+        new Train(train.getName(), train.getPrice(), train.getReqReputation(),
+                train.getMaxAllowed(), train.getType(), train.getMaxSpeed(),
+                train.getMaxFuelCapacity(), train.getFuelEfficiency(),
+                train.getRateOfHealthReduction(), train.getMaxHealth(),
+                train.getComfort(), train.getRepairUnitCost());
     }
 }

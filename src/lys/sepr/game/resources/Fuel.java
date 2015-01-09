@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Fuel extends Resource {
 
-    private static ArrayList<Fuel> FuelList = new ArrayList<Fuel>();
+    private static ArrayList<Fuel> fuelList = new ArrayList<Fuel>();
     private int quantity;
 
     Fuel(String name, int price, int reqReputation, int maxAllowed, int quantity) {
@@ -21,11 +21,11 @@ public class Fuel extends Resource {
     }
 
     public ArrayList<Fuel> getFuelList() {
-        return FuelList;
+        return fuelList;
     }
 
     public void setFuelList(ArrayList<Fuel> fuelList) {
-        FuelList = fuelList;
+        Fuel.fuelList = fuelList;
     }
 
 

@@ -15,6 +15,9 @@ public abstract class Resource {
         this.maxAllowed = maxAllowed;
     }
 
+    protected Resource() {
+    }
+
     public int getPrice() {
         return price;
     }
