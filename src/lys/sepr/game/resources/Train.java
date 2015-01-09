@@ -10,9 +10,9 @@ public class Train extends Resource{
     private Double maxFuelCapacity;
     private Double amountOfFuel;
     private Float fuelEfficiency;
-    private Integer rateOfDeterioration;
-    private Integer maxDeterioration;
-    private Integer deterioration;  //is this health??
+    private Integer rateOfHealthReduction;
+    private Integer maxHealth;
+    private Integer health;
     private Integer comfort;
     private Integer repairUnitCost;
 
@@ -56,28 +56,28 @@ public class Train extends Resource{
         this.fuelEfficiency = fuelEfficiency;
     }
 
-    public Integer getRateOfDeterioration() {
-        return rateOfDeterioration;
+    public Integer getRateOfHealthReduction() {
+        return rateOfHealthReduction;
     }
 
-    public void setRateOfDeterioration(Integer rateOfDeterioration) {
-        this.rateOfDeterioration = rateOfDeterioration;
+    public void setRateOfHealthReduction(Integer rateOfHealthReduction) {
+        this.rateOfHealthReduction = rateOfHealthReduction;
     }
 
-    public Integer getMaxDeterioration() {
-        return maxDeterioration;
+    public Integer getMaxHealth() {
+        return maxHealth;
     }
 
-    public void setMaxDeterioration(Integer maxDeterioration) {
-        this.maxDeterioration = maxDeterioration;
+    public void setMaxHealth(Integer maxHealth) {
+        this.maxHealth = maxHealth;
     }
 
-    public Integer getDeterioration() {
-        return deterioration;
+    public Integer getHealth() {
+        return health;
     }
 
-    public void setDeterioration(Integer deterioration) {
-        this.deterioration = deterioration;
+    public void setHealth(Integer health) {
+        this.health = health;
     }
 
     public Integer getComfort() {
@@ -96,55 +96,12 @@ public class Train extends Resource{
         this.repairUnitCost = repairUnitCost;
     }
 
-    public Resource getInitialPassengerTrain() {
-        return initialPassengerTrain;
-    }
-
-    public void setInitialPassengerTrain(Train initialPassengerTrain) {
-        this.initialPassengerTrain = initialPassengerTrain;
-    }
-
-    public Train getInitialCargoTrain() {
-        return initialCargoTrain;
-    }
-
-    public void setInitialCargoTrain(Train initialCargoTrain) {
-        this.initialCargoTrain = initialCargoTrain;
-    }
-
     public ArrayList<Train> getTrainList() {
         return TrainList;
     }
 
     public void setTrainList(ArrayList<Train> trainList) {
         TrainList = trainList;
-    }
-
-    //initial train types for inventory
-    public Train initialCargoTrain;
-    public Train initialPassengerTrain;
-
-    public void tooMuchError(String message){
-        //show warning on GUI -- Sorry, but this is too much fuel/health
-    }
-
-    public void useTrain(Train train){}
-
-    public void refillTank(Integer fuelQuantity, Train train){
-        if ((train.amountOfFuel += fuelQuantity) > train.maxFuelCapacity) {
-            tooMuchError("fuel");
-        } else {
-            train.amountOfFuel += fuelQuantity;
-        }
-    }
-
-    public void repair(Integer unitsToRepair, Train train){
-        //does this change the deterioration variable
-        if ((train.deterioration += unitsToRepair) > train.maxDeterioration) {
-            tooMuchError("health");
-        } else {
-            train.deterioration += unitsToRepair;  //is this right???????
-        }
     }
 
     public void useFuel(Double distanceTravelled) {
@@ -157,6 +114,22 @@ public class Train extends Resource{
 
     public double getMileageLeft() {
         return getAmountOfFuel() * getFuelEfficiency();
+    }
+
+    public void refill(Integer fuelQuantity){
+        if ((amountOfFuel + fuelQuantity) > maxFuelCapacity) {
+            amountOfFuel = maxFuelCapacity;
+        } else {
+            amountOfFuel += fuelQuantity;
+        }
+    }
+
+    public void repair(Integer unitsToRepair){
+        if ((health + unitsToRepair) > maxHealth) {
+            health = maxHealth;
+        } else {
+            health += unitsToRepair;
+        }
     }
 
     public Train(String name, int price, int reqReputation, int maxAllowed) {
