@@ -57,7 +57,13 @@ public class ActiveTrain {
     }
 
     public void setCurrentSpeed(Double newSpeed) {
-        currentSpeed = newSpeed;
+        if (newSpeed < 0) {
+            currentSpeed = 0d;
+        } else if (newSpeed > train.getMaxSpeed()) {
+            currentSpeed = (double) train.getMaxSpeed();
+        } else {
+            currentSpeed = newSpeed;
+        }
     }
 
     private void updateFacing() {

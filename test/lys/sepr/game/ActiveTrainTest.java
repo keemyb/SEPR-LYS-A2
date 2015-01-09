@@ -33,6 +33,7 @@ public class ActiveTrainTest {
     @Before
     public void setUp() throws Exception {
         train = new Train("test train", 10, 0, 1);
+        train.setMaxSpeed(Integer.MAX_VALUE);
         train.setMaxFuelCapacity(Double.POSITIVE_INFINITY);
         train.setAmountOfFuel(Double.POSITIVE_INFINITY);
         train.setFuelEfficiency(1f);
