@@ -101,21 +101,50 @@ public class ActiveTrainTest {
 
     @Test
     public void testChangeTrack() throws Exception {
+        ActiveTrain activeTrain = new ActiveTrain(train, longRoute);
 
+        activeTrain.setCurrentSpeed(1d);
+
+        advanceTime(activeTrain, 10, 10);
+
+        assertEquals(point2, activeTrain.getCurrentPosition());
+        assertEquals(point3, activeTrain.getFacing());
+        assertFalse(activeTrain.getRemainderOfRoute().contains(track1));
     }
 
     @Test
     public void testChangeTrackOvershoot() throws Exception {
+        ActiveTrain activeTrain = new ActiveTrain(train, longRoute);
 
+        activeTrain.setCurrentSpeed(1d);
+
+        advanceTime(activeTrain, 1, 99);
+        advanceTime(activeTrain, 1, 2);
+
+        assertEquals(point3, activeTrain.getFacing());
+        assertFalse(activeTrain.getRemainderOfRoute().contains(track1));
     }
 
     @Test
     public void testEndRoute() throws Exception {
+        ActiveTrain activeTrain = new ActiveTrain(train, shortRoute);
 
+        activeTrain.setCurrentSpeed(1d);
+
+        advanceTime(activeTrain, 10, 10);
+
+        assertEquals(activeTrain.getDestination(), activeTrain.getCurrentPosition());
     }
 
     @Test
     public void testEndRouteOvershoot() throws Exception {
+        ActiveTrain activeTrain = new ActiveTrain(train, shortRoute);
 
+        activeTrain.setCurrentSpeed(1d);
+
+        advanceTime(activeTrain, 1, 99);
+        advanceTime(activeTrain, 1, 2);
+
+        assertEquals(activeTrain.getDestination(), activeTrain.getCurrentPosition());
     }
 }

@@ -15,7 +15,7 @@ public class ActiveTrain {
     private Point currentPosition;
     private Point destination;
     private Point facing;
-    private List<Track> remainderOfRoute = new ArrayList<Track>();
+    private List<Track> remainderOfRoute;
     private Double orientation;
     private Double currentSpeed;
 
@@ -79,9 +79,42 @@ public class ActiveTrain {
     }
 
     public void move(long timePassed) {
-        List<Double> vector = Utilities.getVector(currentPosition, facing);
-        vector = Utilities.unitVector(vector);
-        List<Double> scaledVector = Utilities.multiply(vector, timePassed * currentSpeed);
-        currentPosition.translate(scaledVector.get(0), scaledVector.get(1));
+        Track currentTrack = remainderOfRoute.get(0);
+
+        List<Double> directionOfTravel = Utilities.getVector(currentPosition, facing);
+        directionOfTravel = Utilities.unitVector(directionOfTravel);
+        List<Double> vectorOfTravel = Utilities.multiply(directionOfTravel, timePassed * currentSpeed);
+        Point projectedPosition = new Point(currentPosition);
+        projectedPosition.translate(vectorOfTravel.get(0), vectorOfTravel.get(1));
+
+        Point closestPoint = Utilities.closestPoint(projectedPosition, currentTrack);
+        if (closestPoint.equals(facing)) {
+            // If the closestPoint on the track is the point we are facing
+            // we have passed the end of track, and should go to the next track
+            remainderOfRoute.remove(currentTrack);
+
+            if (remainderOfRoute.isEmpty()){
+                // If there are no tracks left then we have reached our destination,
+                // or the end of the route if it was changed and no longer reaches
+                // the intended destination.
+                currentPosition = new Point(facing);
+            } else {
+                // Otherwise we should move again for the remainder of time left after
+                // travelling to the point we were facing.
+                Point previousPosition = new Point(currentPosition);
+                currentPosition = new Point(facing);
+                Track nextTrack = remainderOfRoute.get(0);
+                facing = nextTrack.getOtherPoint(nextTrack.getCommonPoint(currentTrack));
+                updateOrientation();
+                Double distanceTravelledOnPreviousTrack = Utilities.distance(previousPosition, currentPosition);
+                Double distanceLeftToTravelOnNextTrack = Utilities.magnitude(vectorOfTravel) - distanceTravelledOnPreviousTrack;
+                long timeLeftToTravelOnNewTrack = (long) (distanceLeftToTravelOnNextTrack / currentSpeed);
+                move(timeLeftToTravelOnNewTrack);
+            }
+        } else {
+            // If the closestPoint on the track is not point we are facing
+            // we are still on the track.
+            currentPosition = projectedPosition;
+        }
     }
 }
