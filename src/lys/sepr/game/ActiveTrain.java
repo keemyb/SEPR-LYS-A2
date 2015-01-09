@@ -80,7 +80,13 @@ public class ActiveTrain {
 
         List<Double> directionOfTravel = Utilities.getVector(currentPosition, facing);
         directionOfTravel = Utilities.unitVector(directionOfTravel);
-        List<Double> vectorOfTravel = Utilities.multiply(directionOfTravel, timePassed * currentSpeed);
+
+        Double distanceToTravel = timePassed * currentSpeed;
+        if (train.getFuelRequired(distanceToTravel) > train.getAmountOfFuel()) {
+            distanceToTravel = train.getMileageLeft();
+        }
+
+        List<Double> vectorOfTravel = Utilities.multiply(directionOfTravel, distanceToTravel);
         Point projectedPosition = new Point(currentPosition);
         projectedPosition.translate(vectorOfTravel.get(0), vectorOfTravel.get(1));
 
@@ -90,23 +96,24 @@ public class ActiveTrain {
             // we have passed the end of track, and should go to the next track
             remainderOfRoute.remove(currentTrack);
 
-            if (remainderOfRoute.isEmpty()){
-                // If there are no tracks left then we have reached our destination,
-                // or the end of the route if it was changed and no longer reaches
-                // the intended destination.
-                currentPosition = new Point(facing);
-            } else {
-                // Otherwise we should move again for the remainder of time left after
-                // travelling to the point we were facing.
-                Point previousPosition = new Point(currentPosition);
-                currentPosition = new Point(facing);
+            Point previousPosition = new Point(currentPosition);
+            currentPosition = new Point(facing);
+
+            Double distanceTravelledOnPreviousTrack = Utilities.distance(previousPosition, currentPosition);
+            train.useFuel(distanceTravelledOnPreviousTrack);
+
+            // If there are no tracks left then we have reached our destination,
+            // or the end of the route if it was changed and no longer reaches
+            // the intended destination.
+            // Otherwise we should move again for the remainder of time left after
+            // travelling to the point we were facing.
+            if (!remainderOfRoute.isEmpty()) {
                 Track nextTrack = remainderOfRoute.get(0);
                 facing = nextTrack.getOtherPoint(nextTrack.getCommonPoint(currentTrack));
                 updateOrientation();
 
                 if (nextTrack.isBroken()) return;
 
-                Double distanceTravelledOnPreviousTrack = Utilities.distance(previousPosition, currentPosition);
                 Double distanceLeftToTravelOnNextTrack = Utilities.magnitude(vectorOfTravel) - distanceTravelledOnPreviousTrack;
                 long timeLeftToTravelOnNewTrack = (long) (distanceLeftToTravelOnNextTrack / currentSpeed);
                 move(timeLeftToTravelOnNewTrack);
@@ -115,6 +122,7 @@ public class ActiveTrain {
             // If the closestPoint on the track is not point we are facing
             // we are still on the track.
             currentPosition = projectedPosition;
+            train.useFuel(distanceToTravel);
         }
     }
 

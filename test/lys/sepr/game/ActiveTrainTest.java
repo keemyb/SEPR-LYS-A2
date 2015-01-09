@@ -17,6 +17,8 @@ public class ActiveTrainTest {
     Route shortRoute;
     Route longRoute;
 
+    Location startLocation;
+
     Map map;
 
     Point point1;
@@ -31,6 +33,9 @@ public class ActiveTrainTest {
     @Before
     public void setUp() throws Exception {
         train = new Train("test train", 10, 0, 1);
+        train.setMaxFuelCapacity(Double.POSITIVE_INFINITY);
+        train.setAmountOfFuel(Double.POSITIVE_INFINITY);
+        train.setFuelEfficiency(1f);
 
         map = new Map();
 
@@ -39,7 +44,7 @@ public class ActiveTrainTest {
         point3 = new Point(200,100);
         point4 = new Point(300,100);
 
-        Location startLocation = new Location(point1, "Start Point");
+        startLocation = new Location(point1, "Start Point");
         Location endLocationShort = new Location(point2, "Short End Point");
         Location endLocationLong = new Location(point4, "Long End Point");
 
@@ -217,5 +222,63 @@ public class ActiveTrainTest {
         advanceTime(activeTrain, 1, 50);
 
         assertEquals(point2, activeTrain.getCurrentPosition());
+    }
+
+    @Test
+    public void testFuelUsageEmptyTank() throws Exception {
+        ActiveTrain activeTrain = new ActiveTrain(train, longRoute);
+        activeTrain.getTrain().setAmountOfFuel(100d);
+
+        activeTrain.setCurrentSpeed(1d);
+
+        advanceTime(activeTrain, 1, 100);
+
+        assertEquals(0d, activeTrain.getTrain().getAmountOfFuel(), 0.0d);
+    }
+
+    @Test
+    public void testFuelUsagePartialEmptyTank() throws Exception {
+        ActiveTrain activeTrain = new ActiveTrain(train, longRoute);
+        activeTrain.getTrain().setAmountOfFuel(100d);
+
+        activeTrain.setCurrentSpeed(1d);
+
+        advanceTime(activeTrain, 1, 50);
+
+        assertEquals(50d, activeTrain.getTrain().getAmountOfFuel(), 0.0d);
+    }
+
+    @Test
+    public void testMoveTrainOnEmptyTank() throws Exception {
+        ActiveTrain activeTrain = new ActiveTrain(train, longRoute);
+        activeTrain.getTrain().setAmountOfFuel(0d);
+
+        activeTrain.setCurrentSpeed(1d);
+
+        advanceTime(activeTrain, 1, 50);
+
+        assertEquals(0d, activeTrain.getTrain().getAmountOfFuel(), 0.0d);
+        assertEquals(point1, activeTrain.getCurrentPosition());
+    }
+
+    @Test
+    public void testMoveTrainNotEnoughFuel() throws Exception {
+        // Making a straight track so I don't have to calculate funky distances.
+        Point altPoint = new Point(200, 0);
+        Track altTrack = new Track(point2, altPoint);
+        Location altLocation = new Location(altPoint, "Alternate Location");
+
+        map.addTrack(altTrack);
+        map.addLocation(altLocation);
+
+        ActiveTrain activeTrain = new ActiveTrain(train, map.fastestRoute(startLocation, altLocation));
+        activeTrain.getTrain().setAmountOfFuel(150d);
+
+        activeTrain.setCurrentSpeed(1d);
+
+        advanceTime(activeTrain, 1, 200);
+
+        assertEquals(0d, activeTrain.getTrain().getAmountOfFuel(), 0.0d);
+        assertEquals(new Point(150, 0), activeTrain.getCurrentPosition());
     }
 }

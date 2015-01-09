@@ -7,14 +7,22 @@ public class Train extends Resource{
     public ArrayList<Train> TrainList = new ArrayList<Train>();
     public TrainType type;
     public Integer maxSpeed;
-    public Integer maxFuelCapacity;
-    public Integer fuelCapacity;
+    public Double maxFuelCapacity;
+    public Double amountOfFuel;
     public Float fuelEfficiency;
     public Integer rateOfDeterioration;
     public Integer maxDeterioration;
     public Integer deterioration;  //is this health??
     public Integer comfort;
     public Integer repairUnitCost;
+
+    public Double getAmountOfFuel() {
+        return amountOfFuel;
+    }
+
+    public void setAmountOfFuel(Double amountOfFuel) {
+        this.amountOfFuel = amountOfFuel;
+    }
 
     public TrainType getType() {
         return type;
@@ -32,11 +40,11 @@ public class Train extends Resource{
         this.maxSpeed = maxSpeed;
     }
 
-    public Integer getMaxFuelCapacity() {
+    public Double getMaxFuelCapacity() {
         return maxFuelCapacity;
     }
 
-    public void setMaxFuelCapacity(Integer maxFuelCapacity) {
+    public void setMaxFuelCapacity(Double maxFuelCapacity) {
         this.maxFuelCapacity = maxFuelCapacity;
     }
 
@@ -123,10 +131,10 @@ public class Train extends Resource{
     public void useTrain(Train train){}
 
     public void refillTank(Integer fuelQuantity, Train train){
-        if ((train.fuelCapacity += fuelQuantity) > train.maxFuelCapacity) {
+        if ((train.amountOfFuel += fuelQuantity) > train.maxFuelCapacity) {
             tooMuchError("fuel");
         } else {
-            train.fuelCapacity += fuelQuantity;
+            train.amountOfFuel += fuelQuantity;
         }
     }
 
@@ -139,7 +147,17 @@ public class Train extends Resource{
         }
     }
 
+    public void useFuel(Double distanceTravelled) {
+        amountOfFuel -= getFuelRequired(distanceTravelled);
+    }
 
+    public double getFuelRequired(Double distanceTravelled) {
+        return distanceTravelled / getFuelEfficiency();
+    }
+
+    public double getMileageLeft() {
+        return getAmountOfFuel() * getFuelEfficiency();
+    }
 
     public Train(String name, int price, int reqReputation, int maxAllowed) {
         super(name, price, reqReputation, maxAllowed);
