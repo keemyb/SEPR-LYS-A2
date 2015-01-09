@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class Fuel extends Resource {
 
+    private static ArrayList<Fuel> FuelList = new ArrayList<Fuel>();
     private int quantity;
-    public ArrayList<Fuel> FuelList = new ArrayList<Fuel>();
 
     Fuel(String name, int price, int reqReputation, int maxAllowed, int quantity) {
         super(name, price, reqReputation, maxAllowed);

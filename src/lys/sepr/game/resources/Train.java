@@ -4,17 +4,17 @@ import java.util.ArrayList;
 
 public class Train extends Resource{
 
-    public ArrayList<Train> TrainList = new ArrayList<Train>();
-    public TrainType type;
-    public Integer maxSpeed;
-    public Double maxFuelCapacity;
-    public Double amountOfFuel;
-    public Float fuelEfficiency;
-    public Integer rateOfDeterioration;
-    public Integer maxDeterioration;
-    public Integer deterioration;  //is this health??
-    public Integer comfort;
-    public Integer repairUnitCost;
+    private static ArrayList<Train> TrainList = new ArrayList<Train>();
+    private TrainType type;
+    private Integer maxSpeed;
+    private Double maxFuelCapacity;
+    private Double amountOfFuel;
+    private Float fuelEfficiency;
+    private Integer rateOfDeterioration;
+    private Integer maxDeterioration;
+    private Integer deterioration;  //is this health??
+    private Integer comfort;
+    private Integer repairUnitCost;
 
     public Double getAmountOfFuel() {
         return amountOfFuel;

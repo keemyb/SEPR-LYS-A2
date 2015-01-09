@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class PowerUp extends Resource {
 
-    public ArrayList<PowerUp> PowerUps = new ArrayList<PowerUp>();
+    private static ArrayList<PowerUp> PowerUps = new ArrayList<PowerUp>();
     // public SOME_TYPE effect;
 
     public ArrayList<PowerUp> getPowerUps() {
