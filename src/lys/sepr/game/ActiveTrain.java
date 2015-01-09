@@ -27,13 +27,21 @@ public class ActiveTrain {
         currentPosition = Utilities.closestPoint(initialRoute.getFrom(), firstTrack);
         destination = initialRoute.getTo();
 
-        if (remainderOfRoute.size() > 1) {
-            Track secondTrack = remainderOfRoute.get(1);
-            facing = firstTrack.getCommonPoint(secondTrack);
-        } else {
-            facing = Utilities.closestPoint(destination, firstTrack);
-        }
+        updateFacing();
+        updateOrientation();
+    }
 
+    private void updateFacing() {
+        Track currentTrack = remainderOfRoute.get(0);
+        if (remainderOfRoute.size() > 1) {
+            Track nextTrack = remainderOfRoute.get(1);
+            facing = currentTrack.getCommonPoint(nextTrack);
+        } else {
+            facing = Utilities.closestPoint(destination, currentTrack);
+        }
+    }
+
+    private void updateOrientation() {
         orientation = Math.toDegrees(Math.atan2(facing.getY() - currentPosition.getY(),
                 facing.getX() - currentPosition.getX()));
     }
