@@ -1,13 +1,31 @@
 package lys.sepr.game.world;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
+/**
+ * The Map Class represents a collection of Tracks, Intersection and Locations,
+ * that can interact with each other.
+ */
 public class Map {
 
     private ArrayList<Track> tracks = new ArrayList<Track>();
     private ArrayList<Intersection> intersections = new ArrayList<Intersection>();
     private ArrayList<Location> locations = new ArrayList<Location>();
+    private HashMap<RouteKey, List<Route>> possibleRoutes = new HashMap<RouteKey, List<Route>>();
 
+    public double getPointTrackThreshold() {
+        return pointTrackThreshold;
+    }
+
+    // how close a point has to be to a track to be considered close/connected.
+    private final double pointTrackThreshold = 10d;
+
+    /**
+     * Adds a location to the map.
+     * @param location The location to be added to the map.
+     */
     public void addLocation(Location location) {
         for (Location existingLocation : locations) {
             if (existingLocation.getPoint().equals(location.getPoint())) {
@@ -15,13 +33,31 @@ public class Map {
             }
         }
         locations.add(location);
+        updatePossibleRoutes();
     }
 
+    /**
+     * Removes a location from the map.
+     * @param location The location to be removed from the map.
+     */
     public void removeLocation(Location location) {
         locations.remove(location);
+        updatePossibleRoutes();
     }
 
+    /**
+     * Adds a track to the map.
+     *
+     * <p> If an intersection in the map shares a point with a point in the
+     * added track, the track will be added to the intersection.
+     *
+     * <p> Otherwise, if a lone track in the map shares a point with a point
+     * in the added track, an intersection will be created with both tracks.
+     * @param track The track to be added to the map.
+     */
     public void addTrack(Track track) {
+        if (tracks.contains(track)) return;
+
         tracks.add(track);
 
         // If there is only one track there can be no intersections
@@ -44,8 +80,29 @@ public class Map {
                 if (intersectionPoints.size() == 2) return;
             }
         }
+        updatePossibleRoutes();
     }
 
+    /**
+     * Moves a point of the track from one position to another.
+     *
+     * <p>The track will be disconnected from the intersection at the point it
+     * has been moved from if it exists.
+     *
+     * <p>Alternatively, a track has been moved as part of an intersection
+     * (using the move intersection method), it will remain a part of that
+     * intersection.
+     *
+     * <p>If an intersection in the map shares a point with a point in the
+     * added track, the track will be added to the intersection.
+     *
+     * <p>Otherwise, if a lone track in the map shares a point with a point in
+     * the added track, an intersection will be created with both tracks.
+     *
+     * @param track       The track to be moved
+     * @param from        The point of a track to be moved.
+     * @param destination Where the point of track will be moved to.
+     */
     public void moveTrack(Track track, Point from, Point destination) {
         track.move(from, destination);
         // We don't want to do anymore work if the move is unsuccessful
@@ -63,8 +120,23 @@ public class Map {
                 return;
             }
         }
+        updatePossibleRoutes();
     }
 
+    /**
+     * Helper that will add a track to an intersection.
+     *
+     * <p>If an intersection in the map shares a point with a point in the
+     * added track, the track will be added to the intersection.
+     *
+     * <p>Otherwise, an intersection will be created with both tracks.
+     *
+     * @param newTrack      The track that is added.
+     * @param existingTrack An existing track in the map, that shares the same
+     *                      point as the track to be added.
+     * @param commonPoint   The point that the new and existing track have in
+     *                      common.
+     */
     private void addTracksToIntersection(Track newTrack, Track existingTrack, Point commonPoint) {
         // If there is an intersection where both tracks meet, add the new one to it,
         // or make a new intersection with both tracks
@@ -75,13 +147,29 @@ public class Map {
         } else {
             intersectionAtCommonPoint.addTrack(newTrack);
         }
+        updatePossibleRoutes();
     }
 
+    /**
+     * Moves an intersection of the track from one position to another.
+     *
+     * <p>If an intersection is moved to a point in the map where an
+     * intersection exists, the two intersections will be merged into one.
+     *
+     * <p>If an intersection is moved to a point in the map where an endpoint
+     * of a track exists, that track wil be added to the intersection.
+     *
+     * @param intersection The intersection to be moved.
+     * @param to           Where the point of track will be moved to.
+     */
     public void moveIntersection(Intersection intersection, Point to) {
+        if (to.equals(intersection.getPoint())) return;
+
         for (Intersection otherIntersections : intersections) {
             if (otherIntersections.getPoint().equals(to)) {
                 intersection.move(to);
                 mergeIntersections(otherIntersections, intersection);
+                updatePossibleRoutes();
                 return;
             }
         }
@@ -91,16 +179,32 @@ public class Map {
                     !intersection.getTracks().contains(track)){
                 intersection.move(to);
                 intersection.addTrack(track);
+                updatePossibleRoutes();
                 return;
             }
         }
         intersection.move(to);
+        updatePossibleRoutes();
     }
 
+    /**
+     * Moves a location from one point to another.
+     * @param location The location to be moved.
+     * @param to       The point where the location will be moved to.
+     */
     public void moveLocation(Location location, Point to) {
         location.getPoint().move(to.getX(), to.getY());
+        updatePossibleRoutes();
     }
 
+    /**
+     * Merges two intersections together.
+     * After this process, only the master intersection will remain, having
+     * taken all of the tracks that were a part of the slave intersection.
+     * @param master The intersection that will absorb the tracks of the slave
+     *               intersection.
+     * @param slave  The intersection that will be dissolved.
+     */
     private void mergeIntersections(Intersection master, Intersection slave) {
         for (Track slaveTrack : slave.getTracks()) {
             master.addTrack(slaveTrack);
@@ -109,11 +213,21 @@ public class Map {
         intersections.remove(slave);
     }
 
+    /**
+     * Removes an intersection from the map.
+     * @param intersection The intersection to be removed from the map and
+     *                     dissolved.
+     */
     public void removeIntersection(Intersection intersection) {
         intersection.dissolve();
         intersections.remove(intersection);
+        updatePossibleRoutes();
     }
 
+    /**
+     * Removes a track from the map.
+     * @param track The track to be removed from the map.
+     */
     public void removeTrack(Track track) {
         for (int i=track.getIntersections().size() - 1; i>=0; i--) {
             Intersection intersection = track.getIntersections().get(i);
@@ -124,108 +238,186 @@ public class Map {
             if (intersection.getTracks().size() == 0) intersections.remove(intersection);
         }
         tracks.remove(track);
+        updatePossibleRoutes();
     }
 
+    /**
+     * Returns the tracks that are part of the map.
+     * @return the list of tracks that are part of the map.
+     */
     public ArrayList<Track> getTracks() {
         return tracks;
     }
 
+    /**
+     * Returns the intersections that are part of the map.
+     * @return the list of intersections that are part of the map.
+     */
     public ArrayList<Intersection> getIntersections() {
         return intersections;
     }
 
+    /**
+     * Returns the locations that are part of the map.
+     * @return the list of locations that are part of the map.
+     */
     public ArrayList<Location> getLocations() {
         return locations;
     }
 
-    public ArrayList<ArrayList<Track>> getRoutes(Location from, Location to) {
+    /**
+     * Returns valid routes from one location to another.
+     * @param from The starting location of the route.
+     * @param to   The finishing location of the route.
+     * @return The list of the routes between the two locations.
+     */
+    public List<Route> getRoutes(Location from, Location to) {
         return getRoutes(from.getPoint(), to.getPoint());
     }
 
-    public ArrayList<ArrayList<Track>> getRoutes(Point from, Point to) {
-        Track startingTrack = Utilities.closestTrack(from, tracks, 10);
-        Track destinationTrack = Utilities.closestTrack(to, tracks, 10);
-
-        ArrayList<ArrayList<Track>> routes = new ArrayList<ArrayList<Track>>();
-
-        // There is no track close enough that serves one of the points
-        if (startingTrack == null || destinationTrack == null) {
-            return routes;
-        } else if (startingTrack == destinationTrack){
-            ArrayList<Track> route = new ArrayList<Track>();
-            route.add(startingTrack);
-            routes.add(route);
-            return routes;
-        }
-
-        ArrayList<Track> currentRoute = new ArrayList<Track>();
-        currentRoute.add(startingTrack);
-
-        getRoutes(destinationTrack, currentRoute, new ArrayList<Track>(), routes);
-
-        return routes;
+    /**
+     * Returns valid routes from one point to another.
+     * @param from The starting point of the route.
+     * @param to   The finishing point of the route.
+     * @return The list of the routes between the two points.
+     */
+    public List<Route> getRoutes(Point from, Point to) {
+        RouteKey routeKey = new RouteKey(from, to);
+        if (possibleRoutes.isEmpty()) updatePossibleRoutes();
+        return possibleRoutes.get(routeKey);
     }
 
-    private void getRoutes(Track destination,
-                           ArrayList<Track> currentRoute,
-                           ArrayList<Track> visitedTracks,
-                           ArrayList<ArrayList<Track>> routes) {
-        // If we have backtracked to the first track , and we have visited all its connected tracks,
-        // there are no more solutions.
-        if (currentRoute.size() == 1 && visitedTracks.contains(currentRoute.get(0).getValidNextTracks())) return;
-
-        Track lastTrackInCurrentRoute = currentRoute.get(currentRoute.size() - 1);
-
-        ArrayList<Track> validNextTracks;
-        if (currentRoute.size() == 1) {
-            validNextTracks = lastTrackInCurrentRoute.getValidNextTracks();
-        } else {
-            // We have come from the point that the last two tracks meet
-            Point comingFrom = lastTrackInCurrentRoute.getCommonPoint(currentRoute.get(currentRoute.size()-2));
-            Point goingTowards = lastTrackInCurrentRoute.getOtherPoint(comingFrom);
-            validNextTracks = lastTrackInCurrentRoute.getValidNextTracks(goingTowards);
-        }
-
-        // Discard all visited tracks
-        validNextTracks.removeAll(visitedTracks);
-
-        // Recurse over all non visited valid tracks
-        for (Track nextTrack : validNextTracks){
-            currentRoute.add(nextTrack);
-            // If the last track visited is our destination, add the route
-            // and keep looking for more routes
-            if (nextTrack == destination) {
-                // Cloning the route as we don't want it to be mutated.
-                routes.add((ArrayList<Track>) currentRoute.clone());
-                currentRoute.remove(destination);
-            } else {
-                visitedTracks.add(nextTrack);
-                getRoutes(destination, currentRoute, visitedTracks, routes);
-                currentRoute.remove(nextTrack);
-            }
-        }
-    }
-
-    public ArrayList<Track> fastestRoute(Location from, Location to) {
+    /**
+     * Returns the fastest route from one location to another.
+     * @param from The starting location of the route.
+     * @param to   The finishing location of the route.
+     * @return The fastest route between the two locations, if one exists.
+     */
+    public Route fastestRoute(Location from, Location to) {
         return fastestRoute(from.getPoint(), to.getPoint());
     }
 
-    public ArrayList<Track> fastestRoute(Point from, Point to) {
-        ArrayList<ArrayList<Track>> routes = getRoutes(from, to);
-        if (routes.isEmpty()) return new ArrayList<Track>();
+    /**
+     * Returns the fastest route from one point to another.
+     * @param from The starting point of the route.
+     * @param to   The finishing point of the route.
+     * @return The fastest route between the two points, if one exists.
+     */
+    public Route fastestRoute(Point from, Point to) {
+        List<Route> routes = getRoutes(from, to);
+        if (routes.isEmpty()) return new Route(from, to);
 
-        ArrayList<Track> fastestRoute = null;
-        Double shortestDistance = null;
-        for (ArrayList<Track> route : routes) {
-            Double distance = 0d;
-            for (Track track : route) {
-                distance += Utilities.length(track);
+        for (Route route : routes) {
+            if (route.isTraversable()) return route;
+        }
+
+        return new Route(from, to);
+    }
+
+    /**
+     * Splits a track into two.
+     * @param track The track to be split.
+     * @param where Where the track shall be split.
+     */
+    public void breakTrack(Track track, Point where) {
+        // Here, the old track should be removed before the new tracks are added.
+        // This is because otherwise the old track will form an intersection
+        // with the new tracks, forming an intersection which will be broken
+        // by the removal of the old track.
+        // Dissolving an intersection moves all tracks in it slightly, so the
+        // ends of the track will not be where they should be.
+        if (track.getIntersections().isEmpty()) {
+            removeTrack(track);
+            for (Point existingPoint : track.getPoints()) {
+                Track splitTrack = new Track(existingPoint, where);
+                addTrack(splitTrack);
             }
-            if (shortestDistance == null || distance < shortestDistance) {
-                shortestDistance = distance;
-                fastestRoute = route;
+        } else if (track.getIntersections().size() == 1) {
+            Intersection intersection = track.getIntersections().get(0);
+            Point pointOfIntersection = intersection.getPoint();
+            Point otherPoint = track.getOtherPoint(pointOfIntersection);
+            Track splitTrack1 = new Track(pointOfIntersection, where);
+            Track splitTrack2 = new Track(otherPoint, where);
+            addTrack(splitTrack1);
+            removeTrack(track);
+            addTrack(splitTrack2);
+        } else {
+            for (Point existingPoint : track.getPoints()) {
+                Track splitTrack = new Track(existingPoint, where);
+                addTrack(splitTrack);
+            }
+            removeTrack(track);
+        }
+        // Here, the old track should be removed after the new tracks are added.
+        // This is because the track may have been part of an intersection
+        // with only one other track, meaning that the connecting track will
+        // have been moved slightly from it's original location as the
+        // intersection dissolves, meaning the split track will no longer be
+        // connected.
+        updatePossibleRoutes();
+    }
+
+    private void updatePossibleRoutes() {
+        possibleRoutes = new HashMap<RouteKey, List<Route>>();
+
+        for (Location locationOne : locations) {
+            for (Location locationTwo : locations) {
+                if (locationOne == locationTwo) continue;
+
+                Point pointOne = locationOne.getPoint();
+                Point pointTwo = locationTwo.getPoint();
+
+                // Using funky routeKey class to get around the fact that
+                // I cannot use a simple list of points added in a reverse
+                // order for equality.
+                RouteKey routeKey = new RouteKey(pointOne, pointTwo);
+
+                // We don't want to regenerate the route if its reverse already
+                // exists, we can simply reverse every route found.
+                if (possibleRoutes.containsKey(routeKey.reverse())) {
+                    List<Route> reversedRoutes = new ArrayList<Route>();
+                    for (Route route : possibleRoutes.get(routeKey.reverse())) {
+                        reversedRoutes.add(route.reverse());
+                    }
+                    possibleRoutes.put(routeKey, reversedRoutes);
+                } else {
+                    possibleRoutes.put(routeKey, Route.getRoutes(pointOne, pointTwo, this));
+                }
             }
         }
-        return fastestRoute;
+    }
+
+    class RouteKey {
+        private Point from;
+        private Point to;
+
+        RouteKey(Point from, Point to) {
+            this.from = from;
+            this.to = to;
+        }
+
+        RouteKey reverse() {
+            return new RouteKey(to, from);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            RouteKey routeKey = (RouteKey) o;
+
+            if (from != null ? !from.equals(routeKey.from) : routeKey.from != null) return false;
+            if (to != null ? !to.equals(routeKey.to) : routeKey.to != null) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = from != null ? from.hashCode() : 0;
+            result = 31 * result + (to != null ? to.hashCode() : 0);
+            return result;
+        }
     }
 }

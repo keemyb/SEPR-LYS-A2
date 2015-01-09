@@ -14,12 +14,6 @@ public class MapTest {
     private Track track1;
     private Track track2;
     private Track track3;
-    private Track track4;
-    private Track track5;
-    private Track track6;
-    private Track track7;
-    private Location locationOne;
-    private Location locationTwo;
 
     @Before
     public void setUp() throws Exception {
@@ -64,7 +58,7 @@ public class MapTest {
     }
 
     @Test
-    public void moveTrackCreateNewIntersection() throws Exception {
+    public void testMoveTrackCreateNewIntersection() throws Exception {
         Track track4 = new Track(new Point(0, 100), new Point(90, 100));
 
         ArrayList<Track> expectedTracks = new ArrayList<Track>();
@@ -80,7 +74,7 @@ public class MapTest {
     }
 
     @Test
-    public void moveTrackExistingIntersection() throws Exception {
+    public void testMoveTrackExistingIntersection() throws Exception {
         Track track4 = new Track(new Point(0, 100), new Point(90, 100));
 
         ArrayList<Track> expectedTracks = new ArrayList<Track>();
@@ -98,7 +92,7 @@ public class MapTest {
     }
 
     @Test
-    public void moveIntersectionConsumeSoloTrack() throws Exception {
+    public void testMoveIntersectionConsumeSoloTrack() throws Exception {
         Track track4 = new Track(new Point(0, 100), new Point(90, 100));
 
         ArrayList<Track> expectedTracks = new ArrayList<Track>();
@@ -120,7 +114,7 @@ public class MapTest {
     }
 
     @Test
-    public void moveIntersectionMergeIntersection() throws Exception {
+    public void testMoveIntersectionMergeIntersection() throws Exception {
         Track track4 = new Track(new Point(0, 100), new Point(90, 100));
         Track track5 = new Track(new Point(0, 200), new Point(90, 100));
 
@@ -146,7 +140,7 @@ public class MapTest {
     }
 
     @Test
-    public void removeIntersection() throws Exception {
+    public void testRemoveIntersection() throws Exception {
         map.addTrack(track1);
         map.addTrack(track2);
         map.addTrack(track3);
@@ -162,7 +156,7 @@ public class MapTest {
     }
 
     @Test
-    public void removeTrack() throws Exception {
+    public void testRemoveTrack() throws Exception {
         Track track4 = new Track(new Point(0, 100), new Point(90, 100));
 
         map.addTrack(track1);
@@ -194,7 +188,7 @@ public class MapTest {
     }
 
     @Test
-    public void removeFinalTrack() throws Exception {
+    public void testRemoveFinalTrack() throws Exception {
         map.addTrack(track1);
         map.addTrack(track2);
 
@@ -202,156 +196,6 @@ public class MapTest {
         map.removeTrack(track2);
 
         assertEquals(0, map.getIntersections().size());
-    }
-
-    @Test
-    public void testFindRouteOnePath() throws Exception {
-        Location locationOne = new Location(new Point(0,0), "one");
-        Location locationTwo = new Location(new Point(200,200), "two");
-        map.addLocation(locationOne);
-        map.addLocation(locationTwo);
-
-        map.addTrack(track1);
-        map.addTrack(track2);
-
-        ArrayList<Track> expectedRoute = new ArrayList<Track>();
-        expectedRoute.add(track1);
-        expectedRoute.add(track2);
-
-        assertEquals(expectedRoute, map.getRoutes(locationOne, locationTwo).get(0));
-        assertEquals(1, map.getRoutes(locationOne, locationTwo).size());
-    }
-
-    @Test
-    public void testFindRouteNoPathLocationNotOnPath() throws Exception {
-        Location locationOne = new Location(new Point(0,0), "one");
-        Location locationTwo = new Location(new Point(300,300), "two");
-        map.addLocation(locationOne);
-        map.addLocation(locationTwo);
-
-        map.addTrack(track1);
-        map.addTrack(track2);
-
-        assertEquals(0, map.getRoutes(locationOne, locationTwo).size());
-    }
-
-    @Test
-    public void testFindRouteLocationUnreachable() throws Exception {
-        Track track3 = new Track(new Point(250,250), new Point(300,300));
-
-        Location locationOne = new Location(new Point(0,0), "one");
-        Location locationTwo = new Location(new Point(300,300), "two");
-        map.addLocation(locationOne);
-        map.addLocation(locationTwo);
-
-        map.addTrack(track1);
-        map.addTrack(track2);
-        map.addTrack(track3);
-
-        assertEquals(0, map.getRoutes(locationOne, locationTwo).size());
-    }
-
-    public void setUpMultiplePaths() {
-//        +-------------------------------+
-//        |                               |
-//        | Approx Locations           7a |
-//        | O = Intersection          X   |
-//        |                          X    |
-//        | From 1a to 7a:          7     |
-//        |                  O4XXX4O      |
-//        | 1-2-7 is fastest 3    26      |
-//        | Then 1-5-6-7     X   X X      |
-//        | Then 1-3-4-7     X  X  6      |
-//        |                  X X  5O      |
-//        |                  32 XX        |
-//        |                  O5X          |
-//        |                 1             |
-//        |                X              |
-//        |               X               |
-//        |              1a               |
-//        |                               |
-//        +-------------------------------+
-
-        this.track1 = new Track(new Point(0, 0), new Point(100, 100));
-        this.track2 = new Track(new Point(100, 100), new Point(200, 200));
-        this.track3 = new Track(new Point(100, 100), new Point(130, 150));
-        this.track4 = new Track(new Point(130, 150), new Point(200, 200));
-        this.track5 = new Track(new Point(100, 100), new Point(160, 150));
-        this.track6 = new Track(new Point(160, 150), new Point(200, 200));
-        this.track7 = new Track(new Point(200, 200), new Point(300, 300));
-
-        map.addTrack(track1);
-        map.addTrack(track2);
-        map.addTrack(track3);
-        map.addTrack(track4);
-        map.addTrack(track5);
-        map.addTrack(track6);
-        map.addTrack(track7);
-
-        this.locationOne = new Location(new Point(0, 0), "location one");
-        this.locationTwo = new Location(new Point(300, 300), "location two");
-
-        map.addLocation(locationOne);
-        map.addLocation(locationTwo);
-    }
-
-    @Test
-    public void testFindRouteMultiplePath() throws Exception {
-        setUpMultiplePaths();
-
-        ArrayList<Track> expectedRoute1 = new ArrayList<Track>();
-        expectedRoute1.add(track1);
-        expectedRoute1.add(track2);
-        expectedRoute1.add(track7);
-
-        ArrayList<Track> expectedRoute2 = new ArrayList<Track>();
-        expectedRoute2.add(track1);
-        expectedRoute2.add(track5);
-        expectedRoute2.add(track6);
-        expectedRoute2.add(track7);
-
-        ArrayList<Track> expectedRoute3 = new ArrayList<Track>();
-        expectedRoute3.add(track1);
-        expectedRoute3.add(track3);
-        expectedRoute3.add(track4);
-        expectedRoute3.add(track7);
-
-        ArrayList<ArrayList<Track>> routes = map.getRoutes(locationOne, locationTwo);
-
-        assertTrue(routes.contains(expectedRoute1));
-        assertTrue(routes.contains(expectedRoute2));
-        assertTrue(routes.contains(expectedRoute3));
-        assertEquals(3, routes.size());
-    }
-
-    @Test
-    public void testFindFastestPath() throws Exception {
-        setUpMultiplePaths();
-
-        ArrayList<Track> expectedRoute = new ArrayList<Track>();
-        expectedRoute.add(track1);
-        expectedRoute.add(track2);
-        expectedRoute.add(track7);
-
-        assertEquals(expectedRoute, map.fastestRoute(locationOne, locationTwo));
-    }
-
-    @Test
-    public void testFindImmediatePath() throws Exception {
-        map.addTrack(track1);
-//        map.addTrack(track2);
-
-        this.locationOne = new Location(new Point(0, 0), "location one");
-        this.locationTwo = new Location(new Point(100, 100), "location two");
-
-        map.addLocation(locationOne);
-        map.addLocation(locationTwo);
-
-        ArrayList<Track> expectedRoute = new ArrayList<Track>();
-        expectedRoute.add(track1);
-
-        assertTrue(map.getRoutes(locationOne, locationTwo).contains(expectedRoute));
-        assertEquals(1, map.getRoutes(locationOne, locationTwo).size());
     }
 
     @Test
@@ -400,5 +244,82 @@ public class MapTest {
         assertEquals(new HashSet(expectedConnections3), new HashSet(track3.getConnectedTracks()));
         assertEquals(new HashSet(expectedConnections4), new HashSet(track4.getConnectedTracks()));
         assertEquals(new HashSet(expectedConnections5), new HashSet(track5.getConnectedTracks()));
+    }
+
+    @Test
+    public void testBreakTrackSolo() throws Exception {
+        Track track1 = new Track(new Point(0,0), new Point(100,100));
+        Track splitTrack1 = new Track(new Point(0, 0), new Point(50, 50));
+        Track splitTrack2 = new Track(new Point(50, 50), new Point(100, 100));
+
+        map.addTrack(track1);
+
+        map.breakTrack(track1, new Point(50,50));
+
+        Intersection intersection = map.getIntersections().get(0);
+
+        assertEquals(2, map.getTracks().size());
+        assertEquals(1, map.getIntersections().size());
+        assertTrue(map.getTracks().contains(splitTrack1));
+        assertTrue(map.getTracks().contains(splitTrack2));
+        assertTrue(intersection.getTracks().contains(splitTrack1));
+        assertTrue(intersection.getTracks().contains(splitTrack2));
+        assertTrue(map.getTracks().get(map.getTracks().indexOf(splitTrack1)).getConnectedTracks().contains(splitTrack2));
+        assertTrue(map.getTracks().get(map.getTracks().indexOf(splitTrack2)).getConnectedTracks().contains(splitTrack1));
+    }
+
+    @Test
+    public void testBreakTrackInOneIntersection() throws Exception {
+        map.addTrack(track1);
+        map.addTrack(track2);
+
+        Track splitTrack1 = new Track(new Point(0, 0), new Point(50, 50));
+        Track splitTrack2 = new Track(new Point(50, 50), new Point(100, 100)); // The part connected to the intersection
+
+        map.breakTrack(track1, new Point(50,50));
+
+        assertEquals(2, map.getIntersections().size());
+
+        for (Intersection intersection : map.getIntersections()) {
+            assertEquals(2, intersection.getTracks().size());
+            if (intersection.getTracks().contains(splitTrack1)) {
+                assertFalse(intersection.getTracks().contains(track2));
+            } else if (intersection.getTracks().contains(track2)){
+                assertFalse(intersection.getTracks().contains(splitTrack1));
+            }
+        }
+
+        assertTrue(map.getTracks().get(map.getTracks().indexOf(splitTrack2)).getConnectedTracks().contains(track2));
+        assertTrue(track2.getConnectedTracks().contains(splitTrack2));
+    }
+
+    @Test
+    public void testBreakTrackInTwoIntersections() throws Exception {
+        Track track3 = new Track(new Point(200, 200), new Point(300, 300));
+
+        map.addTrack(track1);
+        map.addTrack(track2);
+        map.addTrack(track3);
+
+        Track splitTrack1 = new Track(new Point(100, 100), new Point(150, 150));
+        Track splitTrack2 = new Track(new Point(150, 150), new Point(200, 200));
+
+        map.breakTrack(track2, new Point(150, 150));
+
+        assertEquals(3, map.getIntersections().size());
+
+        for (Intersection intersection : map.getIntersections()) {
+            if (intersection.getTracks().contains(splitTrack1)
+                    && !intersection.getTracks().contains(splitTrack2)) {
+                assertTrue(intersection.getTracks().contains(track1));
+            } else if (intersection.getTracks().contains(splitTrack2)
+                        && !intersection.getTracks().contains(splitTrack1)) {
+                assertTrue(intersection.getTracks().contains(track3));
+            }
+        }
+
+        assertFalse(map.getTracks().contains(track2));
+        assertTrue(track1.getConnectedTracks().contains(splitTrack1));
+        assertTrue(track3.getConnectedTracks().contains(splitTrack2));
     }
 }
