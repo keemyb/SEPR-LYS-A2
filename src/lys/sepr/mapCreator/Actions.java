@@ -298,8 +298,6 @@ public final class Actions {
             drawTrack(track, lineColour, state, mapView, g2);
         }
 
-//        Random r = new Random();
-//        float routesHue = r.nextFloat();
         float routesHue = 126f/360f;
 
         for (int i=routes.size()- 1; i>=0; i--) {
@@ -343,7 +341,7 @@ public final class Actions {
             drawTrack(track, lineColour, state, mapView, g2);
         }
         for (Location location : map.getLocations()) {
-            drawLocation(location, locationSize, randomColor(), state, mapView, g2);
+            drawLocation(location, locationSize, mapView.normalTrackColour, state, mapView, g2);
         }
     }
 
