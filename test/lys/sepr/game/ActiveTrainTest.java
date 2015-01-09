@@ -5,6 +5,9 @@ import lys.sepr.game.world.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 public class ActiveTrainTest {
@@ -122,6 +125,7 @@ public class ActiveTrainTest {
         advanceTime(activeTrain, 1, 2);
 
         assertEquals(point3, activeTrain.getFacing());
+        assertNotEquals(activeTrain.getCurrentPosition(), point2);
         assertFalse(activeTrain.getRemainderOfRoute().contains(track1));
     }
 
@@ -146,5 +150,72 @@ public class ActiveTrainTest {
         advanceTime(activeTrain, 1, 2);
 
         assertEquals(activeTrain.getDestination(), activeTrain.getCurrentPosition());
+    }
+
+    @Test
+    public void testChangeRoute() throws Exception {
+        ActiveTrain activeTrain = new ActiveTrain(train, longRoute);
+
+        Point newPoint = new Point(200,50);
+
+        Track newTrack = new Track(point2, newPoint);
+
+        map.addTrack(newTrack);
+
+        activeTrain.changeRoute(track1, newTrack);
+
+        assertEquals(2, activeTrain.getRemainderOfRoute().size());
+        assertEquals(track1, activeTrain.getRemainderOfRoute().get(0));
+        assertEquals(newTrack, activeTrain.getRemainderOfRoute().get(1));
+    }
+
+    @Test
+    public void testChangeRouteInvalid() throws Exception {
+        ActiveTrain activeTrain = new ActiveTrain(train, longRoute);
+
+        Point newPoint1 = new Point(1000,1000);
+        Point newPoint2 = new Point(1001,1001);
+
+        Track newTrack = new Track(newPoint1, newPoint2);
+
+        map.addTrack(newTrack);
+
+        activeTrain.changeRoute(track1, newTrack);
+
+        List<Track> oldRemainderOfRoute = new ArrayList<Track>(activeTrain.getRemainderOfRoute());
+
+        assertEquals(oldRemainderOfRoute, activeTrain.getRemainderOfRoute());
+    }
+
+    @Test
+    public void testMoveToBrokenTrack() throws Exception {
+        ActiveTrain activeTrain = new ActiveTrain(train, longRoute);
+
+        track2.setBroken(true);
+
+        activeTrain.setCurrentSpeed(1d);
+
+        advanceTime(activeTrain, 1, 150);
+
+        assertEquals(point2, activeTrain.getCurrentPosition());
+    }
+
+    @Test
+    public void testReverse() throws Exception {
+        ActiveTrain activeTrain = new ActiveTrain(train, longRoute);
+
+        activeTrain.setCurrentSpeed(1d);
+
+        advanceTime(activeTrain, 1, 150);
+
+        activeTrain.reverse();
+
+        assertEquals(point2, activeTrain.getFacing());
+        assertEquals(1, activeTrain.getRemainderOfRoute().size());
+        assertEquals(track2, activeTrain.getRemainderOfRoute().get(0));
+
+        advanceTime(activeTrain, 1, 50);
+
+        assertEquals(point2, activeTrain.getCurrentPosition());
     }
 }

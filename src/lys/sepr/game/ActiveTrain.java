@@ -1,27 +1,24 @@
 package lys.sepr.game;
 
 import lys.sepr.game.resources.Train;
-import lys.sepr.game.world.Point;
-import lys.sepr.game.world.Route;
-import lys.sepr.game.world.Track;
-import lys.sepr.game.world.Utilities;
+import lys.sepr.game.world.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ActiveTrain {
 
-    private Train train;
+    private final Train train;
     private Point currentPosition;
-    private Point destination;
+    private final Point destination;
     private Point facing;
-    private List<Track> remainderOfRoute;
+    private List<Track> remainderOfRoute = new ArrayList<Track>();
     private Double orientation;
     private Double currentSpeed;
 
     public ActiveTrain(Train train, Route initialRoute) {
         this.train = train;
-        remainderOfRoute = initialRoute.getTracks();
+        remainderOfRoute.addAll(initialRoute.getTracks());
         Track firstTrack = remainderOfRoute.get(0);
 
         currentPosition = Utilities.closestPoint(initialRoute.getFrom(), firstTrack);
@@ -106,6 +103,9 @@ public class ActiveTrain {
                 Track nextTrack = remainderOfRoute.get(0);
                 facing = nextTrack.getOtherPoint(nextTrack.getCommonPoint(currentTrack));
                 updateOrientation();
+
+                if (nextTrack.isBroken()) return;
+
                 Double distanceTravelledOnPreviousTrack = Utilities.distance(previousPosition, currentPosition);
                 Double distanceLeftToTravelOnNextTrack = Utilities.magnitude(vectorOfTravel) - distanceTravelledOnPreviousTrack;
                 long timeLeftToTravelOnNewTrack = (long) (distanceLeftToTravelOnNextTrack / currentSpeed);
@@ -116,5 +116,38 @@ public class ActiveTrain {
             // we are still on the track.
             currentPosition = projectedPosition;
         }
+    }
+
+    public void changeRoute(Track trackInRoute, Track prospectiveNextTrack) {
+        if (!remainderOfRoute.contains(trackInRoute)) return;
+
+        Track currentTrack = remainderOfRoute.get(0);
+        Intersection intersection = currentTrack.getIntersection(facing);
+
+        if (intersection == null) return;
+
+        Track oldNextTrack = trackInRoute.getNextTrack(trackInRoute.getOtherPoint(facing));
+        trackInRoute.setNextTrack(intersection, prospectiveNextTrack);
+
+        // If the prospective next track was not set successfully then we don't
+        // want to change the route.
+        if (oldNextTrack.equals(trackInRoute.getNextTrack(trackInRoute.getOtherPoint(facing)))) return;
+
+        // Removing all tracks after the track in route as the route has changed.
+        for (int i=remainderOfRoute.size() - 1; i > remainderOfRoute.indexOf(trackInRoute); i--) {
+            remainderOfRoute.remove(remainderOfRoute.get(i));
+        }
+
+        remainderOfRoute.add(prospectiveNextTrack);
+    }
+
+    public void reverse() {
+        Track currentTrack = remainderOfRoute.get(0);
+
+        remainderOfRoute.clear();
+        remainderOfRoute.add(currentTrack);
+
+        facing = currentTrack.getOtherPoint(facing);
+        updateOrientation();
     }
 }
