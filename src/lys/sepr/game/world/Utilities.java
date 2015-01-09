@@ -15,7 +15,7 @@ public final class Utilities {
      * Computes the cross product of two vectors.
      * @return The cross product of the two vectors, as a double.
      */
-    public static double crossProduct(ArrayList<Double> vector1, ArrayList<Double> vector2) {
+    public static double crossProduct(List<Double> vector1, List<Double> vector2) {
         double dotProduct = dotProduct(vector1, vector2);
         double magnitude = magnitude(vector1) * magnitude(vector2);
         double cosTheta = dotProduct / magnitude;
@@ -27,7 +27,7 @@ public final class Utilities {
      * Computes the dot product of two vectors.
      * @return The dot product of the two vectors, as a double.
      */
-    public static double dotProduct(ArrayList<Double> vector1, ArrayList<Double> vector2) {
+    public static double dotProduct(List<Double> vector1, List<Double> vector2) {
         double dotProduct = 0;
         for (int i=0; i <vector1.size(); i++) {
             dotProduct += vector1.get(i) * vector2.get(i);
@@ -39,7 +39,7 @@ public final class Utilities {
      * Computes the magnitude of a vector.
      * @return The magnitude of the vector, as a double.
      */
-    public static double magnitude(ArrayList<Double> vector) {
+    public static double magnitude(List<Double> vector) {
         double magnitude = 0;
         for (double component : vector) {
             magnitude += pow(component, 2);
@@ -51,7 +51,7 @@ public final class Utilities {
      * Computes the vector of a track, from one point to another.
      * @return the vector of a track, as an ArrayList of Double with two elements.
      */
-    public static ArrayList<Double> getVector(Track track) {
+    public static List<Double> getVector(Track track) {
         return getVector(track.getPoints().get(0), track.getPoints().get(1));
     }
 
@@ -63,7 +63,7 @@ public final class Utilities {
      * @return the vector between the two points,
      * as an ArrayList of Double with two elements.
      */
-    public static ArrayList<Double> getVector(Point from, Point towards) {
+    public static List<Double> getVector(Point from, Point towards) {
         ArrayList<Double> vector = new ArrayList<Double>(2);
         vector.add(towards.getX() - from.getX());
         vector.add(towards.getY() - from.getY());
@@ -112,7 +112,7 @@ public final class Utilities {
      * @return the normalised vector,
      * as an ArrayList of Double with two elements.
      */
-    public static ArrayList<Double> unitVector(ArrayList<Double> vector) {
+    public static List<Double> unitVector(List<Double> vector) {
         ArrayList<Double> unitVector = new ArrayList<Double>();
         double size = magnitude(vector);
         for (double component : vector) {
@@ -128,7 +128,7 @@ public final class Utilities {
      * @return a new multiplied vector,
      * as an ArrayList of Double with two elements.
      */
-    public static ArrayList<Double> multiply(ArrayList<Double> vector, double constant) {
+    public static List<Double> multiply(List<Double> vector, double constant) {
         ArrayList<Double> newVector = new ArrayList<Double>();
         for (double component : vector) {
             newVector.add(component * constant);
@@ -183,11 +183,11 @@ public final class Utilities {
         // With help from http://doswa.com/2009/07/13/circle-segment-intersectioncollision.html
         Point trackPoint1 = track.getPoints().get(0);
         Point trackPoint2 = track.getPoints().get(1);
-        ArrayList<Double> trackVector = getVector(trackPoint1, trackPoint2);
-        ArrayList<Double> unitTrackVector = unitVector(trackVector);
-        ArrayList<Double> trackPointToClickPointVector = getVector(trackPoint1, to);
+        List<Double> trackVector = getVector(trackPoint1, trackPoint2);
+        List<Double> unitTrackVector = unitVector(trackVector);
+        List<Double> trackPointToClickPointVector = getVector(trackPoint1, to);
         double lengthProjectedVector = dotProduct(trackPointToClickPointVector, unitTrackVector);
-        ArrayList<Double> projectedVector = multiply(unitTrackVector, lengthProjectedVector);
+        List<Double> projectedVector = multiply(unitTrackVector, lengthProjectedVector);
         Point closestPoint;
         if (lengthProjectedVector < 0) {
             closestPoint = new Point(trackPoint1.getX(), trackPoint1.getY());

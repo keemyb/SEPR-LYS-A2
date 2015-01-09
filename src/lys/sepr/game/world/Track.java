@@ -2,6 +2,7 @@ package lys.sepr.game.world;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import static lys.sepr.game.world.Utilities.closestPoint;
 import static lys.sepr.game.world.Utilities.getVector;
@@ -195,7 +196,7 @@ public class Track {
     public void nudge(Point awayFrom) {
         // only move the point closest to the point we want to move away from
         Point closestPoint = closestPoint(awayFrom, points);
-        ArrayList<Double> vector = getVector(closestPoint, getOtherPoint(closestPoint));
+        List<Double> vector = getVector(closestPoint, getOtherPoint(closestPoint));
         for (int i=0; i < vector.size(); i++) {
             vector.set(i, vector.get(i) * nudgeStrength);
         }

@@ -22,7 +22,7 @@ public class Point {
         setY(y);
     }
 
-    Point(Point point) {
+    public Point(Point point) {
         setX(point.getX());
         setY(point.getY());
     }

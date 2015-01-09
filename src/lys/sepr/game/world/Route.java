@@ -8,6 +8,15 @@ import java.util.List;
 public class Route {
     private double length;
     private List<Track> tracks;
+
+    public Point getFrom() {
+        return from;
+    }
+
+    public Point getTo() {
+        return to;
+    }
+
     private Point from;
     private Point to;
 

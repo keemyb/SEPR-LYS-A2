@@ -2,6 +2,7 @@ package lys.sepr.game.world;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static lys.sepr.game.world.Utilities.crossProduct;
 import static lys.sepr.game.world.Utilities.getVector;
@@ -62,11 +63,11 @@ public class Intersection {
         validNextTracks = new HashMap<Track,ArrayList<Track>>();
         for (Track track1 : tracks) {
             ArrayList<Track> validNextTracksList = new ArrayList<Track>();
-            ArrayList<Double> vector1 = getVector(track1.getOtherPoint(point), point);
+            List<Double> vector1 = getVector(track1.getOtherPoint(point), point);
             for (Track track2 : tracks) {
                 if (track1 == track2) continue;
 
-                ArrayList<Double> vector2 = getVector(track2.getOtherPoint(point), point);
+                List<Double> vector2 = getVector(track2.getOtherPoint(point), point);
                 double angle = crossProduct(vector1, vector2);
 
                 if (validAngle(angle)) {

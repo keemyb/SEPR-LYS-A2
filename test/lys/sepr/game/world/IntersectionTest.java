@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static lys.sepr.game.world.Utilities.crossProduct;
 import static lys.sepr.game.world.Utilities.getVector;
@@ -64,8 +65,8 @@ public class IntersectionTest {
     @Test
     public void testCrossProduct() throws Exception {
         this.intersection = new Intersection(new Point(100,100), track1, track2);
-        ArrayList<Double> vector1 = getVector(track1.getOtherPoint(intersection.getPoint()), intersection.getPoint());
-        ArrayList<Double> vector2 = getVector(track2.getOtherPoint(intersection.getPoint()), intersection.getPoint());
+        List<Double> vector1 = getVector(track1.getOtherPoint(intersection.getPoint()), intersection.getPoint());
+        List<Double> vector2 = getVector(track2.getOtherPoint(intersection.getPoint()), intersection.getPoint());
 
         assertEquals(0, crossProduct(vector1, vector2)%180, 0.0d);
 
