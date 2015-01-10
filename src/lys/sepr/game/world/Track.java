@@ -265,22 +265,35 @@ public class Track {
      * they can be)
      * @return The list of tracks that can be traversed from this track.
      */
-    public ArrayList<Track> getValidConnections() {
-        ArrayList<Track> validNextTracks = new ArrayList<Track>();
+    public List<Track> getValidConnections() {
+        List<Track> validNextTracks = new ArrayList<Track>();
         for (Point point : points) {
-            validNextTracks.addAll(getValidConnections(point));
+            validNextTracks.addAll(getValidConnectionsTowards(point));
         }
         return validNextTracks;
     }
 
     /**
-     * Returns the list of tracks that can be traversed from a particular
-     * point on the track.
-     * @param towards The point that the next tracks will be reached from.
+     * Returns the possible tracks that a train may move on towards,
+     * after it has completed this one.
+     * @param from The point that the train is coming from.
+     *             This point must be one of the track's points.
      * @return The list of tracks that can be traversed from a particular
      * point on the track.
      */
-    public ArrayList<Track> getValidConnections(Point towards) {
+    public List<Track> getValidConnectionsComingFrom(Point from) {
+        return getValidConnectionsTowards(getOtherPoint(from));
+    }
+
+    /**
+     * Returns the possible tracks that a train may move on towards,
+     * after it has completed this one.
+     * @param towards The point that the train is going towards.
+     *                This point must be one of the track's points.
+     * @return The list of tracks that can be traversed from a particular
+     * point on the track.
+     */
+    public List<Track> getValidConnectionsTowards(Point towards) {
         Intersection intersection = getIntersection(towards);
         if (intersection != null) {
             return getIntersection(towards).getValidConnections(this);

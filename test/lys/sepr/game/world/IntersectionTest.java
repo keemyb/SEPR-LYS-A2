@@ -256,9 +256,9 @@ public class IntersectionTest {
         assertEquals(expectedTracks2, intersection.getValidConnections(track2));
         assertEquals(expectedTracks3, intersection.getValidConnections(track3));
 
-        assertEquals(expectedTracks1, track1.getValidConnections(new Point(100, 100)));
-        assertEquals(expectedTracks2, track2.getValidConnections(new Point(100, 100)));
-        assertEquals(expectedTracks3, track3.getValidConnections(new Point(100, 100)));
+        assertEquals(expectedTracks1, track1.getValidConnectionsTowards(new Point(100, 100)));
+        assertEquals(expectedTracks2, track2.getValidConnectionsTowards(new Point(100, 100)));
+        assertEquals(expectedTracks3, track3.getValidConnectionsTowards(new Point(100, 100)));
     }
 
 }

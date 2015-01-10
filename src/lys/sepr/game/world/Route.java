@@ -161,14 +161,14 @@ public class Route {
         // there are no more solutions.
         if (currentRoute.size() == 1 && visitedTracks.containsAll(lastTrackInCurrentRoute.getValidConnections())) return;
 
-        ArrayList<Track> validNextTracks;
+        List<Track> validNextTracks;
         if (currentRoute.size() == 1) {
             validNextTracks = lastTrackInCurrentRoute.getValidConnections();
         } else {
             // We have come from the point that the last two tracks meet
             Point comingFrom = lastTrackInCurrentRoute.getCommonPoint(currentRoute.getTracks().get(currentRoute.size() - 2));
             Point goingTowards = lastTrackInCurrentRoute.getOtherPoint(comingFrom);
-            validNextTracks = lastTrackInCurrentRoute.getValidConnections(goingTowards);
+            validNextTracks = lastTrackInCurrentRoute.getValidConnectionsTowards(goingTowards);
         }
 
         // Discard all visited tracks
