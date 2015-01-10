@@ -1,21 +1,24 @@
 package lys.sepr.game;
 
+import lys.sepr.game.resources.Resource;
+import lys.sepr.game.resources.Train;
+import lys.sepr.game.resources.TrainStore;
 import lys.sepr.game.resources.TrainType;
 import lys.sepr.game.world.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
 public class Game {
 
     private static int timePerTurn = 30;
+    private static int contractsToChooseFromEachTurn = 3;
     private List<Player> players;
     private int maxContracts;
     private Player activePlayer;
     private Map map;
-    private boolean gameStarted;
+    private boolean gameStarted = false;
     private List<Contract> possibleContracts = new ArrayList<Contract>();
 
     //TODO proper exceptions
@@ -55,14 +58,25 @@ public class Game {
         return map;
     }
 
-    public void startGame(Player player) {
+    public void startGame(Player playerToStart) {
         if (gameStarted) return;
         gameStarted = true;
 
-        if (players.contains(player)) {
-            activePlayer = player;
+        for (Player player : players) {
+            giveStarterTrains(player);
+        }
+
+        if (players.contains(playerToStart)) {
+            activePlayer = playerToStart;
         } else {
             activePlayer = players.get(0);
+        }
+    }
+
+    private void giveStarterTrains(Player player) {
+        for (TrainType trainType : TrainType.values()) {
+            Train train = TrainStore.getStarterTrain(trainType);
+            if (train != null) player.getInventory().addNewResource(train);
         }
     }
 
@@ -80,18 +94,33 @@ public class Game {
         activePlayer = players.get(nextPlayerIndex);
     }
 
-    public void beginTurn(Contract contract) {
-        if (activePlayer.getCurrentContract() == null) {
-            Random r = new Random();
-            int nextContractIndex = r.nextInt(possibleContracts.size());
-
-            activePlayer.assignContract(possibleContracts.get(nextContractIndex));
-            possibleContracts.remove(nextContractIndex);
-        }
+    public void assignContract(Train train, Contract contract) {
+        activePlayer.acceptContract(train, contract);
+        possibleContracts.remove(contract);
     }
 
-    public void continueTurn() {
+    public List<Contract> getContracts() {
+        List<Contract> contracts = new ArrayList<Contract>();
+        Random r = new Random();
+        int nextContractIndex = r.nextInt(possibleContracts.size());
+        while (contracts.size() < contractsToChooseFromEachTurn) {
+            contracts.add(possibleContracts.get(nextContractIndex));
+        }
+        return contracts;
+    }
 
+    public List<Train> getTrains(Contract contract) {
+        TrainType requiredTrainType = contract.getRequiredTrainType();
+        List<Train> suitableTrains = new ArrayList<Train>();
+        for (Resource resource : activePlayer.getInventory().getContents()) {
+            if (resource.getClass() != Train.class) continue;
+
+            Train train = (Train) resource;
+            if (requiredTrainType == train.getType()) {
+                suitableTrains.add((Train) resource);
+            }
+        }
+        return suitableTrains;
     }
 
     private void generatePossibleContracts() {
@@ -119,18 +148,65 @@ public class Game {
 
             possibleContracts.add(contract);
         }
+
+        // TODO filter contracts based on most available routes and length
+        // while there are atleast players.size() * maxContracts (+ 2 for a choice of three),
+        // drop short contracts and then contracts with fewer routes.
     }
 
-    public void changeNextTrack(Track trackInRoute, Track prospectiveNextTrack) {
-        for (Player player : players) {
-            ActiveTrain activeTrain = player.getActiveTrain();
-            if (activeTrain != null) {
-                // TODO change activeTrain implementation so that it's
-                // route is checked even if the track was changed by a
-                // previous iteration of this loop. ~ line 143
-                activeTrain.changeRoute(trackInRoute, prospectiveNextTrack);
-            }
+    public boolean changeNextTrack(Track track, Track prospectiveNextTrack) {
+        Point commonPoint = track.getCommonPoint(prospectiveNextTrack);
+        Intersection intersection = track.getIntersection(commonPoint);
+
+        if (intersection != null) {
+            track.setNextTrack(intersection, prospectiveNextTrack);
         }
+
+        return prospectiveNextTrack == track.getNextTrack(track.getOtherPoint(commonPoint));
+    }
+
+    public void changeRoute(Track trackInRoute, Track prospectiveNextTrack) {
+        activePlayer.getActiveTrain().changeRoute(trackInRoute, prospectiveNextTrack);
+    }
+
+    public boolean hasCompletedContract(Player player) {
+        ActiveTrain activeTrain = player.getActiveTrain();
+        return activeTrain.getDestination() == activeTrain.getCurrentPosition();
+    }
+
+    public void fulfilledCurrentContract(Player player) {
+        player.fulfilledCurrentContract();
+    }
+
+    public void failedCurrentContract(Player player) {
+        player.failedCurrentContract();
+    }
+
+    public boolean hasAContract(Player player){
+        return player.getCurrentContract() != null;
+    }
+
+    public void increaseTrainSpeed() {
+        double currentSpeed = activePlayer.getActiveTrain().getCurrentSpeed();
+        double newSpeed = currentSpeed * 1.25;
+        activePlayer.getActiveTrain().setCurrentSpeed(newSpeed);
+    }
+
+    public void decreaseTrainSpeed() {
+        double currentSpeed = activePlayer.getActiveTrain().getCurrentSpeed();
+        double newSpeed = currentSpeed / 1.25;
+        activePlayer.getActiveTrain().setCurrentSpeed(newSpeed);
+    }
+
+    // TODO decide on which way to set train speed, discretely or continuously?
+    // Leaving both sets of methods in for the mean time.
+    public void setTrainSpeed(double percentage) {
+        double newSpeed = activePlayer.getActiveTrain().getTrain().getMaxSpeed() * percentage;
+        activePlayer.getActiveTrain().setCurrentSpeed(newSpeed);
+    }
+
+    public void reverseTrain() {
+        activePlayer.getActiveTrain().reverse();
     }
 
 }

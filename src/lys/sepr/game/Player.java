@@ -34,32 +34,34 @@ public class Player {
         return currentContract;
     }
 
-    public void assignContract(Contract contract) {
-        currentContract = contract;
-    }
-
-    public void completedCurrentContract() {
-        if (currentContract != null) completedContracts.add(currentContract);
-        addMoney(currentContract.getMoneyPayout());
-        updateReputation(currentContract.getReputationPayout());
-        endTurn();
+    public void fulfilledCurrentContract() {
+        if (currentContract != null){
+            completedContracts.add(currentContract);
+            addMoney(currentContract.getMoneyPayout());
+            updateReputation(currentContract.getReputationPayout());
+            endContract();
+        }
     }
 
     public void failedCurrentContract() {
-        if (currentContract != null) failedContracts.add(currentContract);
-        updateReputation(-(currentContract.getReputationPayout()) / 2);
-        endTurn();
+        if (currentContract != null) {
+            failedContracts.add(currentContract);
+            updateReputation(-(currentContract.getReputationPayout()) / 2);
+            endContract();
+        }
     }
 
     public Inventory getInventory() {
         return inventory;
     }
 
-    public void beginTurn(Train train, Contract contract) {
+    public void acceptContract(Train train, Contract contract) {
+        currentContract = contract;
         activeTrain = new ActiveTrain(train, contract.getInitialRoute());
     }
 
-    private void endTurn() {
+    private void endContract() {
+        currentContract = null;
         activeTrain = null;
     }
 
