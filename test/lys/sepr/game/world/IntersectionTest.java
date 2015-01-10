@@ -119,47 +119,47 @@ public class IntersectionTest {
     }
 
     @Test
-    public void testSetConnectedTrackValidChoice() throws Exception {
+    public void testSetActiveConnectedTrackValidChoice() throws Exception {
         setUp3Tracks();
 
         track1.setActiveConnection(intersection, track3);
 
-        assertEquals(track3, track1.getConnectedTrackComingFrom(new Point(0, 0)));
+        assertEquals(track3, track1.getActiveConnectedTrackComingFrom(new Point(0, 0)));
 
         track1.setActiveConnection(intersection, track2);
 
-        assertEquals(track2, track1.getConnectedTrackComingFrom(new Point(0, 0)));
+        assertEquals(track2, track1.getActiveConnectedTrackComingFrom(new Point(0, 0)));
     }
 
     @Test
-    public void testSetConnectedTrackInvalidChoice() throws Exception {
+    public void testSetActiveConnectedTrackInvalidChoice() throws Exception {
         setUp3Tracks();
 
         track2.setActiveConnection(intersection, track3);
 
-        assertEquals(null, track2.getConnectedTrackComingFrom(new Point(0, 0)));
+        assertEquals(track1, track2.getActiveConnectedTrackComingFrom(new Point(200, 200)));
     }
 
     @Test
-    public void testConnectedTrackAvailableTrack() throws Exception {
+    public void testActiveConnectedTrackAvailableTrack() throws Exception {
         this.intersection = new Intersection(new Point(100,100), track1, track2);
 
-        assertEquals(track2, track1.getConnectedTrackComingFrom(new Point(0, 0)));
+        assertEquals(track2, track1.getActiveConnectedTrackComingFrom(new Point(0, 0)));
     }
 
     @Test
-    public void testConnectedTrackNonAvailableTrack() throws Exception {
+    public void testActiveConnectedTrackNonAvailableTrack() throws Exception {
         this.intersection = new Intersection(new Point(100,100), track2, track3);
 
-        assertEquals(null, track2.getConnectedTrackComingFrom(new Point(200, 200)));
+        assertEquals(null, track2.getActiveConnectedTrackComingFrom(new Point(200, 200)));
     }
 
     @Test
-    public void testConnectedTrackMultipleAvailableTracks() throws Exception {
+    public void testActiveConnectedTrackMultipleAvailableTracks() throws Exception {
         setUp3Tracks();
 
         // Favour first added track (track2)
-        assertEquals(track2, track1.getConnectedTrackComingFrom(new Point(0, 0)));
+        assertEquals(track2, track1.getActiveConnectedTrackComingFrom(new Point(0, 0)));
     }
 
     @Test
@@ -173,8 +173,8 @@ public class IntersectionTest {
         intersection.removeTrack(track2);
 
         assertEquals(expectedTracks, intersection.getTracks());
-        assertEquals(track3, track1.getConnectedTrackComingFrom(new Point(0, 0)));
-        assertEquals(null, track2.getConnectedTrackComingFrom(new Point(200, 200)));
+        assertEquals(track3, track1.getActiveConnectedTrackComingFrom(new Point(0, 0)));
+        assertEquals(null, track2.getActiveConnectedTrackComingFrom(new Point(200, 200)));
         /* We want to push the removed track away from the intersection after removal
         so that it does not touch the old intersection and cause confusion.
          */
@@ -198,11 +198,11 @@ public class IntersectionTest {
         assertEquals(expectedTracks, intersection.getTracks());
         assertEquals(intersection, track1.getIntersection(new Point(90,90)));
         // Should be track3 since it was connected before
-        assertEquals(track2, track1.getConnectedTrackComingFrom(new Point(0, 0)));
+        assertEquals(track2, track1.getActiveConnectedTrackComingFrom(new Point(0, 0)));
     }
 
     @Test
-    public void testConnectedTrackAfterMove() throws Exception {
+    public void testActiveConnectedTrackAfterMove() throws Exception {
         // Testing to ensure that a track is removed from next tracks
         // after being moved to a non traversable location,
         // when no other tracks can connect to it and "take over".
@@ -211,8 +211,8 @@ public class IntersectionTest {
 
         track1.move(new Point(0,0), new Point(200, 100));
 
-        assertEquals(0, track1.getConnectedTracks().size());
-        assertEquals(0, track2.getConnectedTracks().size());
+        assertEquals(0, track1.getActiveConnectedTracks().size());
+        assertEquals(0, track2.getActiveConnectedTracks().size());
     }
 
     @Test

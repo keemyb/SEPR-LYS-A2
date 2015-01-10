@@ -38,16 +38,33 @@ public class Track {
     }
 
     /**
+     * Returns the tracks that a train will move on towards, after it has
+     * completed this one.
+     * The list will contain a maximum of two tracks, one for each
+     * end of the track.
+     * @return The list of track that the train will move on towards.
+     */
+    public List<Track> getActiveConnectedTracks() {
+        List<Track> activeConnectedTracks = new ArrayList<Track>();
+
+        for (Point point : points) {
+            Track activeConnectedTrack = getActiveConnectedTrackTowards(point);
+            if (activeConnectedTrack != null) activeConnectedTracks.add(activeConnectedTrack);
+        }
+        return activeConnectedTracks;
+    }
+
+    /**
      * Returns the track that a train will move on towards, after it has
      * completed this one.
      * @param origin The point that a train has come from. This point
      *               must be one of the track's points.
      * @return The track that the train will move on towards.
      */
-    public Track getConnectedTrackComingFrom(Point origin) {
+    public Track getActiveConnectedTrackComingFrom(Point origin) {
         Point destination = getOtherPoint(origin);
 
-        return getConnectedTrackTowards(destination);
+        return getActiveConnectedTrackTowards(destination);
     }
 
     /**
@@ -57,14 +74,18 @@ public class Track {
      *               must be one of the track's points.
      * @return The track that the train will move on towards.
      */
-    public Track getConnectedTrackTowards(Point destination) {
+    public Track getActiveConnectedTrackTowards(Point destination) {
         // destination is the point that we are travelling to.
         if (intersections.isEmpty()) return null;
 
         // Look for the track that has a point that equals the destination.
-        for (Track track : getConnectedTracks()) {
-            for (Point point : track.getPoints()) {
-                if (point.equals(destination)) return track;
+        Intersection intersection = getIntersection(destination);
+        if (intersection == null) return null;
+
+        List<Track> activeConnection = intersection.getActiveConnection();
+        if (activeConnection.contains(this)) {
+            for (Track track : activeConnection) {
+                if (track != this) return track;
             }
         }
 
@@ -241,19 +262,16 @@ public class Track {
     }
 
     /**
-     * Returns the set of tracks that a train will travel from after it has
-     * completed this one.
-     * The returned set will contain a maximum of two tracks, one for each
-     * end of the track.
+     * Returns the set of tracks that share the same intersection as this one
      * @return The set of connected next tracks.
      */
     public Set<Track> getConnectedTracks() {
         Set<Track> connectedTracks = new HashSet<Track>();
         for (Intersection intersection : intersections) {
-            List<Track> activeConnection = intersection.getActiveConnection();
-            if (!activeConnection.contains(this)) continue;
-            connectedTracks.addAll(activeConnection);
+            connectedTracks.addAll(intersection.getTracks());
         }
+        // Will be in there twice
+        connectedTracks.remove(this);
         connectedTracks.remove(this);
         return connectedTracks;
     }

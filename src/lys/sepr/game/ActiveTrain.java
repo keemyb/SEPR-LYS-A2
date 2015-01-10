@@ -129,7 +129,7 @@ public class ActiveTrain {
             if (!remainderOfRoute.isEmpty()) {
                 Track nextTrack = remainderOfRoute.get(0);
                 if (nextTrack.isBroken()) return;
-                if (nextTrack != currentTrack.getConnectedTrackTowards(facing)) return;
+                if (nextTrack != currentTrack.getActiveConnectedTrackTowards(facing)) return;
 
                 facing = nextTrack.getOtherPoint(nextTrack.getCommonPoint(currentTrack));
                 updateOrientation();

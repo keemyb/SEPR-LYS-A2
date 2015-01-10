@@ -330,7 +330,7 @@ public final class Actions {
         for (Track track : map.getTracks()) {
             if (track.equals(state.getSelectedTrack())) {
                 lineColour = mapView.selectedTrackColour;
-            } else if (state.getSelectedTrack().getConnectedTracks().contains(track)) {
+            } else if (state.getSelectedTrack().getActiveConnectedTracks().contains(track)) {
                 lineColour = mapView.activeConnectedTrackColour;
             } else if (state.getSelectedTrack().getValidConnections().contains(track)) {
                 lineColour = mapView.validConnectedTrackColour;

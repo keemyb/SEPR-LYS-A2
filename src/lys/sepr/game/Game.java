@@ -161,7 +161,7 @@ public class Game {
             track.setActiveConnection(commonPoint, prospectiveNextTrack);
         }
 
-        return prospectiveNextTrack == track.getConnectedTrackTowards(commonPoint);
+        return prospectiveNextTrack == track.getActiveConnectedTrackTowards(commonPoint);
     }
 
     public void changeRoute(Track trackInRoute, Track prospectiveNextTrack) {
