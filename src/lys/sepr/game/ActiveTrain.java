@@ -13,8 +13,8 @@ public class ActiveTrain {
     private final Point destination;
     private Point facing;
     private List<Track> remainderOfRoute = new ArrayList<Track>();
-    private Double orientation;
-    private Double currentSpeed;
+    private double orientation;
+    private double currentSpeed;
 
     public ActiveTrain(Train train, Route initialRoute) {
         this.train = train;
@@ -48,15 +48,15 @@ public class ActiveTrain {
         return remainderOfRoute;
     }
 
-    public Double getOrientation() {
+    public double getOrientation() {
         return orientation;
     }
 
-    public Double getCurrentSpeed() {
+    public double getCurrentSpeed() {
         return currentSpeed;
     }
 
-    public void setCurrentSpeed(Double newSpeed) {
+    public void setCurrentSpeed(double newSpeed) {
         if (newSpeed < 0) {
             currentSpeed = 0d;
         } else if (newSpeed > train.getMaxSpeed()) {
