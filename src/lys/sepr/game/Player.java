@@ -13,6 +13,7 @@ public class Player {
     private int money;
 
     private Inventory inventory = new Inventory();
+
     private ActiveTrain activeTrain;
 
     private List<Contract> completedContracts = new ArrayList<Contract>();
@@ -23,6 +24,14 @@ public class Player {
 
     Player(int money) {
         this.money = money;
+    }
+
+    public ActiveTrain getActiveTrain() {
+        return activeTrain;
+    }
+
+    public Contract getCurrentContract() {
+        return currentContract;
     }
 
     public void assignContract(Contract contract) {

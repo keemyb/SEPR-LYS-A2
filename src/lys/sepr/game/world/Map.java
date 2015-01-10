@@ -387,7 +387,19 @@ public class Map {
         }
     }
 
-    class RouteKey {
+    public HashMap<RouteKey, List<Route>> getPossibleRoutes() {
+        if (possibleRoutes.isEmpty()) updatePossibleRoutes();
+        return possibleRoutes;
+    }
+
+    public int numberOfPossibleRoutes() {
+        // Only concerned about the different locations that can
+        // navigated from one another, not the actual amount of
+        // possible routes from A to B.
+        return getPossibleRoutes().size();
+    }
+
+    public class RouteKey {
         private Point from;
         private Point to;
 
