@@ -335,7 +335,7 @@ public final class Actions {
             } else if (state.getSelectedTrack().getValidConnections().contains(track)) {
                 lineColour = mapView.validConnectedTrackColour;
             } else if (state.getSelectedTrack().getConnectedTracks().contains(track)) {
-                lineColour = mapView.connectedTrackColour;
+                lineColour = mapView.invalidConnectedTrackColour;
             } else lineColour = mapView.unconnectedTrackColour;
 
             drawTrack(track, lineColour, state, mapView, g2);

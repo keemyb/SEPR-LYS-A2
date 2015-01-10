@@ -5,9 +5,9 @@ import java.awt.*;
 
 public class KeyInfo {
     JLabel selectedTrackLabel = new JLabel("Selected Track     ", SwingConstants.LEFT);
-    JLabel activeConnectionTrackLabel = new JLabel("Active Connection     ", SwingConstants.LEFT);
-    JLabel validConnectionTrackLabel = new JLabel("Valid Connection     ", SwingConstants.LEFT);
-    JLabel connectedTrackLabel = new JLabel("Connected (Non traversable) Track     ", SwingConstants.LEFT);
+    JLabel activeConnectedTrackLabel = new JLabel("Active Connection     ", SwingConstants.LEFT);
+    JLabel validConnectedTrackLabel = new JLabel("Valid Connection     ", SwingConstants.LEFT);
+    JLabel invalidConnectedTrackLabel = new JLabel("Invalid Connection     ", SwingConstants.LEFT);
     JLabel unconnectedTrackLabel = new JLabel("Unconnected Track     ", SwingConstants.LEFT);
     JLabel fastestRouteLabel = new JLabel("     Fastest Route     ", SwingConstants.LEFT);
     JLabel longerRouteLabel = new JLabel("Longer Route     ", SwingConstants.LEFT);
@@ -20,9 +20,9 @@ public class KeyInfo {
         keyPanel.setLayout(new BoxLayout(keyPanel, BoxLayout.X_AXIS));
 
         keyPanel.add(selectedTrackLabel);
-        keyPanel.add(activeConnectionTrackLabel);
-        keyPanel.add(validConnectionTrackLabel);
-        keyPanel.add(connectedTrackLabel);
+        keyPanel.add(activeConnectedTrackLabel);
+        keyPanel.add(validConnectedTrackLabel);
+        keyPanel.add(invalidConnectedTrackLabel);
         keyPanel.add(unconnectedTrackLabel);
         keyPanel.add(fastestRouteLabel);
         keyPanel.add(longerRouteLabel);
@@ -30,9 +30,9 @@ public class KeyInfo {
         keyPanel.add(routeExplainLabel);
 
         selectedTrackLabel.setForeground(mapView.selectedTrackColour);
-        activeConnectionTrackLabel.setForeground(mapView.activeConnectedTrackColour);
-        validConnectionTrackLabel.setForeground(mapView.validConnectedTrackColour);
-        connectedTrackLabel.setForeground(mapView.connectedTrackColour);
+        activeConnectedTrackLabel.setForeground(mapView.activeConnectedTrackColour);
+        validConnectedTrackLabel.setForeground(mapView.validConnectedTrackColour);
+        invalidConnectedTrackLabel.setForeground(mapView.invalidConnectedTrackColour);
         unconnectedTrackLabel.setForeground(mapView.unconnectedTrackColour);
         fastestRouteLabel.setForeground(mapView.selectedTrackColour);
         longerRouteLabel.setForeground(Color.GREEN.darker());

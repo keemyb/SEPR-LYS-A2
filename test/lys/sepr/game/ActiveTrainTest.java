@@ -183,6 +183,8 @@ public class ActiveTrainTest {
     public void testChangeRouteInvalid() throws Exception {
         ActiveTrain activeTrain = new ActiveTrain(train, longRoute);
 
+        ActiveTrain.setMustChooseValidConnectedTrack(true);
+
         Point newPoint1 = new Point(1000,1000);
         Point newPoint2 = new Point(1001,1001);
 
@@ -275,6 +277,7 @@ public class ActiveTrainTest {
 
         map.addTrack(altTrack);
         map.addLocation(altLocation);
+        track1.setActiveConnection(point2, altTrack);
 
         ActiveTrain activeTrain = new ActiveTrain(train, map.fastestRoute(startLocation, altLocation));
         activeTrain.getTrain().setAmountOfFuel(150d);
@@ -285,5 +288,28 @@ public class ActiveTrainTest {
 
         assertEquals(0d, activeTrain.getTrain().getAmountOfFuel(), 0.0d);
         assertEquals(new Point(150, 0), activeTrain.getCurrentPosition());
+    }
+
+    @Test
+    public void testMoveTrainNoPathEnoughFuel() throws Exception {
+        // This test is to ensure that the right amount of fuel is used when a
+        // train is instructed to move past a certain track, but cannot.
+
+        // Making a straight track so I don't have to calculate funky distances.
+        Point altPoint = new Point(200, 0);
+        Track altTrack = new Track(point2, altPoint);
+        Location altLocation = new Location(altPoint, "Alternate Location");
+
+        map.addTrack(altTrack);
+        map.addLocation(altLocation);
+
+        ActiveTrain activeTrain = new ActiveTrain(train, map.fastestRoute(startLocation, altLocation));
+        activeTrain.getTrain().setAmountOfFuel(150d);
+
+        activeTrain.setCurrentSpeed(1d);
+
+        advanceTime(activeTrain, 1, 200);
+
+        assertEquals(50d, activeTrain.getTrain().getAmountOfFuel(), 0.0d);
     }
 }

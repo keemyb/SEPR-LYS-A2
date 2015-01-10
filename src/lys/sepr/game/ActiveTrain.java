@@ -16,6 +16,11 @@ public class ActiveTrain {
     private double orientation;
     private double currentSpeed;
 
+    // This changes if the trains route can be changed so that it is
+    // not possible to move from one track to another. (This does
+    // not include broken tracks).
+    private static boolean mustChooseValidConnectedTrack = true;
+
     public ActiveTrain(Train train, Route initialRoute) {
         this.train = train;
         remainderOfRoute.addAll(initialRoute.getTracks());
@@ -64,6 +69,14 @@ public class ActiveTrain {
         } else {
             currentSpeed = newSpeed;
         }
+    }
+
+    public static boolean isMustChooseValidConnectedTrack() {
+        return mustChooseValidConnectedTrack;
+    }
+
+    public static void setMustChooseValidConnectedTrack(boolean mustChooseValidConnectedTrack) {
+        ActiveTrain.mustChooseValidConnectedTrack = mustChooseValidConnectedTrack;
     }
 
     private void updateFacing() {
@@ -115,10 +128,11 @@ public class ActiveTrain {
             // travelling to the point we were facing.
             if (!remainderOfRoute.isEmpty()) {
                 Track nextTrack = remainderOfRoute.get(0);
+                if (nextTrack.isBroken()) return;
+                if (nextTrack != currentTrack.getConnectedTrackTowards(facing)) return;
+
                 facing = nextTrack.getOtherPoint(nextTrack.getCommonPoint(currentTrack));
                 updateOrientation();
-
-                if (nextTrack.isBroken()) return;
 
                 Double distanceLeftToTravelOnNextTrack = Utilities.magnitude(vectorOfTravel) - distanceTravelledOnPreviousTrack;
                 long timeLeftToTravelOnNewTrack = (long) (distanceLeftToTravelOnNextTrack / currentSpeed);
@@ -135,17 +149,9 @@ public class ActiveTrain {
     public void changeRoute(Track trackInRoute, Track prospectiveNextTrack) {
         if (!remainderOfRoute.contains(trackInRoute)) return;
 
-        Track currentTrack = remainderOfRoute.get(0);
-        Intersection intersection = currentTrack.getIntersection(facing);
-
-        if (intersection == null) return;
-
-        Track oldNextTrack = trackInRoute.getConnectedTrackTowards(facing);
-        trackInRoute.setActiveConnection(intersection, prospectiveNextTrack);
-
-        // If the prospective next track was not set successfully then we don't
-        // want to change the route.
-        if (oldNextTrack.equals(trackInRoute.getConnectedTrackTowards(facing))) return;
+        if (mustChooseValidConnectedTrack) {
+            if (!trackInRoute.getValidConnections().contains(prospectiveNextTrack)) return;
+        }
 
         // Removing all tracks after the track in route as the route has changed.
         for (int i=remainderOfRoute.size() - 1; i > remainderOfRoute.indexOf(trackInRoute); i--) {
