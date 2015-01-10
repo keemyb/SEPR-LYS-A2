@@ -124,11 +124,11 @@ public class IntersectionTest {
 
         track1.setNextTrack(intersection, track3);
 
-        assertEquals(track3, track1.getNextTrack(new Point(0,0)));
+        assertEquals(track3, track1.getNextTrackComingFrom(new Point(0, 0)));
 
         track1.setNextTrack(intersection, track2);
 
-        assertEquals(track2, track1.getNextTrack(new Point(0,0)));
+        assertEquals(track2, track1.getNextTrackComingFrom(new Point(0, 0)));
     }
 
     @Test
@@ -137,21 +137,21 @@ public class IntersectionTest {
 
         track2.setNextTrack(intersection, track3);
 
-        assertEquals(null, track2.getNextTrack(new Point(0,0)));
+        assertEquals(null, track2.getNextTrackComingFrom(new Point(0, 0)));
     }
 
     @Test
     public void testNextTrackAvailableTrack() throws Exception {
         this.intersection = new Intersection(new Point(100,100), track1, track2);
 
-        assertEquals(track2, track1.getNextTrack(new Point(0,0)));
+        assertEquals(track2, track1.getNextTrackComingFrom(new Point(0, 0)));
     }
 
     @Test
     public void testNextTrackNonAvailableTrack() throws Exception {
         this.intersection = new Intersection(new Point(100,100), track2, track3);
 
-        assertEquals(null, track2.getNextTrack(new Point(200,200)));
+        assertEquals(null, track2.getNextTrackComingFrom(new Point(200, 200)));
     }
 
     @Test
@@ -161,7 +161,7 @@ public class IntersectionTest {
         /* Favour the first track added (that can connect)
         We don't want to break an existing connection when adding new tracks.
          */
-        assertEquals(track2, track1.getNextTrack(new Point(0,0)));
+        assertEquals(track2, track1.getNextTrackComingFrom(new Point(0, 0)));
     }
 
     @Test
@@ -175,8 +175,8 @@ public class IntersectionTest {
         intersection.removeTrack(track2);
 
         assertEquals(expectedTracks, intersection.getTracks());
-        assertEquals(track3, track1.getNextTrack(new Point(0, 0)));
-        assertEquals(null, track2.getNextTrack(new Point(200, 200)));
+        assertEquals(track3, track1.getNextTrackComingFrom(new Point(0, 0)));
+        assertEquals(null, track2.getNextTrackComingFrom(new Point(200, 200)));
         /* We want to push the removed track away from the intersection after removal
         so that it does not touch the old intersection and cause confusion.
          */
@@ -199,7 +199,7 @@ public class IntersectionTest {
         assertEquals(new Point(90,90), track3.getOtherPoint(new Point(200,100)));
         assertEquals(expectedTracks, intersection.getTracks());
         assertEquals(intersection, track1.getIntersection(new Point(90,90)));
-        assertEquals(track2, track1.getNextTrack(new Point(0,0)));
+        assertEquals(track2, track1.getNextTrackComingFrom(new Point(0, 0)));
     }
 
     @Test

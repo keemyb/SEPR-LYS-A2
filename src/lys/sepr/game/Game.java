@@ -162,7 +162,7 @@ public class Game {
             track.setNextTrack(intersection, prospectiveNextTrack);
         }
 
-        return prospectiveNextTrack == track.getNextTrack(track.getOtherPoint(commonPoint));
+        return prospectiveNextTrack == track.getNextTrackTowards(commonPoint);
     }
 
     public void changeRoute(Track trackInRoute, Track prospectiveNextTrack) {

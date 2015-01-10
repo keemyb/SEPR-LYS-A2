@@ -89,7 +89,7 @@ public class Intersection {
         for (Track track : tracks) {
             // We want the point that is not at this intersection so that we can find its current next track
             Point destination = track.getOtherPoint(getPoint());
-            Track currentNextTrack = track.getNextTrack(destination);
+            Track currentNextTrack = track.getNextTrackComingFrom(destination);
 
             if (currentNextTrack != null) {
                 // If there are valid next tracks and the current next track is one of them,

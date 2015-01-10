@@ -44,13 +44,22 @@ public class Track {
      *               must be one of the track's points.
      * @return The track that the train will move on towards.
      */
-    public Track getNextTrack(Point origin) {
-        // origin is the point that we are travelling away from.
-        if (intersections.isEmpty()) return null;
-
-        /* as tracks have no distinguishable start and end point, the destination
-        is the one that is not the origin point */
+    public Track getNextTrackComingFrom(Point origin) {
         Point destination = getOtherPoint(origin);
+
+        return getNextTrackTowards(destination);
+    }
+
+    /**
+     * Returns the track that a train will move on towards, after it has
+     * completed this one.
+     * @param destination The point that a train is going towards. This point
+     *               must be one of the track's points.
+     * @return The track that the train will move on towards.
+     */
+    public Track getNextTrackTowards(Point destination) {
+        // destination is the point that we are travelling to.
+        if (intersections.isEmpty()) return null;
 
         // Look for the track that has a point that equals the destination.
         for (Track track : activeNextTracks) {

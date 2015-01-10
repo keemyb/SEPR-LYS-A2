@@ -49,7 +49,8 @@ public class TrackTest {
 
     @Test
     public void testNextTrackSolo() throws Exception {
-        assertEquals(null, track1.getNextTrack(new Point(0, 0)));
+        assertEquals(null, track1.getNextTrackComingFrom(new Point(0, 0)));
+        assertEquals(null, track1.getNextTrackTowards(new Point(0, 0)));
     }
 
     @Test
@@ -57,8 +58,14 @@ public class TrackTest {
         map.addTrack(track1);
         map.addTrack(track2);
 
-        assertEquals(track2, track1.getNextTrack(new Point(0,0)));
-        assertEquals(null, track1.getNextTrack(new Point(100,100)));
+        assertEquals(track2, track1.getNextTrackComingFrom(new Point(0, 0)));
+        assertEquals(null, track1.getNextTrackComingFrom(new Point(100, 100)));
+
+        assertEquals(track2, track1.getNextTrackTowards(new Point(100, 100)));
+        assertEquals(null, track1.getNextTrackTowards(new Point(0, 0)));
+
+        assertEquals(track1, track2.getNextTrackTowards(new Point(100, 100)));
+        assertEquals(null, track2.getNextTrackTowards(new Point(200, 200)));
     }
 
     @Test
@@ -67,9 +74,9 @@ public class TrackTest {
         map.addTrack(track2);
         map.addTrack(track3);
 
-        assertEquals(track1, track3.getNextTrack(new Point(200,100)));
-        assertEquals(track1, track2.getNextTrack(new Point(200,200)));
-        assertEquals(track2, track1.getNextTrack(new Point(0,0)));
+        assertEquals(track1, track3.getNextTrackComingFrom(new Point(200, 100)));
+        assertEquals(track1, track2.getNextTrackComingFrom(new Point(200, 200)));
+        assertEquals(track2, track1.getNextTrackComingFrom(new Point(0, 0)));
     }
 
     @Test
