@@ -4,6 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import static lys.sepr.game.world.Utilities.getVector;
 import static org.junit.Assert.*;
@@ -48,35 +50,35 @@ public class TrackTest {
     }
 
     @Test
-    public void testNextTrackSolo() throws Exception {
-        assertEquals(null, track1.getNextTrackComingFrom(new Point(0, 0)));
-        assertEquals(null, track1.getNextTrackTowards(new Point(0, 0)));
+    public void testConnectedTrackSolo() throws Exception {
+        assertEquals(null, track1.getConnectedTrackComingFrom(new Point(0, 0)));
+        assertEquals(null, track1.getConnectedTrackTowards(new Point(0, 0)));
     }
 
     @Test
-    public void testNextTrackDuo() throws Exception {
+    public void testConnectedTrackDuo() throws Exception {
         map.addTrack(track1);
         map.addTrack(track2);
 
-        assertEquals(track2, track1.getNextTrackComingFrom(new Point(0, 0)));
-        assertEquals(null, track1.getNextTrackComingFrom(new Point(100, 100)));
+        assertEquals(track2, track1.getConnectedTrackComingFrom(new Point(0, 0)));
+        assertEquals(null, track1.getConnectedTrackComingFrom(new Point(100, 100)));
 
-        assertEquals(track2, track1.getNextTrackTowards(new Point(100, 100)));
-        assertEquals(null, track1.getNextTrackTowards(new Point(0, 0)));
+        assertEquals(track2, track1.getConnectedTrackTowards(new Point(100, 100)));
+        assertEquals(null, track1.getConnectedTrackTowards(new Point(0, 0)));
 
-        assertEquals(track1, track2.getNextTrackTowards(new Point(100, 100)));
-        assertEquals(null, track2.getNextTrackTowards(new Point(200, 200)));
+        assertEquals(track1, track2.getConnectedTrackTowards(new Point(100, 100)));
+        assertEquals(null, track2.getConnectedTrackTowards(new Point(200, 200)));
     }
 
     @Test
-    public void testNextTrackTrio() throws Exception {
+    public void testConnectedTrackTrio() throws Exception {
         map.addTrack(track1);
         map.addTrack(track2);
         map.addTrack(track3);
 
-        assertEquals(track1, track3.getNextTrackComingFrom(new Point(200, 100)));
-        assertEquals(track1, track2.getNextTrackComingFrom(new Point(200, 200)));
-        assertEquals(track2, track1.getNextTrackComingFrom(new Point(0, 0)));
+        assertEquals(track2, track1.getConnectedTrackComingFrom(new Point(0, 0)));
+        assertEquals(track1, track2.getConnectedTrackComingFrom(new Point(200, 200)));
+        assertEquals(null, track3.getConnectedTrackComingFrom(new Point(200, 100)));
     }
 
     @Test
@@ -120,10 +122,11 @@ public class TrackTest {
     }
 
     @Test
-    public void testConnectedTrackNoDuplicateNoSelf() throws Exception {
-        Track track1 = new Track(new Point(100,100), new Point(150,200));
-        Track track2 = new Track(new Point(200,100), new Point(150,200));
-        Track track3 = new Track(new Point(100,100), new Point(200,100));
+    public void testConnectedTrackContainsNoDuplicateNoSelf() throws Exception {
+        // Looks like a sideways Y
+        Track track1 = new Track(new Point(100,100), new Point(200,100));
+        Track track2 = new Track(new Point(200,100), new Point(300,200));
+        Track track3 = new Track(new Point(200,100), new Point(300,0));
 
         Map map = new Map();
 
@@ -131,17 +134,13 @@ public class TrackTest {
         map.addTrack(track2);
         map.addTrack(track3);
 
-        ArrayList<Track> expectedConnections1 = new ArrayList<Track>();
+        Set<Track> expectedConnections1 = new HashSet<Track>();
         expectedConnections1.add(track2);
-        expectedConnections1.add(track3);
 
-        ArrayList<Track> expectedConnections2 = new ArrayList<Track>();
+        Set<Track> expectedConnections2 = new HashSet<Track>();
         expectedConnections2.add(track1);
-        expectedConnections2.add(track3);
 
-        ArrayList<Track> expectedConnections3 = new ArrayList<Track>();
-        expectedConnections3.add(track1);
-        expectedConnections3.add(track2);
+        Set<Track> expectedConnections3 = new HashSet<Track>();
 
         assertEquals(expectedConnections1, track1.getConnectedTracks());
         assertEquals(expectedConnections2, track2.getConnectedTracks());

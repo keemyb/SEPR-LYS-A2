@@ -3,6 +3,7 @@ package lys.sepr.game.world;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static lys.sepr.game.world.Utilities.closestPoint;
 import static lys.sepr.game.world.Utilities.getVector;
@@ -17,7 +18,6 @@ public class Track {
     private static double nudgeStrength = 0.1;
     private ArrayList<Point> points = new ArrayList<Point>();
     private ArrayList<Intersection> intersections = new ArrayList<Intersection>();
-    private ArrayList<Track> activeNextTracks = new ArrayList<Track>();
     private Boolean broken = false;
 
     /**
@@ -44,10 +44,10 @@ public class Track {
      *               must be one of the track's points.
      * @return The track that the train will move on towards.
      */
-    public Track getNextTrackComingFrom(Point origin) {
+    public Track getConnectedTrackComingFrom(Point origin) {
         Point destination = getOtherPoint(origin);
 
-        return getNextTrackTowards(destination);
+        return getConnectedTrackTowards(destination);
     }
 
     /**
@@ -57,12 +57,12 @@ public class Track {
      *               must be one of the track's points.
      * @return The track that the train will move on towards.
      */
-    public Track getNextTrackTowards(Point destination) {
+    public Track getConnectedTrackTowards(Point destination) {
         // destination is the point that we are travelling to.
         if (intersections.isEmpty()) return null;
 
         // Look for the track that has a point that equals the destination.
-        for (Track track : activeNextTracks) {
+        for (Track track : getConnectedTracks()) {
             for (Point point : track.getPoints()) {
                 if (point.equals(destination)) return track;
             }
@@ -74,22 +74,35 @@ public class Track {
     /**
      * Sets the track that a train will move to after this track has been completed.
      * The next track will only be set if it is a valid next track, that is if it
-     * can be traversed from this track. This is to prevent unfeasible situations
-     * such as a train being able to complete sharp, hairpin angles.
+     * can be traversed from this track. This is to prevent impossible situations
+     * such as a train being able to complete hairpin turns.
+     * This function is symmetric and so sets the prospective next tracks next track
+     * to this track
+     * @param point The point of the intersection where the routing will be changed.
+     * @param prospectiveNextTrack The track that will be set as the next track,
+     *                             if it is valid.
+     */
+    public void setActiveConnection(Point point, Track prospectiveNextTrack) {
+        Intersection intersection = getIntersection(point);
+        if (intersection != null) setActiveConnection(intersection, prospectiveNextTrack);
+    }
+
+    /**
+     * Sets the track that a train will move to after this track has been completed.
+     * The next track will only be set if it is a valid next track, that is if it
+     * can be traversed from this track. This is to prevent impossible situations
+     * such as a train being able to complete hairpin turns.
+     * This function is symmetric and so sets the prospective next tracks next track
+     * to this track
      * @param intersection The intersection where the routing will be changed.
      * @param prospectiveNextTrack The track that will be set as the next track,
      *                             if it is valid.
      */
-    public void setNextTrack(Intersection intersection, Track prospectiveNextTrack) {
-        if (intersection.getValidNextTracks(this).contains(prospectiveNextTrack)) {
-            Track trackToRemove = null;
-            // Remove existing next tracks if they connect via this intersection
-            for (Track existingNextTrack : activeNextTracks) {
-                if (intersection.getTracks().contains(existingNextTrack)) trackToRemove = existingNextTrack;
-            }
-            if (trackToRemove != null) activeNextTracks.remove(trackToRemove);
-            activeNextTracks.add(prospectiveNextTrack);
-        }
+    // Should this be called setActiveConnection
+    public void setActiveConnection(Intersection intersection, Track prospectiveNextTrack) {
+        if (!intersection.getValidConnections(this).contains(prospectiveNextTrack)) return;
+
+        intersection.setActiveConnection(this, prospectiveNextTrack);
     }
 
     /**
@@ -185,11 +198,11 @@ public class Track {
 
         // Update the valid tracks as the angle between tracks may have changed
         // Only doing this for the intersection which was at the end of the track
-        // that was not moved, as the other intersection will update itself (if it
-        // exists).
+        // that was not moved, as if the track was moved as part of an intersection
+        // it will update itself.
         Intersection intersectionAtStationaryPoint = getIntersection(getOtherPoint(to));
         if (intersectionAtStationaryPoint != null) {
-            intersectionAtStationaryPoint.updateValidTracks();
+            intersectionAtStationaryPoint.updateValidConnections();
         }
     }
 
@@ -228,44 +241,34 @@ public class Track {
     }
 
     /**
-     * Returns a list of tracks that this track is connected to.
-     */
-    public ArrayList<Track> getConnectedTracks() {
-        ArrayList<Track> connectedTracks = new ArrayList<Track>();
-        for (Intersection intersection : intersections) {
-            for (Track track : intersection.getTracks()) {
-                if (track.equals(this)) {
-                    continue;
-                } else if (!connectedTracks.contains(track)){
-                    connectedTracks.add(track);
-                }
-            }
-        }
-        return connectedTracks;
-    }
-
-    /**
-     * Returns the list of tracks that a train will travel from after it has
+     * Returns the set of tracks that a train will travel from after it has
      * completed this one.
-     * The returned list will contain a maximum of two tracks, one for each
+     * The returned set will contain a maximum of two tracks, one for each
      * end of the track.
-     * @return The list of active next tracks.
+     * @return The set of connected next tracks.
      */
-    public ArrayList<Track> getActiveNextTracks() {
-        return activeNextTracks;
+    public Set<Track> getConnectedTracks() {
+        Set<Track> connectedTracks = new HashSet<Track>();
+        for (Intersection intersection : intersections) {
+            List<Track> activeConnection = intersection.getActiveConnection();
+            if (!activeConnection.contains(this)) continue;
+            connectedTracks.addAll(activeConnection);
+        }
+        connectedTracks.remove(this);
+        return connectedTracks;
     }
 
     /**
      * Returns the list of tracks that can be traversed from this track.
      * Note that this is not necessarily the same as getConnectedTracks,
-     * as it may not be possible for a train to move from one track to another,
-     * depending on the angle between them.
+     * as the intersection may not have connected two tracks (even though
+     * they can be)
      * @return The list of tracks that can be traversed from this track.
      */
-    public ArrayList<Track> getValidNextTracks() {
+    public ArrayList<Track> getValidConnections() {
         ArrayList<Track> validNextTracks = new ArrayList<Track>();
         for (Point point : points) {
-            validNextTracks.addAll(getValidNextTracks(point));
+            validNextTracks.addAll(getValidConnections(point));
         }
         return validNextTracks;
     }
@@ -277,23 +280,13 @@ public class Track {
      * @return The list of tracks that can be traversed from a particular
      * point on the track.
      */
-    public ArrayList<Track> getValidNextTracks(Point towards) {
+    public ArrayList<Track> getValidConnections(Point towards) {
         Intersection intersection = getIntersection(towards);
         if (intersection != null) {
-            return getIntersection(towards).getValidNextTracks(this);
+            return getIntersection(towards).getValidConnections(this);
         } else {
             return new ArrayList<Track>();
         }
-    }
-
-    /**
-     * Removes a track from the list of Active Next Tracks.
-     * This method probably should not be called directly, as removing the next
-     * track while one still (visually) exists could create problems.
-     * @param track
-     */
-    public void removeActiveNextTrack(Track track) {
-        activeNextTracks.remove(track);
     }
 
     public Boolean isBroken() {

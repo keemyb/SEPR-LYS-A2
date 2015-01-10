@@ -5,8 +5,8 @@ import java.awt.*;
 
 public class KeyInfo {
     JLabel selectedTrackLabel = new JLabel("Selected Track     ", SwingConstants.LEFT);
-    JLabel activeNextTrackLabel = new JLabel("Active Next Track     ", SwingConstants.LEFT);
-    JLabel validNextTrackLabel = new JLabel("Valid Next Track     ", SwingConstants.LEFT);
+    JLabel activeConnectionTrackLabel = new JLabel("Active Connection     ", SwingConstants.LEFT);
+    JLabel validConnectionTrackLabel = new JLabel("Valid Connection     ", SwingConstants.LEFT);
     JLabel connectedTrackLabel = new JLabel("Connected (Non traversable) Track     ", SwingConstants.LEFT);
     JLabel unconnectedTrackLabel = new JLabel("Unconnected Track     ", SwingConstants.LEFT);
     JLabel fastestRouteLabel = new JLabel("     Fastest Route     ", SwingConstants.LEFT);
@@ -20,8 +20,8 @@ public class KeyInfo {
         keyPanel.setLayout(new BoxLayout(keyPanel, BoxLayout.X_AXIS));
 
         keyPanel.add(selectedTrackLabel);
-        keyPanel.add(activeNextTrackLabel);
-        keyPanel.add(validNextTrackLabel);
+        keyPanel.add(activeConnectionTrackLabel);
+        keyPanel.add(validConnectionTrackLabel);
         keyPanel.add(connectedTrackLabel);
         keyPanel.add(unconnectedTrackLabel);
         keyPanel.add(fastestRouteLabel);
@@ -30,8 +30,8 @@ public class KeyInfo {
         keyPanel.add(routeExplainLabel);
 
         selectedTrackLabel.setForeground(mapView.selectedTrackColour);
-        activeNextTrackLabel.setForeground(mapView.activeNextTrackColour);
-        validNextTrackLabel.setForeground(mapView.validNextTrackColour);
+        activeConnectionTrackLabel.setForeground(mapView.activeConnectedTrackColour);
+        validConnectionTrackLabel.setForeground(mapView.validConnectedTrackColour);
         connectedTrackLabel.setForeground(mapView.connectedTrackColour);
         unconnectedTrackLabel.setForeground(mapView.unconnectedTrackColour);
         fastestRouteLabel.setForeground(mapView.selectedTrackColour);

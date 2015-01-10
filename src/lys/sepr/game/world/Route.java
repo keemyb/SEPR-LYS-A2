@@ -159,16 +159,16 @@ public class Route {
 
         // If we have backtracked to the first track , and we have visited all its connected tracks,
         // there are no more solutions.
-        if (currentRoute.size() == 1 && visitedTracks.containsAll(lastTrackInCurrentRoute.getValidNextTracks())) return;
+        if (currentRoute.size() == 1 && visitedTracks.containsAll(lastTrackInCurrentRoute.getValidConnections())) return;
 
         ArrayList<Track> validNextTracks;
         if (currentRoute.size() == 1) {
-            validNextTracks = lastTrackInCurrentRoute.getValidNextTracks();
+            validNextTracks = lastTrackInCurrentRoute.getValidConnections();
         } else {
             // We have come from the point that the last two tracks meet
             Point comingFrom = lastTrackInCurrentRoute.getCommonPoint(currentRoute.getTracks().get(currentRoute.size() - 2));
             Point goingTowards = lastTrackInCurrentRoute.getOtherPoint(comingFrom);
-            validNextTracks = lastTrackInCurrentRoute.getValidNextTracks(goingTowards);
+            validNextTracks = lastTrackInCurrentRoute.getValidConnections(goingTowards);
         }
 
         // Discard all visited tracks

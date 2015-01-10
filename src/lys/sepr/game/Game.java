@@ -154,15 +154,14 @@ public class Game {
         // drop short contracts and then contracts with fewer routes.
     }
 
-    public boolean changeNextTrack(Track track, Track prospectiveNextTrack) {
+    public boolean changeConnectedTrack(Track track, Track prospectiveNextTrack) {
         Point commonPoint = track.getCommonPoint(prospectiveNextTrack);
-        Intersection intersection = track.getIntersection(commonPoint);
 
-        if (intersection != null) {
-            track.setNextTrack(intersection, prospectiveNextTrack);
+        if (commonPoint != null) {
+            track.setActiveConnection(commonPoint, prospectiveNextTrack);
         }
 
-        return prospectiveNextTrack == track.getNextTrackTowards(commonPoint);
+        return prospectiveNextTrack == track.getConnectedTrackTowards(commonPoint);
     }
 
     public void changeRoute(Track trackInRoute, Track prospectiveNextTrack) {

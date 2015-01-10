@@ -267,7 +267,7 @@ public final class Actions {
         if (state.getRouteLocation2() != null) {
             drawRoute(map, state, locationSize, mapView, g2);
         } else if (state.getSelectedTrack() != null) {
-            drawNextTracks(map, state, locationSize, mapView, g2);
+            drawConnectedTracks(map, state, locationSize, mapView, g2);
         } else {
             drawNormal(map, state, locationSize, mapView, g2);
         }
@@ -325,15 +325,15 @@ public final class Actions {
         }
     }
 
-    public static void drawNextTracks(Map map, State state, double locationSize, MapView mapView, Graphics2D g2) {
+    public static void drawConnectedTracks(Map map, State state, double locationSize, MapView mapView, Graphics2D g2) {
         java.awt.Color lineColour;
         for (Track track : map.getTracks()) {
             if (track.equals(state.getSelectedTrack())) {
                 lineColour = mapView.selectedTrackColour;
-            } else if (state.getSelectedTrack().getActiveNextTracks().contains(track)) {
-                lineColour = mapView.activeNextTrackColour;
-            } else if (state.getSelectedTrack().getValidNextTracks().contains(track)) {
-                lineColour = mapView.validNextTrackColour;
+            } else if (state.getSelectedTrack().getConnectedTracks().contains(track)) {
+                lineColour = mapView.activeConnectedTrackColour;
+            } else if (state.getSelectedTrack().getValidConnections().contains(track)) {
+                lineColour = mapView.validConnectedTrackColour;
             } else if (state.getSelectedTrack().getConnectedTracks().contains(track)) {
                 lineColour = mapView.connectedTrackColour;
             } else lineColour = mapView.unconnectedTrackColour;

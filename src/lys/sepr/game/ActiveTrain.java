@@ -140,12 +140,12 @@ public class ActiveTrain {
 
         if (intersection == null) return;
 
-        Track oldNextTrack = trackInRoute.getNextTrackTowards(facing);
-        trackInRoute.setNextTrack(intersection, prospectiveNextTrack);
+        Track oldNextTrack = trackInRoute.getConnectedTrackTowards(facing);
+        trackInRoute.setActiveConnection(intersection, prospectiveNextTrack);
 
         // If the prospective next track was not set successfully then we don't
         // want to change the route.
-        if (oldNextTrack.equals(trackInRoute.getNextTrackTowards(facing))) return;
+        if (oldNextTrack.equals(trackInRoute.getConnectedTrackTowards(facing))) return;
 
         // Removing all tracks after the track in route as the route has changed.
         for (int i=remainderOfRoute.size() - 1; i > remainderOfRoute.indexOf(trackInRoute); i--) {

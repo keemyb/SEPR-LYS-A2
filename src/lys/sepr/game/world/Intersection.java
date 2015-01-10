@@ -17,7 +17,8 @@ public class Intersection {
     private static int minAngle = 120;
     private Point point;
     private ArrayList<Track> tracks = new ArrayList<Track>();
-    private HashMap<Track,ArrayList<Track>> validNextTracks = new HashMap<Track,ArrayList<Track>>();
+    private HashMap<Track,ArrayList<Track>> validConnections = new HashMap<Track,ArrayList<Track>>();
+    private List<Track> activeConnection = new ArrayList<Track>();
 
     /**
      * Constructor
@@ -34,7 +35,7 @@ public class Intersection {
         a.addIntersection(this);
         b.addIntersection(this);
 
-        updateValidTracks();
+        updateValidConnections();
     }
 
     /**
@@ -45,22 +46,22 @@ public class Intersection {
         tracks.add(track);
         track.addIntersection(this);
 
-        updateValidTracks();
+        updateValidConnections();
     }
 
     /**
-     * Updates the valid tracks of each track that is a part of this intersection.
-     * It will be called when a track in the intersection, or the intersection
-     * itself is moved.
-     * It is necessary to update the the validNextTracks HashMap as the angles
+     * Updates the valid connections for each track in this intersection.
+     * It should be called when a track in the intersection, or the intersection
+     * itself is modified.
+     * It is necessary to update the the validConnections HashMap as the angles
      * between tracks may have changed.
      */
-    public void updateValidTracks() {
+    public void updateValidConnections() {
         /* Clear existing valid tracks as we will be regenerating them.
         As the angles between tracks change when an intersection is moved,
         we must recalculate them to see if they are still valid.
         */
-        validNextTracks = new HashMap<Track,ArrayList<Track>>();
+        validConnections.clear();
         for (Track track1 : tracks) {
             ArrayList<Track> validNextTracksList = new ArrayList<Track>();
             List<Double> vector1 = getVector(track1.getOtherPoint(point), point);
@@ -74,9 +75,9 @@ public class Intersection {
                     validNextTracksList.add(track2);
                 }
             }
-            validNextTracks.put(track1, validNextTracksList);
+            validConnections.put(track1, validNextTracksList);
         }
-        setDefaultNextTracks();
+        updateActiveConnection();
     }
 
     /**
@@ -85,27 +86,41 @@ public class Intersection {
      * If a track has an active next track that is valid, it is left untouched,
      * otherwise it is set to an arbitrary valid next track if one exists.
      */
-    private void setDefaultNextTracks() {
-        for (Track track : tracks) {
-            // We want the point that is not at this intersection so that we can find its current next track
-            Point destination = track.getOtherPoint(getPoint());
-            Track currentNextTrack = track.getNextTrackComingFrom(destination);
+    private void updateActiveConnection() {
+        if (!activeConnection.isEmpty()) {
+            Track activeConnectionTrack1 = activeConnection.get(0);
+            Track activeConnectionTrack2 = activeConnection.get(1);
 
-            if (currentNextTrack != null) {
-                // If there are valid next tracks and the current next track is one of them,
-                // leave it, or else remove it
-                if (validNextTracks.get(track) != null && validNextTracks.get(track).contains(currentNextTrack)){
-                    continue;
-                } else {
-                    track.removeActiveNextTrack(currentNextTrack);
-                }
-            }
-
-            // Set the first valid next track, if there is one
-            if (!getValidNextTracks(track).isEmpty()) {
-                track.setNextTrack(this, getValidNextTracks(track).get(0));
-            }
+            // If the current activeConnection is valid leave it, else make a new one.
+            // We need to check that the validConnections key still exists as it may not
+            // exist in the case that a track is broken.
+            List<Track> validConnections = getValidConnections(activeConnectionTrack1);
+            if (validConnections != null && validConnections.contains(activeConnectionTrack2)) return;
         }
+
+        for (Track track : tracks) {
+            List<Track> validNextTracks = getValidConnections(track);
+            if (validNextTracks.isEmpty()) continue;
+            setActiveConnection(track, validNextTracks.get(0));
+            return;
+        }
+
+        clearActiveConnection();
+    }
+
+    public void setActiveConnection(Track track1, Track track2) {
+        if (!getTracks().contains(track1)) return;
+        if (!getTracks().contains(track2)) return;
+
+        if (validConnections.get(track1) != null && validConnections.get(track1).contains(track2)) {
+            clearActiveConnection();
+            activeConnection.add(track1);
+            activeConnection.add(track2);
+        }
+    }
+
+    private void clearActiveConnection() {
+        activeConnection.clear();
     }
 
     /**
@@ -134,11 +149,19 @@ public class Intersection {
     }
 
     /**
-     * Returns the mapping of valid next tracks for all tracks in the intersection.
-     * @return the HashMap of valid next tracks.
+     * Returns the mapping of valid connections for all tracks in the intersection.
+     * @return the HashMap of valid connections.
      */
-    public ArrayList<Track> getValidNextTracks(Track track) {
-        return validNextTracks.get(track);
+    public ArrayList<Track> getValidConnections(Track track) {
+        return validConnections.get(track);
+    }
+
+    /**
+     * Returns the tracks in the active connection.
+     * @return the active connection.
+     */
+    public List<Track> getActiveConnection() {
+        return new ArrayList<Track>(activeConnection);
     }
 
     /**
@@ -150,13 +173,6 @@ public class Intersection {
     public void removeTrack(Track track) {
         track.removeIntersection(this);
         tracks.remove(track);
-
-        // Remove the removed track from all other active next tracks
-        for (int i=0; i < tracks.size(); i++) {
-            Track remainingTrack = tracks.get(i);
-            track.removeActiveNextTrack(remainingTrack);
-            remainingTrack.removeActiveNextTrack(track);
-        }
 
         // Move the track away from the intersection a little bit,
         // so that it is not confused as being part of it.
@@ -170,7 +186,7 @@ public class Intersection {
             tracks.remove(remainingTrack);
             remainingTrack.nudge(getPoint());
         } else {
-            updateValidTracks();
+            updateValidConnections();
         }
     }
 
@@ -212,6 +228,6 @@ public class Intersection {
             track.addIntersection(this);
         }
         point = to;
-        updateValidTracks();
+        updateValidConnections();
     }
 }

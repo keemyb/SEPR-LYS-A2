@@ -322,8 +322,8 @@ public class Map {
     public void breakTrack(Track track, Point where) {
         // Here, the old track should be removed before the new tracks are added.
         // This is because otherwise the old track will form an intersection
-        // with the new tracks, forming an intersection which will be broken
-        // by the removal of the old track.
+        // with the new tracks, forming an intersection which will be dissolved
+        // when the old track is removed.
         // Dissolving an intersection moves all tracks in it slightly, so the
         // ends of the track will not be where they should be.
         if (track.getIntersections().isEmpty()) {
@@ -333,6 +333,10 @@ public class Map {
                 addTrack(splitTrack);
             }
         } else if (track.getIntersections().size() == 1) {
+            // Here we add the splitTrack that would be part of an intersection
+            // first and then remove the old track before adding the other
+            // splitTrack. This is so that we can ensure the intersection
+            // remains unmoved and undissolved.
             Intersection intersection = track.getIntersections().get(0);
             Point pointOfIntersection = intersection.getPoint();
             Point otherPoint = track.getOtherPoint(pointOfIntersection);
@@ -348,6 +352,7 @@ public class Map {
             }
             removeTrack(track);
         }
+        // ^^^^^
         // Here, the old track should be removed after the new tracks are added.
         // This is because the track may have been part of an intersection
         // with only one other track, meaning that the connecting track will

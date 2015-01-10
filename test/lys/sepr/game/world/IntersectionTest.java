@@ -78,17 +78,17 @@ public class IntersectionTest {
     }
 
     @Test
-    public void testValidNextTracksDuo() throws Exception {
+    public void testValidConnectedTracksDuo() throws Exception {
         ArrayList<Track> expectedTracks = new ArrayList<Track>();
         expectedTracks.add(track2);
 
         this.intersection = new Intersection(new Point(100,100), track1, track2);
 
-        assertEquals(expectedTracks, intersection.getValidNextTracks(track1));
+        assertEquals(expectedTracks, intersection.getValidConnections(track1));
     }
 
     @Test
-    public void testValidNextTracksTrio() throws Exception {
+    public void testValidConnectedTracksTrio() throws Exception {
         ArrayList<Track> expectedTracks1 = new ArrayList<Track>();
         expectedTracks1.add(track2);
         expectedTracks1.add(track3);
@@ -113,55 +113,53 @@ public class IntersectionTest {
 //        double angle3 = intersection.crossProduct(vector5, vector6);
 //        System.out.println(angle3);
 
-        assertEquals(expectedTracks1, intersection.getValidNextTracks(track1));
-        assertEquals(expectedTracks2, intersection.getValidNextTracks(track2));
-        assertEquals(expectedTracks2, intersection.getValidNextTracks(track3));
+        assertEquals(expectedTracks1, intersection.getValidConnections(track1));
+        assertEquals(expectedTracks2, intersection.getValidConnections(track2));
+        assertEquals(expectedTracks2, intersection.getValidConnections(track3));
     }
 
     @Test
-    public void testSetNextTrackValidChoice() throws Exception {
+    public void testSetConnectedTrackValidChoice() throws Exception {
         setUp3Tracks();
 
-        track1.setNextTrack(intersection, track3);
+        track1.setActiveConnection(intersection, track3);
 
-        assertEquals(track3, track1.getNextTrackComingFrom(new Point(0, 0)));
+        assertEquals(track3, track1.getConnectedTrackComingFrom(new Point(0, 0)));
 
-        track1.setNextTrack(intersection, track2);
+        track1.setActiveConnection(intersection, track2);
 
-        assertEquals(track2, track1.getNextTrackComingFrom(new Point(0, 0)));
+        assertEquals(track2, track1.getConnectedTrackComingFrom(new Point(0, 0)));
     }
 
     @Test
-    public void testSetNextTrackInvalidChoice() throws Exception {
+    public void testSetConnectedTrackInvalidChoice() throws Exception {
         setUp3Tracks();
 
-        track2.setNextTrack(intersection, track3);
+        track2.setActiveConnection(intersection, track3);
 
-        assertEquals(null, track2.getNextTrackComingFrom(new Point(0, 0)));
+        assertEquals(null, track2.getConnectedTrackComingFrom(new Point(0, 0)));
     }
 
     @Test
-    public void testNextTrackAvailableTrack() throws Exception {
+    public void testConnectedTrackAvailableTrack() throws Exception {
         this.intersection = new Intersection(new Point(100,100), track1, track2);
 
-        assertEquals(track2, track1.getNextTrackComingFrom(new Point(0, 0)));
+        assertEquals(track2, track1.getConnectedTrackComingFrom(new Point(0, 0)));
     }
 
     @Test
-    public void testNextTrackNonAvailableTrack() throws Exception {
+    public void testConnectedTrackNonAvailableTrack() throws Exception {
         this.intersection = new Intersection(new Point(100,100), track2, track3);
 
-        assertEquals(null, track2.getNextTrackComingFrom(new Point(200, 200)));
+        assertEquals(null, track2.getConnectedTrackComingFrom(new Point(200, 200)));
     }
 
     @Test
-    public void testNextTrackMultipleAvailableTracks() throws Exception {
+    public void testConnectedTrackMultipleAvailableTracks() throws Exception {
         setUp3Tracks();
 
-        /* Favour the first track added (that can connect)
-        We don't want to break an existing connection when adding new tracks.
-         */
-        assertEquals(track2, track1.getNextTrackComingFrom(new Point(0, 0)));
+        // Favour first added track (track2)
+        assertEquals(track2, track1.getConnectedTrackComingFrom(new Point(0, 0)));
     }
 
     @Test
@@ -175,8 +173,8 @@ public class IntersectionTest {
         intersection.removeTrack(track2);
 
         assertEquals(expectedTracks, intersection.getTracks());
-        assertEquals(track3, track1.getNextTrackComingFrom(new Point(0, 0)));
-        assertEquals(null, track2.getNextTrackComingFrom(new Point(200, 200)));
+        assertEquals(track3, track1.getConnectedTrackComingFrom(new Point(0, 0)));
+        assertEquals(null, track2.getConnectedTrackComingFrom(new Point(200, 200)));
         /* We want to push the removed track away from the intersection after removal
         so that it does not touch the old intersection and cause confusion.
          */
@@ -199,21 +197,22 @@ public class IntersectionTest {
         assertEquals(new Point(90,90), track3.getOtherPoint(new Point(200,100)));
         assertEquals(expectedTracks, intersection.getTracks());
         assertEquals(intersection, track1.getIntersection(new Point(90,90)));
-        assertEquals(track2, track1.getNextTrackComingFrom(new Point(0, 0)));
+        // Should be track3 since it was connected before
+        assertEquals(track2, track1.getConnectedTrackComingFrom(new Point(0, 0)));
     }
 
     @Test
-    public void testLastActiveNextTrackMove() throws Exception {
+    public void testConnectedTrackAfterMove() throws Exception {
         // Testing to ensure that a track is removed from next tracks
         // after being moved to a non traversable location,
-        // when no other tracks can take it's place (as a valid next track).
+        // when no other tracks can connect to it and "take over".
 
-        Intersection intersection = new Intersection(new Point(100,100), track1, track2);
+        new Intersection(new Point(100,100), track1, track2);
 
         track1.move(new Point(0,0), new Point(200, 100));
 
-        assertEquals(0, track1.getActiveNextTracks().size());
-        assertEquals(0, track2.getActiveNextTracks().size());
+        assertEquals(0, track1.getConnectedTracks().size());
+        assertEquals(0, track2.getConnectedTracks().size());
     }
 
     @Test
@@ -223,8 +222,8 @@ public class IntersectionTest {
         intersection.removeTrack(track1);
 
         assertEquals(0, intersection.getTracks().size());
-        assertEquals(0, track1.getActiveNextTracks().size());
-        assertEquals(0, track2.getActiveNextTracks().size());
+        assertEquals(0, track1.getConnectedTracks().size());
+        assertEquals(0, track2.getConnectedTracks().size());
     }
 
     @Test
@@ -234,12 +233,12 @@ public class IntersectionTest {
         intersection.dissolve();
 
         assertEquals(0, intersection.getTracks().size());
-        assertEquals(0, track1.getActiveNextTracks().size());
-        assertEquals(0, track2.getActiveNextTracks().size());
+        assertEquals(0, track1.getConnectedTracks().size());
+        assertEquals(0, track2.getConnectedTracks().size());
     }
 
     @Test
-    public void testValidNextTracks() {
+    public void testValidConnectedTracks() {
         this.intersection = new Intersection(new Point(100,100), track1, track2);
         intersection.addTrack(track3);
 
@@ -253,13 +252,13 @@ public class IntersectionTest {
         ArrayList<Track> expectedTracks3 = new ArrayList<Track>();
         expectedTracks3.add(track1);
 
-        assertEquals(expectedTracks1, intersection.getValidNextTracks(track1));
-        assertEquals(expectedTracks2, intersection.getValidNextTracks(track2));
-        assertEquals(expectedTracks3, intersection.getValidNextTracks(track3));
+        assertEquals(expectedTracks1, intersection.getValidConnections(track1));
+        assertEquals(expectedTracks2, intersection.getValidConnections(track2));
+        assertEquals(expectedTracks3, intersection.getValidConnections(track3));
 
-        assertEquals(expectedTracks1, track1.getValidNextTracks(new Point(100,100)));
-        assertEquals(expectedTracks2, track2.getValidNextTracks(new Point(100,100)));
-        assertEquals(expectedTracks3, track3.getValidNextTracks(new Point(100,100)));
+        assertEquals(expectedTracks1, track1.getValidConnections(new Point(100, 100)));
+        assertEquals(expectedTracks2, track2.getValidConnections(new Point(100, 100)));
+        assertEquals(expectedTracks3, track3.getValidConnections(new Point(100, 100)));
     }
 
 }

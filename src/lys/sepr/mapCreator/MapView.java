@@ -14,8 +14,8 @@ import java.util.List;
 
 public class MapView {
     java.awt.Color selectedTrackColour = Color.ORANGE;
-    java.awt.Color activeNextTrackColour = Color.GREEN;
-    java.awt.Color validNextTrackColour = Color.BLUE;
+    java.awt.Color activeConnectedTrackColour = Color.GREEN;
+    java.awt.Color validConnectedTrackColour = Color.BLUE;
     java.awt.Color connectedTrackColour = Color.RED;
     java.awt.Color unconnectedTrackColour = Color.BLACK;
     java.awt.Color normalTrackColour = new Color(204, 0, 204); // Purple
