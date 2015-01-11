@@ -7,6 +7,8 @@ import org.junit.Test;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -198,54 +200,98 @@ public class MapTest {
         assertEquals(0, map.getIntersections().size());
     }
 
-    // TODO Check if still necessary
-//    @Test
-//    public void testAddTrackToTrackWithTwoIntersections() throws Exception {
-//        Track track1 = new Track(new Point(100,100), new Point(150,200));
-//        Track track2 = new Track(new Point(200,100), new Point(150,200));
-//        Track track3 = new Track(new Point(100,100), new Point(200,100));
-//        Track track4 = new Track(new Point(100,100), new Point(150,0));
-//        Track track5 = new Track(new Point(150,0), new Point(200,100));
-//
-//        map.addTrack(track1);
-//        map.addTrack(track2);
-//        map.addTrack(track3);
-//        map.addTrack(track4);
-//        map.addTrack(track5);
-//
-//        ArrayList<Track> expectedConnections1 = new ArrayList<Track>();
-//        expectedConnections1.add(track2);
-//        expectedConnections1.add(track3);
-//        expectedConnections1.add(track4);
-//
-//        ArrayList<Track> expectedConnections2 = new ArrayList<Track>();
-//        expectedConnections2.add(track1);
-//        expectedConnections2.add(track3);
-//        expectedConnections2.add(track5);
-//
-//        ArrayList<Track> expectedConnections3 = new ArrayList<Track>();
-//        expectedConnections3.add(track1);
-//        expectedConnections3.add(track2);
-//        expectedConnections3.add(track4);
-//        expectedConnections3.add(track5);
-//
-//        ArrayList<Track> expectedConnections4 = new ArrayList<Track>();
-//        expectedConnections4.add(track1);
-//        expectedConnections4.add(track3);
-//        expectedConnections4.add(track5);
-//
-//        ArrayList<Track> expectedConnections5 = new ArrayList<Track>();
-//        expectedConnections5.add(track2);
-//        expectedConnections5.add(track3);
-//        expectedConnections5.add(track4);
-//
-//        assertEquals(4, map.getIntersections().size());
-//        assertEquals(new HashSet(expectedConnections1), new HashSet(track1.getConnectedTracks()));
-//        assertEquals(new HashSet(expectedConnections2), new HashSet(track2.getConnectedTracks()));
-//        assertEquals(new HashSet(expectedConnections3), new HashSet(track3.getConnectedTracks()));
-//        assertEquals(new HashSet(expectedConnections4), new HashSet(track4.getConnectedTracks()));
-//        assertEquals(new HashSet(expectedConnections5), new HashSet(track5.getConnectedTracks()));
-//    }
+    @Test
+    public void testAddTrackInTwoIntersectionsConnections() throws Exception {
+        Track track1 = new Track(new Point(0,0), new Point(100,0));
+        Track track2 = new Track(new Point(100,0), new Point(200, 10));
+        Track track3 = new Track(new Point(200,10), new Point(300,0));
+        Track track4 = new Track(new Point(300,0), new Point(400,0));
+        Track track5 = new Track(new Point(100,0), new Point(300,0));
+
+        map.addTrack(track1);
+        map.addTrack(track2);
+        map.addTrack(track3);
+        map.addTrack(track4);
+        map.addTrack(track5);
+        // Trying to trigger odd bug, when adding a new track breaks intersections
+        map.addTrack(new Track(new Point(1,1), new Point(2,2)));
+
+        Set<Track> expectedConnections1 = new HashSet<Track>();
+        expectedConnections1.add(track2);
+        expectedConnections1.add(track5);
+
+        Set<Track> expectedConnections2 = new HashSet<Track>();
+        expectedConnections2.add(track1);
+        expectedConnections2.add(track3);
+        expectedConnections2.add(track5);
+
+        Set<Track> expectedConnections3 = new HashSet<Track>();
+        expectedConnections3.add(track2);
+        expectedConnections3.add(track4);
+        expectedConnections3.add(track5);
+
+        Set<Track> expectedConnections4 = new HashSet<Track>();
+        expectedConnections4.add(track3);
+        expectedConnections4.add(track5);
+
+        Set<Track> expectedConnections5 = new HashSet<Track>();
+        expectedConnections5.add(track1);
+        expectedConnections5.add(track2);
+        expectedConnections5.add(track3);
+        expectedConnections5.add(track4);
+
+        assertEquals(3, map.getIntersections().size());
+        assertEquals(expectedConnections1, new HashSet(track1.getConnectedTracks()));
+        assertEquals(expectedConnections2, new HashSet(track2.getConnectedTracks()));
+        assertEquals(expectedConnections3, new HashSet(track3.getConnectedTracks()));
+        assertEquals(expectedConnections4, new HashSet(track4.getConnectedTracks()));
+        assertEquals(expectedConnections5, new HashSet(track5.getConnectedTracks()));
+    }
+
+
+    @Test
+    public void testAddTrackInTwoIntersectionsValidConnections() throws Exception {
+        Track track1 = new Track(new Point(0,0), new Point(100,0));
+        Track track2 = new Track(new Point(100,0), new Point(200, 10));
+        Track track3 = new Track(new Point(200,10), new Point(300,0));
+        Track track4 = new Track(new Point(300,0), new Point(400,0));
+        Track track5 = new Track(new Point(100,0), new Point(300,0));
+
+        map.addTrack(track1);
+        map.addTrack(track2);
+        map.addTrack(track3);
+        map.addTrack(track4);
+        map.addTrack(track5);
+        // Trying to trigger odd bug, when adding a new track breaks intersections
+        map.addTrack(new Track(new Point(1,1), new Point(2,2)));
+
+        Set<Track> expectedValidConnections1 = new HashSet<Track>();
+        expectedValidConnections1.add(track2);
+        expectedValidConnections1.add(track5);
+
+        Set<Track> expectedValidConnections2 = new HashSet<Track>();
+        expectedValidConnections2.add(track1);
+        expectedValidConnections2.add(track3);
+
+        Set<Track> expectedValidConnections3 = new HashSet<Track>();
+        expectedValidConnections3.add(track2);
+        expectedValidConnections3.add(track4);
+
+        Set<Track> expectedValidConnections4 = new HashSet<Track>();
+        expectedValidConnections4.add(track3);
+        expectedValidConnections4.add(track5);
+
+        Set<Track> expectedValidConnections5 = new HashSet<Track>();
+        expectedValidConnections5.add(track1);
+        expectedValidConnections5.add(track4);
+
+        assertEquals(3, map.getIntersections().size());
+        assertEquals(expectedValidConnections1, new HashSet(track1.getValidConnections()));
+        assertEquals(expectedValidConnections2, new HashSet(track2.getValidConnections()));
+        assertEquals(expectedValidConnections3, new HashSet(track3.getValidConnections()));
+        assertEquals(expectedValidConnections4, new HashSet(track4.getValidConnections()));
+        assertEquals(expectedValidConnections5, new HashSet(track5.getValidConnections()));
+    }
 
     @Test
     public void testBreakTrackSolo() throws Exception {
