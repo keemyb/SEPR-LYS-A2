@@ -165,6 +165,19 @@ public class Map {
     public void moveIntersection(Intersection intersection, Point to) {
         if (to.equals(intersection.getPoint())) return;
 
+        for (Intersection otherIntersection : intersections) {
+            if (otherIntersection == intersection) continue;
+            if (!otherIntersection.getPoint().equals(to)) continue;
+            for (Track track1 : intersection.getTracks()) {
+                for (Track track2 : otherIntersection.getTracks()) {
+                    if (track1 == track2) {
+                        handleCollapsedTrack(track1, intersection, otherIntersection, to);
+                        return;
+                    }
+                }
+            }
+        }
+
         for (Intersection otherIntersections : intersections) {
             if (otherIntersections.getPoint().equals(to)) {
                 intersection.move(to);
@@ -187,6 +200,53 @@ public class Map {
         updatePossibleRoutes();
     }
 
+    private void handleCollapsedTrack(Track track, Intersection intersectionToMove,
+                                      Intersection stationaryIntersection, Point to) {
+
+        int intersectionToMoveSize = intersectionToMove.getTracks().size();
+        int stationaryIntersectionSize = stationaryIntersection.getTracks().size();
+
+        if (intersectionToMoveSize >= 3 && stationaryIntersectionSize >= 3) {
+//            No idea why the commented out bit doesn't work.
+//            removeTrack(track);
+//            moveIntersection(intersectionToMove, to);
+            removeTrack(track);
+            moveIntersection(stationaryIntersection, intersectionToMove.getPoint());
+            moveIntersection(stationaryIntersection, to);
+        } else if (intersectionToMoveSize >= 3 && stationaryIntersectionSize == 2) {
+            intersectionToMove.removeTrack(track);
+            moveIntersection(intersectionToMove, to);
+            removeTrack(track);
+        } else if (intersectionToMoveSize == 2 && stationaryIntersectionSize >= 3) {
+//            No idea why the commented out bit doesn't work.
+//            Track trackToMove = track.getConnectedTrackTowards(intersectionToMove.getPoint()).get(0);
+//            Point stationaryTrackPoint = trackToMove.getOtherPoint(intersectionToMove.getPoint());
+//            removeTrack(track);
+//            Point pointToMove = trackToMove.getOtherPoint(stationaryTrackPoint);
+//            moveTrack(trackToMove, pointToMove, to);
+            Track trackToMove = track.getConnectedTrackTowards(intersectionToMove.getPoint()).get(0);
+            Point stationaryTrackPoint = trackToMove.getOtherPoint(intersectionToMove.getPoint());
+            removeTrack(track);
+            Point pointToMoveTo = trackToMove.getOtherPoint(stationaryTrackPoint);
+            moveIntersection(stationaryIntersection, pointToMoveTo);
+            moveIntersection(stationaryIntersection, to);
+        } else if (intersectionToMoveSize == 2 && stationaryIntersectionSize == 2) {
+            Track trackToMove1 = track.getConnectedTrackTowards(intersectionToMove.getPoint()).get(0);
+            Point stationaryTrackPoint1 = trackToMove1.getOtherPoint(intersectionToMove.getPoint());
+
+            Track trackToMove2 = track.getConnectedTrackTowards(stationaryIntersection.getPoint()).get(0);
+            Point stationaryTrackPoint2 = trackToMove2.getOtherPoint(stationaryIntersection.getPoint());
+            removeTrack(track);
+
+            Point pointToMove1 = trackToMove1.getOtherPoint(stationaryTrackPoint1);
+            Point pointToMove2 = trackToMove2.getOtherPoint(stationaryTrackPoint2);
+
+            moveTrack(trackToMove1, pointToMove1, to);
+            moveTrack(trackToMove2, pointToMove2, to);
+        }
+        updatePossibleRoutes();
+    }
+
     /**
      * Moves a location from one point to another.
      * @param location The location to be moved.
@@ -206,11 +266,18 @@ public class Map {
      * @param slave  The intersection that will be dissolved.
      */
     private void mergeIntersections(Intersection master, Intersection slave) {
-        for (Track slaveTrack : slave.getTracks()) {
-            master.addTrack(slaveTrack);
+        List<Track> slaveTracks = new ArrayList<Track>(slave.getTracks());
+        List<Point> stationaryTrackPoints = new ArrayList<Point>();
+        for (Track track : slaveTracks) {
+            stationaryTrackPoints.add(track.getOtherPoint(slave.getPoint()));
         }
         slave.dissolve();
         intersections.remove(slave);
+        for (int i=0 ; i < slaveTracks.size() ; i++) {
+            Track trackToMove = slaveTracks.get(i);
+            Point pointToMove = trackToMove.getOtherPoint(stationaryTrackPoints.get(i));
+            moveTrack(trackToMove, pointToMove, master.getPoint());
+        }
     }
 
     /**

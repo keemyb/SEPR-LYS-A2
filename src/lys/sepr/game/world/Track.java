@@ -265,15 +265,42 @@ public class Track {
      * Returns the set of tracks that share the same intersection as this one
      * @return The set of connected next tracks.
      */
-    public Set<Track> getConnectedTracks() {
-        Set<Track> connectedTracks = new HashSet<Track>();
-        for (Intersection intersection : intersections) {
-            connectedTracks.addAll(intersection.getTracks());
+    public List<Track> getConnectedTracks() {
+        List<Track> connectedTracks = new ArrayList<Track>();
+        for (Point point : points) {
+            connectedTracks.addAll(getConnectedTrackTowards(point));
         }
-        // Will be in there twice
-        connectedTracks.remove(this);
-        connectedTracks.remove(this);
         return connectedTracks;
+    }
+
+    /**
+     * Returns the tracks that are connected to this, towards the point given.
+     * @param destination The point that the train is going towards. This point
+     *               must be one of the track's points.
+     * @return The list of tracks that the train is connected to towards the given point.
+     */
+    public List<Track> getConnectedTrackTowards(Point destination) {
+        // destination is the point that we are travelling to.
+        if (intersections.isEmpty()) return new ArrayList<Track>();
+
+        // Look for the track that has a point that equals the destination.
+        Intersection intersection = getIntersection(destination);
+        if (intersection == null) return new ArrayList<Track>();
+
+        List<Track> connectedTracks = new ArrayList<Track>(intersection.getTracks());
+        connectedTracks.remove(this);
+
+        return connectedTracks;
+    }
+
+    /**
+     * Returns the tracks that are connected to this, coming from the point given.
+     * @param origin The point that the train is coming from. This point
+     *               must be one of the track's points.
+     * @return The list of tracks that the train is connected to coming from the given point.
+     */
+    public List<Track> getConnectedTrackComingFrom(Point origin) {
+        return getConnectedTrackTowards(getOtherPoint(origin));
     }
 
     /**

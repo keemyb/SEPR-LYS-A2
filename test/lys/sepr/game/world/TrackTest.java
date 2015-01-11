@@ -154,9 +154,9 @@ public class TrackTest {
         expectedConnections3.add(track1);
         expectedConnections3.add(track2);
 
-        assertEquals(expectedConnections1, track1.getConnectedTracks());
-        assertEquals(expectedConnections2, track2.getConnectedTracks());
-        assertEquals(expectedConnections3, track3.getConnectedTracks());
+        assertEquals(new HashSet<Track>(expectedConnections1), new HashSet<Track>(track1.getConnectedTracks()));
+        assertEquals(new HashSet<Track>(expectedConnections2), new HashSet<Track>(track2.getConnectedTracks()));
+        assertEquals(new HashSet<Track>(expectedConnections3), new HashSet<Track>(track3.getConnectedTracks()));
     }
 
     @Test
