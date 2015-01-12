@@ -16,7 +16,7 @@ public class Dialog {
 	 * Displays an error message
 	 * @param message - error message
 	 */
-	public void error(String message) {
+	public static void error(String message) {
 		JOptionPane.showMessageDialog(parent, message, "", JOptionPane.ERROR_MESSAGE);
 	}
 	
@@ -26,7 +26,7 @@ public class Dialog {
 	 * @return user input
 	 * @throws NumberFormatException - if user types input which cannot be parsed to an integer
 	 */
-	public int intInput(String message) throws NumberFormatException {
+	public static int intInput(String message) throws NumberFormatException {
 		return Integer.parseInt(JOptionPane.showInputDialog(parent, message));
 	}
 	
@@ -35,7 +35,7 @@ public class Dialog {
 	 * @param message - message
 	 * @return user input
 	 */
-	public  String stringInput(String message) {
+	public static String stringInput(String message) {
 		return JOptionPane.showInputDialog(parent, message);
 	}
 	
