@@ -6,7 +6,7 @@ import javax.swing.JOptionPane;
 
 public class Dialog {
 
-	static Component parent;
+	static Component parent = null;
 	
 	protected static void setParent(Component parent){
 		Dialog.parent = parent;
