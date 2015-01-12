@@ -20,7 +20,7 @@ public class ApplicationWindow extends JFrame {
 
 	JPanel menuPanel = new JPanel();
 	
-	public static final String TITLE = "Train Game";	
+	public static final String TITLE = "World War Trains";	
 	
 	public ApplicationWindow() {
 		super(TITLE);
