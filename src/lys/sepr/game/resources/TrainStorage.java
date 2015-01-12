@@ -3,7 +3,7 @@ package lys.sepr.game.resources;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TrainStore {
+public class TrainStorage {
 
     private static List<Train> trains = new ArrayList<Train>();
 

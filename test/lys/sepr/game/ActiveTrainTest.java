@@ -1,7 +1,6 @@
 package lys.sepr.game;
 
 import lys.sepr.game.resources.Train;
-import lys.sepr.game.resources.TrainStore;
 import lys.sepr.game.resources.TrainType;
 import lys.sepr.game.world.*;
 import org.junit.Before;

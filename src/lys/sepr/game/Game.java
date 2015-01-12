@@ -2,7 +2,7 @@ package lys.sepr.game;
 
 import lys.sepr.game.resources.Resource;
 import lys.sepr.game.resources.Train;
-import lys.sepr.game.resources.TrainStore;
+import lys.sepr.game.resources.TrainStorage;
 import lys.sepr.game.resources.TrainType;
 import lys.sepr.game.world.*;
 
@@ -75,7 +75,7 @@ public class Game {
 
     private void giveStarterTrains(Player player) {
         for (TrainType trainType : TrainType.values()) {
-            Train train = TrainStore.getStarterTrain(trainType);
+            Train train = TrainStorage.getStarterTrain(trainType);
             if (train != null) player.getInventory().addNewResource(train);
         }
     }
