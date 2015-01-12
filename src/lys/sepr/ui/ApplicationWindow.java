@@ -1,9 +1,12 @@
 package lys.sepr.ui;
 
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class ApplicationWindow extends JFrame {
@@ -23,6 +26,7 @@ public class ApplicationWindow extends JFrame {
 		super(TITLE);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setSize(660, 400);
+		addActionListeners();
 		menuPanel.setLayout(null);
 		menuPanel.add(newGameButton);
 		menuPanel.add(loadGameButton);
@@ -30,6 +34,30 @@ public class ApplicationWindow extends JFrame {
 		menuPanel.add(exitButton);
 		menuPanel.add(settingsButton);
 		add(menuPanel);
+	}
+	
+	private void addActionListeners() {
+		newGameButton.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				newGame();
+				
+			}
+			
+		});
+		exitButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				System.exit(0);
+			}
+		});
+	}
+	
+	private void newGame() {
+		try {
+			int goals = Integer.parseInt(JOptionPane.showInputDialog(this, "Please indicate how many goals you wish to complete."));
+		} catch (NumberFormatException e) {
+			JOptionPane.showMessageDialog(this, "Please enter a number", "Invalid format", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
 	private void setMenuLayout() {
