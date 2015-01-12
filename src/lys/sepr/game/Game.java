@@ -208,4 +208,17 @@ public class Game {
         activePlayer.getActiveTrain().reverse();
     }
 
+    public void update(long timePassed) {
+        for (Player player : players) {
+            ActiveTrain activeTrain = player.getActiveTrain();
+            if (activeTrain != null) {
+                activeTrain.move(timePassed);
+            }
+        }
+    }
+
+    public void setActiveConnection(Track track, Intersection intersection, Track prospectiveNextTrack) {
+        track.setActiveConnection(intersection, prospectiveNextTrack);
+    }
+
 }
