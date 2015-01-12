@@ -34,6 +34,7 @@ public class Game {
         this.maxContracts = maxContracts;
 
         if (map == null) throw new Exception("No Map Selected");
+        // May want to disable this when testing the game on a small test map
         if (map.numberOfPossibleRoutes() < players.size() * maxContracts)
             throw new Exception("Not enough routes");
 
@@ -73,6 +74,7 @@ public class Game {
         }
     }
 
+    // Gives a player a train from each type with the lowest stats
     private void giveStarterTrains(Player player) {
         for (TrainType trainType : TrainType.values()) {
             Train train = TrainStorage.getStarterTrain(trainType);
@@ -94,11 +96,16 @@ public class Game {
         activePlayer = players.get(nextPlayerIndex);
     }
 
+    // Starting the players turn by giving them the contract and
+    // train they have chosen.
+    // Note there is no choose method in here, should be handled in GUI after
+    // presenting them contracts and then trains as shown below.
     public void assignContract(Train train, Contract contract) {
         activePlayer.acceptContract(train, contract);
         possibleContracts.remove(contract);
     }
 
+    // Returns a list of contracts for player to choose from
     public List<Contract> getContracts() {
         List<Contract> contracts = new ArrayList<Contract>();
         Random r = new Random();
@@ -109,6 +116,8 @@ public class Game {
         return contracts;
     }
 
+    // Returns the trains that the activePlayer can choose subject to their
+    // contract
     public List<Train> getTrains(Contract contract) {
         TrainType requiredTrainType = contract.getRequiredTrainType();
         List<Train> suitableTrains = new ArrayList<Train>();
@@ -154,7 +163,10 @@ public class Game {
         // drop short contracts and then contracts with fewer routes.
     }
 
-    public boolean changeConnectedTrack(Track track, Track prospectiveNextTrack) {
+    // Changing the intersection/junction, setting which track a train will move to next
+    // Note the distinction between this and the changeRoute method.
+    // Returns true if the change was successful
+    public boolean changeActiveConnection(Track track, Track prospectiveNextTrack) {
         Point commonPoint = track.getCommonPoint(prospectiveNextTrack);
 
         if (commonPoint != null) {
@@ -164,10 +176,18 @@ public class Game {
         return prospectiveNextTrack == track.getActiveConnectedTrackTowards(commonPoint);
     }
 
+    // This method modifies where the active players train.
+    // Note the distinction between this and changeActiveConnection
+    // A train will wait at an intersection until there is an activeConnection
+    // between the track it is on currently and the next track it wants to go to
+    // (the next track in the route).
     public void changeRoute(Track trackInRoute, Track prospectiveNextTrack) {
         activePlayer.getActiveTrain().changeRoute(trackInRoute, prospectiveNextTrack);
     }
 
+    // A test to see if a player trains is where the contract says the destination is
+    // if it has not been finished before the time runs out then call
+    // faliedCurrentContract, else fulfilledCurrentContract
     public boolean hasCompletedContract(Player player) {
         ActiveTrain activeTrain = player.getActiveTrain();
         return activeTrain.getDestination() == activeTrain.getCurrentPosition();
@@ -208,6 +228,7 @@ public class Game {
         activePlayer.getActiveTrain().reverse();
     }
 
+    // timePassed = time since last frame update
     public void update(long timePassed) {
         for (Player player : players) {
             ActiveTrain activeTrain = player.getActiveTrain();
@@ -216,9 +237,4 @@ public class Game {
             }
         }
     }
-
-    public void setActiveConnection(Track track, Intersection intersection, Track prospectiveNextTrack) {
-        track.setActiveConnection(intersection, prospectiveNextTrack);
-    }
-
 }
