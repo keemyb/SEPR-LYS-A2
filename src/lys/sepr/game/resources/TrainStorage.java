@@ -7,7 +7,7 @@ public class TrainStorage {
 
     private static List<Train> trains = new ArrayList<Train>();
 
-    static Train babyChoo = new Train("FatherCare Baby Choo", 500, 0, Integer.MAX_VALUE,
+    static Train machineGunWagon = new Train("Machine-gun Wagon", 500, 0, Integer.MAX_VALUE,
             TrainType.PASSENGER, 15, 600, 1d, 0, 100, 100, 10);
 
     static Train toddlerTerror = new Train("FatherCare Toddler Terror", 500, 0, Integer.MAX_VALUE,
@@ -20,7 +20,7 @@ public class TrainStorage {
             TrainType.CARGO, 20, 750, 0.9d, 0, 200, 30, 5);
 
     static {
-        trains.add(babyChoo);
+        trains.add(machineGunWagon);
         trains.add(toddlerTerror);
         trains.add(comfyCarriage);
         trains.add(tinyTank);
