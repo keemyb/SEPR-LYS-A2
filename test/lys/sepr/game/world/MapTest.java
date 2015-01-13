@@ -1,13 +1,10 @@
 package lys.sepr.game.world;
 
-import lys.sepr.mapCreator.Actions;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.*;
@@ -201,7 +198,7 @@ public class MapTest {
     }
 
     @Test
-    public void testAddTrackInTwoIntersectionsConnections() throws Exception {
+    public void testAddTrackInTwoIntersectionsAllConnections() throws Exception {
         Track track1 = new Track(new Point(0,0), new Point(100,0));
         Track track2 = new Track(new Point(100,0), new Point(200, 10));
         Track track3 = new Track(new Point(200,10), new Point(300,0));
@@ -241,11 +238,11 @@ public class MapTest {
         expectedConnections5.add(track4);
 
         assertEquals(3, map.getIntersections().size());
-        assertEquals(expectedConnections1, new HashSet(track1.getConnectedTracks()));
-        assertEquals(expectedConnections2, new HashSet(track2.getConnectedTracks()));
-        assertEquals(expectedConnections3, new HashSet(track3.getConnectedTracks()));
-        assertEquals(expectedConnections4, new HashSet(track4.getConnectedTracks()));
-        assertEquals(expectedConnections5, new HashSet(track5.getConnectedTracks()));
+        assertEquals(expectedConnections1, new HashSet(track1.getAllConnectedTracks()));
+        assertEquals(expectedConnections2, new HashSet(track2.getAllConnectedTracks()));
+        assertEquals(expectedConnections3, new HashSet(track3.getAllConnectedTracks()));
+        assertEquals(expectedConnections4, new HashSet(track4.getAllConnectedTracks()));
+        assertEquals(expectedConnections5, new HashSet(track5.getAllConnectedTracks()));
     }
 
 
@@ -314,8 +311,8 @@ public class MapTest {
         assertTrue(map.getTracks().contains(splitTrack2));
         assertTrue(intersection.getTracks().contains(splitTrack1));
         assertTrue(intersection.getTracks().contains(splitTrack2));
-        assertTrue(newSplitTrack1.getConnectedTracks().contains(newSplitTrack2));
-        assertTrue(newSplitTrack2.getConnectedTracks().contains(newSplitTrack1));
+        assertTrue(newSplitTrack1.getAllConnectedTracks().contains(newSplitTrack2));
+        assertTrue(newSplitTrack2.getAllConnectedTracks().contains(newSplitTrack1));
     }
 
     @Test
@@ -342,8 +339,8 @@ public class MapTest {
         // The ones created above aren't the same as the ones in the map
         Track newSplitTrack2 = map.getTracks().get(map.getTracks().indexOf(splitTrack2));
 
-        assertTrue(newSplitTrack2.getConnectedTracks().contains(track2));
-        assertTrue(track2.getConnectedTracks().contains(newSplitTrack2));
+        assertTrue(newSplitTrack2.getAllConnectedTracks().contains(track2));
+        assertTrue(track2.getAllConnectedTracks().contains(newSplitTrack2));
     }
 
     @Test
@@ -376,7 +373,7 @@ public class MapTest {
         Track newSplitTrack2 = map.getTracks().get(map.getTracks().indexOf(splitTrack2));
 
         assertFalse(map.getTracks().contains(track2));
-        assertTrue(track1.getConnectedTracks().contains(newSplitTrack1));
-        assertTrue(track3.getConnectedTracks().contains(newSplitTrack2));
+        assertTrue(track1.getAllConnectedTracks().contains(newSplitTrack1));
+        assertTrue(track3.getAllConnectedTracks().contains(newSplitTrack2));
     }
 }

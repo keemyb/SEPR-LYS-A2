@@ -359,7 +359,7 @@ public final class Actions {
                 lineColour = mapView.activeConnectedTrackColour;
             } else if (state.getSelectedTrack().getValidConnections().contains(track)) {
                 lineColour = mapView.validConnectedTrackColour;
-            } else if (state.getSelectedTrack().getConnectedTracks().contains(track)) {
+            } else if (state.getSelectedTrack().getAllConnectedTracks().contains(track)) {
                 lineColour = mapView.invalidConnectedTrackColour;
             } else lineColour = mapView.unconnectedTrackColour;
 

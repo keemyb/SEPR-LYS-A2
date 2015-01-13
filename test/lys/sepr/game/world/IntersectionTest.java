@@ -218,8 +218,8 @@ public class IntersectionTest {
         intersection.removeTrack(track1);
 
         assertEquals(0, intersection.getTracks().size());
-        assertEquals(0, track1.getConnectedTracks().size());
-        assertEquals(0, track2.getConnectedTracks().size());
+        assertEquals(0, track1.getAllConnectedTracks().size());
+        assertEquals(0, track2.getAllConnectedTracks().size());
     }
 
     @Test
@@ -229,8 +229,8 @@ public class IntersectionTest {
         intersection.dissolve();
 
         assertEquals(0, intersection.getTracks().size());
-        assertEquals(0, track1.getConnectedTracks().size());
-        assertEquals(0, track2.getConnectedTracks().size());
+        assertEquals(0, track1.getAllConnectedTracks().size());
+        assertEquals(0, track2.getAllConnectedTracks().size());
     }
 
     @Test

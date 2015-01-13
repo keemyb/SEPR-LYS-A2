@@ -3,7 +3,6 @@ package lys.sepr.game.world;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static lys.sepr.game.world.Utilities.closestPoint;
 import static lys.sepr.game.world.Utilities.getVector;
@@ -242,13 +241,13 @@ public class Track {
     }
 
     /**
-     * Returns the set of tracks that share the same intersection as this one
-     * @return The set of connected next tracks.
+     * Returns the list of all tracks that share an intersection with this one
+     * @return The list of all connected next tracks.
      */
-    public List<Track> getConnectedTracks() {
+    public List<Track> getAllConnectedTracks() {
         List<Track> connectedTracks = new ArrayList<Track>();
         for (Point point : points) {
-            connectedTracks.addAll(getConnectedTrackTowards(point));
+            connectedTracks.addAll(getAllConnectedTrackTowards(point));
         }
         return connectedTracks;
     }
@@ -259,7 +258,7 @@ public class Track {
      *               must be one of the track's points.
      * @return The list of tracks that the train is connected to towards the given point.
      */
-    public List<Track> getConnectedTrackTowards(Point destination) {
+    public List<Track> getAllConnectedTrackTowards(Point destination) {
         // destination is the point that we are travelling to.
         if (intersections.isEmpty()) return new ArrayList<Track>();
 
@@ -279,13 +278,13 @@ public class Track {
      *               must be one of the track's points.
      * @return The list of tracks that the train is connected to coming from the given point.
      */
-    public List<Track> getConnectedTrackComingFrom(Point origin) {
-        return getConnectedTrackTowards(getOtherPoint(origin));
+    public List<Track> getAllConnectedTrackComingFrom(Point origin) {
+        return getAllConnectedTrackTowards(getOtherPoint(origin));
     }
 
     /**
      * Returns the list of tracks that can be traversed from this track.
-     * Note that this is not necessarily the same as getConnectedTracks,
+     * Note that this is not necessarily the same as getAllConnectedTracks,
      * as the intersection may not have connected two tracks (even though
      * they can be)
      * @return The list of tracks that can be traversed from this track.

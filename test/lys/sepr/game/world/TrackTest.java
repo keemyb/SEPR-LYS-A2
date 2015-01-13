@@ -51,7 +51,7 @@ public class TrackTest {
 
     @Test
     public void testConnectedTrackSolo() throws Exception {
-        assertEquals(0, track1.getConnectedTracks().size());
+        assertEquals(0, track1.getAllConnectedTracks().size());
         assertEquals(null, track1.getActiveConnectedTrackComingFrom(new Point(0, 0)));
         assertEquals(null, track1.getActiveConnectedTrackTowards(new Point(0, 0)));
     }
@@ -61,8 +61,8 @@ public class TrackTest {
         map.addTrack(track1);
         map.addTrack(track2);
 
-        assertEquals(1, track1.getConnectedTracks().size());
-        assertEquals(1, track2.getConnectedTracks().size());
+        assertEquals(1, track1.getAllConnectedTracks().size());
+        assertEquals(1, track2.getAllConnectedTracks().size());
 
         assertEquals(track2, track1.getActiveConnectedTrackComingFrom(new Point(0, 0)));
         assertEquals(null, track1.getActiveConnectedTrackComingFrom(new Point(100, 100)));
@@ -80,9 +80,9 @@ public class TrackTest {
         map.addTrack(track2);
         map.addTrack(track3);
 
-        assertEquals(2, track1.getConnectedTracks().size());
-        assertEquals(2, track2.getConnectedTracks().size());
-        assertEquals(2, track3.getConnectedTracks().size());
+        assertEquals(2, track1.getAllConnectedTracks().size());
+        assertEquals(2, track2.getAllConnectedTracks().size());
+        assertEquals(2, track3.getAllConnectedTracks().size());
 
         assertEquals(track2, track1.getActiveConnectedTrackComingFrom(new Point(0, 0)));
         assertEquals(track1, track2.getActiveConnectedTrackComingFrom(new Point(200, 200)));
@@ -154,9 +154,9 @@ public class TrackTest {
         expectedConnections3.add(track1);
         expectedConnections3.add(track2);
 
-        assertEquals(new HashSet<Track>(expectedConnections1), new HashSet<Track>(track1.getConnectedTracks()));
-        assertEquals(new HashSet<Track>(expectedConnections2), new HashSet<Track>(track2.getConnectedTracks()));
-        assertEquals(new HashSet<Track>(expectedConnections3), new HashSet<Track>(track3.getConnectedTracks()));
+        assertEquals(new HashSet<Track>(expectedConnections1), new HashSet<Track>(track1.getAllConnectedTracks()));
+        assertEquals(new HashSet<Track>(expectedConnections2), new HashSet<Track>(track2.getAllConnectedTracks()));
+        assertEquals(new HashSet<Track>(expectedConnections3), new HashSet<Track>(track3.getAllConnectedTracks()));
     }
 
     @Test
