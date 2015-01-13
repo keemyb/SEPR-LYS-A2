@@ -50,6 +50,20 @@ public class Intersection {
     }
 
     /**
+     * Adds a list of track to this intersection.
+     * @param tracks The list of tracks to be added to the intersection.
+     */
+    public void addTracks(List<Track> tracks) {
+        for (Track track : tracks) {
+            this.tracks.add(track);
+            track.addIntersection(this);
+        }
+        // Not simply calling singular addTrack method over and over as
+        // We don't want to update the connections until all tracks have been added.
+        updateValidConnections();
+    }
+
+    /**
      * Updates the valid connections for each track in this intersection.
      * It should be called when a track in the intersection, or the intersection
      * itself is modified.
@@ -174,17 +188,12 @@ public class Intersection {
         track.removeIntersection(this);
         tracks.remove(track);
 
-        // Move the track away from the intersection a little bit,
-        // so that it is not confused as being part of it.
-        track.nudge(getPoint());
-
         if (tracks.size() == 1) {
             /* remove this intersection from the remaining track, since an intersection
             cannot consist of one track */
             Track remainingTrack = tracks.get(0);
             remainingTrack.removeIntersection(this);
             tracks.remove(remainingTrack);
-            remainingTrack.nudge(getPoint());
         } else {
             updateValidConnections();
         }

@@ -266,18 +266,9 @@ public class Map {
      * @param slave  The intersection that will be dissolved.
      */
     private void mergeIntersections(Intersection master, Intersection slave) {
-        List<Track> slaveTracks = new ArrayList<Track>(slave.getTracks());
-        List<Point> stationaryTrackPoints = new ArrayList<Point>();
-        for (Track track : slaveTracks) {
-            stationaryTrackPoints.add(track.getOtherPoint(slave.getPoint()));
-        }
+        master.addTracks(slave.getTracks());
         slave.dissolve();
         intersections.remove(slave);
-        for (int i=0 ; i < slaveTracks.size() ; i++) {
-            Track trackToMove = slaveTracks.get(i);
-            Point pointToMove = trackToMove.getOtherPoint(stationaryTrackPoints.get(i));
-            moveTrack(trackToMove, pointToMove, master.getPoint());
-        }
     }
 
     /**
