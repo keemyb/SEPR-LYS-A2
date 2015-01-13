@@ -175,10 +175,6 @@ public class IntersectionTest {
         assertEquals(expectedTracks, intersection.getTracks());
         assertEquals(track3, track1.getActiveConnectedTrackComingFrom(new Point(0, 0)));
         assertEquals(null, track2.getActiveConnectedTrackComingFrom(new Point(200, 200)));
-        /* We want to push the removed track away from the intersection after removal
-        so that it does not touch the old intersection and cause confusion.
-         */
-        assertNotEquals(new Point(100, 100), track2.getOtherPoint(new Point(200, 200)));
     }
 
     @Test

@@ -15,7 +15,6 @@ import static lys.sepr.game.world.Utilities.getVector;
  */
 public class Track {
 
-    private static double nudgeStrength = 0.1;
     private ArrayList<Point> points = new ArrayList<Point>();
     private ArrayList<Intersection> intersections = new ArrayList<Intersection>();
     private Boolean broken = false;
@@ -225,25 +224,6 @@ public class Track {
         if (intersectionAtStationaryPoint != null) {
             intersectionAtStationaryPoint.updateValidConnections();
         }
-    }
-
-    /**
-     * Moves a point of the track away from a specified point.
-     * This method is called when a track has been removed from an intersection
-     * to move it away from the intersection, so that it is not later mistaken
-     * as being part of that intersection.
-     * @param awayFrom the point which the track should be moved away from.
-     *                 Only the point of the track closest to the point is
-     *                 moved away.
-     */
-    public void nudge(Point awayFrom) {
-        // only move the point closest to the point we want to move away from
-        Point closestPoint = closestPoint(awayFrom, points);
-        List<Double> vector = getVector(closestPoint, getOtherPoint(closestPoint));
-        for (int i=0; i < vector.size(); i++) {
-            vector.set(i, vector.get(i) * nudgeStrength);
-        }
-        closestPoint.translate(vector.get(0), vector.get(1));
     }
 
     /**
