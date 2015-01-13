@@ -165,8 +165,33 @@ public final class Actions {
     public static void removeIntersection(Map map, Point clickPoint, Double minPickUpDistance) {
         Intersection intersection = selectIntersection(map, clickPoint, minPickUpDistance);
         if (intersection != null) {
+            List<Track> intersectionTracks = new ArrayList<Track>(intersection.getTracks());
+            Point intersectionPoint = intersection.getPoint();
             map.removeIntersection(intersection);
+            for (Track track : intersectionTracks) {
+                nudgeTrack(track, intersectionPoint);
+            }
         }
+    }
+
+    /**
+     * Moves a point of the track away from a specified point.
+     * This method is called when a track has been removed from an intersection
+     * to move it away from the intersection, so that it is not later mistaken
+     * as being part of that intersection.
+     * @param awayFrom the point which the track should be moved away from.
+     *                 Only the point of the track closest to the point is
+     *                 moved away.
+     */
+    public static void nudgeTrack(Track track, Point awayFrom) {
+        double nudgeStrength = 0.1;
+        // only move the point closest to the point we want to move away from
+        Point closestPoint = closestPoint(awayFrom, track.getPoints());
+        List<Double> vector = getVector(closestPoint, track.getOtherPoint(closestPoint));
+        for (int i=0; i < vector.size(); i++) {
+            vector.set(i, vector.get(i) * nudgeStrength);
+        }
+        closestPoint.translate(vector.get(0), vector.get(1));
     }
 
     public static void inspectTrack(Map map, Point clickPoint, Double minPickUpDistance, State state) {
