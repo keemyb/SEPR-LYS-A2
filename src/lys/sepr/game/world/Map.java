@@ -171,7 +171,10 @@ public class Map {
             for (Track track1 : intersection.getTracks()) {
                 for (Track track2 : otherIntersection.getTracks()) {
                     if (track1 == track2) {
-                        handleCollapsedTrack(track1, intersection, otherIntersection, to);
+                        // if a track is in two intersections, one of which will be moved
+                        // to the other, we need to do something because a track cannot
+                        // have two points in the same place.
+                        handleCollapsedTrack(track1, otherIntersection, intersection);
                         return;
                     }
                 }
@@ -200,50 +203,46 @@ public class Map {
         updatePossibleRoutes();
     }
 
-    private void handleCollapsedTrack(Track track, Intersection intersectionToMove,
-                                      Intersection stationaryIntersection, Point to) {
+    private void handleCollapsedTrack(Track track, Intersection master,
+                                      Intersection slave) {
+        // The master intersection will not be moved.
+        /* The reason why we cannot simply merge intersection in some of the below cases
+        is because tracks cannot be moved to a position where both points are in the same
+        place, for safety.
+         */
 
-        int intersectionToMoveSize = intersectionToMove.getTracks().size();
-        int stationaryIntersectionSize = stationaryIntersection.getTracks().size();
+        int masterSize = master.getTracks().size();
+        int slaveSize = slave.getTracks().size();
 
-        if (intersectionToMoveSize >= 3 && stationaryIntersectionSize >= 3) {
-//            No idea why the commented out bit doesn't work.
-//            removeTrack(track);
-//            moveIntersection(intersectionToMove, to);
+        if (masterSize >= 3 && slaveSize >= 3) {
+            // if both intersections have at least three tracks, they are both "stable"
+            // and will not be destroyed when one track is removed from it
             removeTrack(track);
-            moveIntersection(stationaryIntersection, intersectionToMove.getPoint());
-            moveIntersection(stationaryIntersection, to);
-        } else if (intersectionToMoveSize >= 3 && stationaryIntersectionSize == 2) {
-            intersectionToMove.removeTrack(track);
-            moveIntersection(intersectionToMove, to);
+            mergeIntersections(master, slave);
+        } else if (masterSize >= 3 && slaveSize == 2) {
+            // the master will remain after the removal, the slave will not,
+            // so we move the remaining slave track into the remaining intersection.
+            Track remainingTrack = slave.getTracks().get(0) == track ?
+                    slave.getTracks().get(1) : slave.getTracks().get(0);
+            Point pointToMove = slave.getPoint();
+            Point pointToMoveTo = master.getPoint();
             removeTrack(track);
-        } else if (intersectionToMoveSize == 2 && stationaryIntersectionSize >= 3) {
-//            No idea why the commented out bit doesn't work.
-//            Track trackToMove = track.getConnectedTrackTowards(intersectionToMove.getPoint()).get(0);
-//            Point stationaryTrackPoint = trackToMove.getOtherPoint(intersectionToMove.getPoint());
-//            removeTrack(track);
-//            Point pointToMove = trackToMove.getOtherPoint(stationaryTrackPoint);
-//            moveTrack(trackToMove, pointToMove, to);
-            Track trackToMove = track.getConnectedTrackTowards(intersectionToMove.getPoint()).get(0);
-            Point stationaryTrackPoint = trackToMove.getOtherPoint(intersectionToMove.getPoint());
+            moveTrack(remainingTrack, pointToMove, pointToMoveTo);
+        } else if (masterSize == 2 && slaveSize >= 3) {
+            // the slave will remain after the removal, the master will not,
+            // so we move the slave intersection to the point of the remaining track.
             removeTrack(track);
-            Point pointToMoveTo = trackToMove.getOtherPoint(stationaryTrackPoint);
-            moveIntersection(stationaryIntersection, pointToMoveTo);
-            moveIntersection(stationaryIntersection, to);
-        } else if (intersectionToMoveSize == 2 && stationaryIntersectionSize == 2) {
-            Track trackToMove1 = track.getConnectedTrackTowards(intersectionToMove.getPoint()).get(0);
-            Point stationaryTrackPoint1 = trackToMove1.getOtherPoint(intersectionToMove.getPoint());
-
-            Track trackToMove2 = track.getConnectedTrackTowards(stationaryIntersection.getPoint()).get(0);
-            Point stationaryTrackPoint2 = trackToMove2.getOtherPoint(stationaryIntersection.getPoint());
+            moveIntersection(slave, master.getPoint());
+        } else if (masterSize == 2 && slaveSize == 2) {
+            // neither intersection will survive
+            Track remainingSlaveTrack = slave.getTracks().get(0) == track ?
+                    slave.getTracks().get(1) : slave.getTracks().get(0);
+            Point pointToMove = slave.getPoint();
+            Point pointToMoveTo = master.getPoint();
             removeTrack(track);
-
-            Point pointToMove1 = trackToMove1.getOtherPoint(stationaryTrackPoint1);
-            Point pointToMove2 = trackToMove2.getOtherPoint(stationaryTrackPoint2);
-
-            moveTrack(trackToMove1, pointToMove1, to);
-            moveTrack(trackToMove2, pointToMove2, to);
+            moveTrack(remainingSlaveTrack, pointToMove, pointToMoveTo);
         }
+
         updatePossibleRoutes();
     }
 
@@ -266,8 +265,10 @@ public class Map {
      * @param slave  The intersection that will be dissolved.
      */
     private void mergeIntersections(Intersection master, Intersection slave) {
-        master.addTracks(slave.getTracks());
+        slave.move(master.getPoint());
+        List<Track> slaveTracks = new ArrayList<Track>(slave.getTracks());
         slave.dissolve();
+        master.addTracks(slaveTracks);
         intersections.remove(slave);
     }
 
