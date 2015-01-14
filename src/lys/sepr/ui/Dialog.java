@@ -12,6 +12,10 @@ public class Dialog {
 		Dialog.parent = parent;
 	}
 	
+	public static void info(String message) {
+		JOptionPane.showMessageDialog(parent, message);
+	}
+	
 	/**
 	 * Displays an error message
 	 * @param message - error message
@@ -27,7 +31,7 @@ public class Dialog {
 	 * @throws NumberFormatException - if user types input which cannot be parsed to an integer
 	 */
 	public static int intInput(String message) throws NumberFormatException {
-		return Integer.parseInt(JOptionPane.showInputDialog(parent, message));
+		return Integer.parseInt(stringInput(message));
 	}
 	
 	/**
