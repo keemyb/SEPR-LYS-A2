@@ -10,6 +10,7 @@ import java.util.List;
 public class Player {
 
     private Contract currentContract;
+    private long contractStartTime;
     private int money;
 
     private Inventory inventory = new Inventory();
@@ -58,6 +59,13 @@ public class Player {
     public void acceptContract(Train train, Contract contract) {
         currentContract = contract;
         activeTrain = new ActiveTrain(train, contract.getInitialRoute());
+        contractStartTime = System.currentTimeMillis();
+    }
+    
+    public boolean isContractOutOfTime() {
+    	if(currentContract == null)
+    		return false;
+    	return (System.currentTimeMillis() - contractStartTime) >= currentContract.getTimeLimit()*1000;
     }
 
     private void endContract() {

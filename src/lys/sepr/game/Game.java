@@ -30,6 +30,8 @@ public class Game implements Runnable {
     private long turnStartTime = 0;
     private long loopTime = 0;
     
+    private GameEventListener gameListener = null;
+    
     //TODO proper exceptions
     Game(List<Player> players, int maxContracts, Map map) throws Exception {
         this.players = players;
@@ -202,7 +204,7 @@ public class Game implements Runnable {
     // faliedCurrentContract, else fulfilledCurrentContract
     public boolean hasCompletedContract(Player player) {
         ActiveTrain activeTrain = player.getActiveTrain();
-        return activeTrain.getDestination() == activeTrain.getCurrentPosition();
+        return activeTrain.getDestination().equals(activeTrain.getCurrentPosition());
     }
 
     public void fulfilledCurrentContract(Player player) {
@@ -257,12 +259,26 @@ public class Game implements Runnable {
 		while(gameRunning) {
 			long nowTime = System.currentTimeMillis();
 			update(nowTime-loopTime);
-			//check contract completion
+			if(hasAContract(activePlayer)) {
+				if(hasCompletedContract(activePlayer)) {
+					gameListener.contractCompleted();
+					fulfilledCurrentContract(activePlayer);
+				}
+				if(activePlayer.isContractOutOfTime()) {
+					gameListener.contractFailed();
+					failedCurrentContract(activePlayer);
+				}
+			}
+			//check has contract
 			//check for win/game end states
 			if(nowTime-turnStartTime >= timePerTurn) {
 				switchPlayer();
 			}
 			
 		}
+	}
+	
+	public void addGameEventListener(GameEventListener gameEventListener) {
+		gameListener = gameEventListener;
 	}
 }
