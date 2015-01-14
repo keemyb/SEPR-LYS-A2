@@ -97,6 +97,10 @@ public class Player {
         reputation += amount;
         if (reputation < 0) reputation = 0;
     }
+    
+    public int getNumberOfAttemptedContracts() {
+    	return completedContracts.size() + failedContracts.size();
+    }
 
     public int getReputation() {
         return reputation;

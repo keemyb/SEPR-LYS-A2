@@ -1,7 +1,7 @@
 package lys.sepr.game;
 
 public interface GameEventListener {
-	public void gameWon();
+	public void gameEnd();
 	public void contractCompleted();
 	public void contractFailed();
 	public void contractChoose();

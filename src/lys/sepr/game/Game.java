@@ -108,6 +108,7 @@ public class Game implements Runnable {
         }
         activePlayer = players.get(nextPlayerIndex);
         turnStartTime = System.currentTimeMillis();
+        gameListener.turnBegin();
     }
 
     // Starting the players turn by giving them the contract and
@@ -259,6 +260,7 @@ public class Game implements Runnable {
 		while(gameRunning) {
 			long nowTime = System.currentTimeMillis();
 			update(nowTime-loopTime);
+			gameListener.update();
 			if(hasAContract(activePlayer)) {
 				if(hasCompletedContract(activePlayer)) {
 					gameListener.contractCompleted();
@@ -269,12 +271,17 @@ public class Game implements Runnable {
 					failedCurrentContract(activePlayer);
 				}
 			}
-			//check has contract
-			//check for win/game end states
+			if(activePlayer.getNumberOfAttemptedContracts() >= maxContracts) {
+				gameListener.gameEnd();
+				gameRunning = false;
+				break;
+			}
+			if(!hasAContract(activePlayer)) {
+				gameListener.contractChoose(); //will be handled all in GameWindow
+			}
 			if(nowTime-turnStartTime >= timePerTurn) {
 				switchPlayer();
 			}
-			
 		}
 	}
 	
