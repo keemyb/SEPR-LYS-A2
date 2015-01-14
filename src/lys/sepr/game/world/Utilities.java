@@ -64,7 +64,7 @@ public final class Utilities {
      * as an ArrayList of Double with two elements.
      */
     public static List<Double> getVector(Point from, Point towards) {
-        ArrayList<Double> vector = new ArrayList<Double>(2);
+        List<Double> vector = new ArrayList<Double>(2);
         vector.add(towards.getX() - from.getX());
         vector.add(towards.getY() - from.getY());
         return vector;
@@ -129,7 +129,7 @@ public final class Utilities {
      * as an ArrayList of Double with two elements.
      */
     public static List<Double> multiply(List<Double> vector, double constant) {
-        ArrayList<Double> newVector = new ArrayList<Double>();
+        List<Double> newVector = new ArrayList<Double>();
         for (double component : vector) {
             newVector.add(component * constant);
         }

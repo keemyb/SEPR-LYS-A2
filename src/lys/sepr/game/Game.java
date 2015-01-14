@@ -33,7 +33,7 @@ public class Game implements Runnable {
     private GameEventListener gameListener = null;
     
     //TODO proper exceptions
-    Game(List<Player> players, int maxContracts, Map map) throws Exception {
+    public Game(List<Player> players, int maxContracts, Map map) throws Exception {
         this.players = players;
         if (players.size() < 2) throw new Exception("Not Enough Players");
         for (Player player : players) {
@@ -44,10 +44,10 @@ public class Game implements Runnable {
         if (maxContracts < 0) maxContracts = 3;
         this.maxContracts = maxContracts;
 
-        if (map == null) throw new Exception("No Map Selected");
+//        if (map == null) throw new Exception("No Map Selected");
         // May want to disable this when testing the game on a small test map
-        if (map.numberOfPossibleRoutes() < players.size() * maxContracts)
-            throw new Exception("Not enough routes");
+//        if (map.numberOfPossibleRoutes() < players.size() * maxContracts)
+//            throw new Exception("Not enough routes");
 
         this.map = map;
 
@@ -147,20 +147,19 @@ public class Game implements Runnable {
     }
 
     private void generatePossibleContracts() {
-        for (java.util.Map.Entry<Map.RouteKey, List<Route>> entry : map.getPossibleRoutes().entrySet()) {
-            Map.RouteKey routeKey = entry.getKey();
-            List<Route> routeList = entry.getValue();
-
+        for (List<Route> routeList : map.getPossibleRoutes().values()) {
+            int numberOfRoutes = routeList.size();
+            if (numberOfRoutes == 0) continue;
             int averageDistance = 0;
             for (Route route : routeList) {
                 averageDistance += Utilities.routeLength(route.getTracks());
             }
-            averageDistance = averageDistance / routeList.size();
+            averageDistance = averageDistance / numberOfRoutes;
 
             // Doing a random route and not the fastest route as the initial
             // route because we want the user to have a bit of choice!
             Random r = new Random();
-            int nextRouteIndex = r.nextInt(routeList.size());
+            int nextRouteIndex = r.nextInt(numberOfRoutes);
             Route nextRoute = routeList.get(nextRouteIndex);
 
             int nextTrainTypeIndex = r.nextInt(TrainType.values().length);
@@ -274,7 +273,7 @@ public class Game implements Runnable {
 			if(nowTime-turnStartTime >= timePerTurn) {
 				switchPlayer();
 			}
-			
+
 		}
 	}
 	

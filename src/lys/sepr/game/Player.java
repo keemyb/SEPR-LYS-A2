@@ -23,7 +23,7 @@ public class Player {
     private int reputation = 0;
     private Profile profile;
 
-    Player(int money) {
+    public Player(int money) {
         this.money = money;
     }
 

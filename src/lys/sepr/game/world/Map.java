@@ -1,5 +1,8 @@
 package lys.sepr.game.world;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +17,7 @@ public class Map {
     private ArrayList<Intersection> intersections = new ArrayList<Intersection>();
     private ArrayList<Location> locations = new ArrayList<Location>();
     private HashMap<RouteKey, List<Route>> possibleRoutes = new HashMap<RouteKey, List<Route>>();
+    private BufferedImage background;
 
     public double getPointTrackThreshold() {
         return pointTrackThreshold;
@@ -322,6 +326,21 @@ public class Map {
      */
     public ArrayList<Location> getLocations() {
         return locations;
+    }
+
+    // TODO remove europe hard-coding
+    public BufferedImage getBackground() {
+//        return background;
+        try {
+            return ImageIO.read(getClass().getResourceAsStream("/europe.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void setBackground(BufferedImage background) {
+        this.background = background;
     }
 
     /**
