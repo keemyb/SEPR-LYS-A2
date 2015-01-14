@@ -3,11 +3,8 @@ package lys.sepr.game.resources;
 import lys.sepr.game.Player;
 import lys.sepr.ui.Dialog;
 
-import java.util.ArrayList;
-
 public class Fuel extends Resource {
 
-    private static ArrayList<Fuel> fuelList = new ArrayList<Fuel>();
     private double quantity;
 
     Fuel(String name, int price, int reqReputation, int maxAllowed, int quantity) {
@@ -21,14 +18,6 @@ public class Fuel extends Resource {
 
     public void setQuantity(double quantity) {
         this.quantity = quantity;
-    }
-
-    public ArrayList<Fuel> getFuelList() {
-        return fuelList;
-    }
-
-    public void setFuelList(ArrayList<Fuel> fuelList) {
-        Fuel.fuelList = fuelList;
     }
 
     public void use(double quantity, Player player){

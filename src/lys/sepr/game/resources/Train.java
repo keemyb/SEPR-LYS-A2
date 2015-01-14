@@ -2,8 +2,6 @@ package lys.sepr.game.resources;
 
 import lys.sepr.game.Player;
 
-import java.util.ArrayList;
-
 public class Train extends Resource{
 
     private TrainType type;
@@ -170,6 +168,5 @@ public class Train extends Resource{
 
     @Override
     public void use(double quantity, Player player) {
-        return;
     }
 }
