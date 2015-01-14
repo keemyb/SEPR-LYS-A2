@@ -22,12 +22,16 @@ public class Player {
     private int reputation = 0;
     private Profile profile;
 
-    Player(int money) {
+    public Player(int money) {
         this.money = money;
     }
 
     public ActiveTrain getActiveTrain() {
         return activeTrain;
+    }
+
+    public void setActiveTrain(ActiveTrain activeTrain) {
+        this.activeTrain = activeTrain;
     }
 
     public Contract getCurrentContract() {

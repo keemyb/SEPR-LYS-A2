@@ -1,5 +1,8 @@
 package lys.sepr.game.resources;
 
+import lys.sepr.game.Player;
+import lys.sepr.ui.Dialog;
+
 import java.util.ArrayList;
 
 public class Inventory {
@@ -20,7 +23,7 @@ public class Inventory {
         return contents.size();
     }
 
-    public int getQuantity(Fuel fuel) {
+    public double getQuantity(Fuel fuel) {
         if (containsResource(fuel)) {
             Fuel existingFuel = (Fuel) contents.get(contents.indexOf(fuel));
             return existingFuel.getQuantity();
@@ -28,34 +31,29 @@ public class Inventory {
     }
 
     private void inventoryFullError(){
-        //display error message on GUI  -- I'm sorry, but your inventory is already full
+        Dialog.error("I'm sorry, but your inventory is already full");
+        //display error message on GUI
     }
 
-    private void resourceNotInInventoryError(String message){
-        //display error message on GUI  -- I'm sorry, but you cannot remove/use a resource that you do not have
+    private void resourceNotInInventoryError(){
+        Dialog.error("I'm sorry, but you cannot remove a resource that you do not have");
+        //display error message on GUI
     }
 
     private void maximumResourceError(Resource resource){
-        //display error message on GUI  -- I'm sorry, but you already own the maximum number of (resource.name)
+        Dialog.error("I'm sorry, but you already own the maximum number of" + resource.getName());
+        //display error message on GUI
     }
 
     public Boolean containsResource(Resource resource) {
         return contents.contains(resource);
     }
 
-    public void applyResource (Resource resource) {
-        if (!containsResource(resource)) {
-            resourceNotInInventoryError("use");
-        } else {
-            resource.useResource(resource);                  //how specify specific resource if two of same???  index??
-        }
-    }
-
     public void discardResource (Resource resource) {
         if (!containsResource(resource)) {
-            resourceNotInInventoryError("remove");
+            resourceNotInInventoryError();
         } else {
-            contents.remove(resource);                      //how specify specific resource if two of same???  index??
+            contents.remove(resource);
         }
     }
 
@@ -95,7 +93,7 @@ public class Inventory {
     public void addNewResource (Fuel fuel) {
         if (containsResource(fuel)) {
             Fuel existingFuel = (Fuel) contents.get(contents.indexOf(fuel));
-            int newQuantity = existingFuel.getQuantity() + fuel.getQuantity();
+            double newQuantity = existingFuel.getQuantity() + fuel.getQuantity();
             if (newQuantity >= fuel.getMaxAllowed()) {
                 existingFuel.setQuantity(existingFuel.getMaxAllowed());
                 maximumResourceError(fuel);

@@ -1,5 +1,7 @@
 package lys.sepr.game.resources;
 
+import lys.sepr.game.Player;
+
 import java.util.ArrayList;
 
 public class PowerUp extends Resource {
@@ -17,5 +19,10 @@ public class PowerUp extends Resource {
 
     PowerUp(String name, int price, int reqReputation, int maxAllowed) {
         super(name, price, reqReputation, maxAllowed);
+    }
+
+    @Override
+    public void use(double quantity, Player player) {
+        //cannot be written until power-ups have been defined
     }
 }
