@@ -1,26 +1,37 @@
 package lys.sepr.game;
 
-import lys.sepr.game.resources.Resource;
-import lys.sepr.game.resources.Train;
-import lys.sepr.game.resources.TrainStorage;
-import lys.sepr.game.resources.TrainType;
-import lys.sepr.game.world.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Game {
+import lys.sepr.game.resources.Resource;
+import lys.sepr.game.resources.Train;
+import lys.sepr.game.resources.TrainStorage;
+import lys.sepr.game.resources.TrainType;
+import lys.sepr.game.world.Location;
+import lys.sepr.game.world.Map;
+import lys.sepr.game.world.Point;
+import lys.sepr.game.world.Route;
+import lys.sepr.game.world.Track;
+import lys.sepr.game.world.Utilities;
 
-    private static int timePerTurn = 30;
+public class Game implements Runnable {
+
+    private static int timePerTurn = 30000; //ms
     private static int contractsToChooseFromEachTurn = 3;
     private List<Player> players;
     private int maxContracts;
     private Player activePlayer;
     private Map map;
-    private boolean gameStarted = false;
+    private boolean gameRunning = false;
     private List<Contract> possibleContracts = new ArrayList<Contract>();
 
+    //thread variables
+    private long turnStartTime = 0;
+    private long loopTime = 0;
+    
+    private GameEventListener gameListener = null;
+    
     //TODO proper exceptions
     Game(List<Player> players, int maxContracts, Map map) throws Exception {
         this.players = players;
@@ -60,8 +71,8 @@ public class Game {
     }
 
     public void startGame(Player playerToStart) {
-        if (gameStarted) return;
-        gameStarted = true;
+        if (gameRunning) return;
+        gameRunning = true;
 
         for (Player player : players) {
             giveStarterTrains(player);
@@ -72,6 +83,8 @@ public class Game {
         } else {
             activePlayer = players.get(0);
         }
+        Thread runner = new Thread(this);
+        runner.start();
     }
 
     // Gives a player a train from each type with the lowest stats
@@ -94,6 +107,7 @@ public class Game {
             nextPlayerIndex = currentPlayerIndex + 1;
         }
         activePlayer = players.get(nextPlayerIndex);
+        turnStartTime = System.currentTimeMillis();
     }
 
     // Starting the players turn by giving them the contract and
@@ -190,7 +204,7 @@ public class Game {
     // faliedCurrentContract, else fulfilledCurrentContract
     public boolean hasCompletedContract(Player player) {
         ActiveTrain activeTrain = player.getActiveTrain();
-        return activeTrain.getDestination() == activeTrain.getCurrentPosition();
+        return activeTrain.getDestination().equals(activeTrain.getCurrentPosition());
     }
 
     public void fulfilledCurrentContract(Player player) {
@@ -237,4 +251,34 @@ public class Game {
             }
         }
     }
+
+	@Override
+	public void run() {
+		turnStartTime = System.currentTimeMillis();
+		loopTime = System.currentTimeMillis();
+		while(gameRunning) {
+			long nowTime = System.currentTimeMillis();
+			update(nowTime-loopTime);
+			if(hasAContract(activePlayer)) {
+				if(hasCompletedContract(activePlayer)) {
+					gameListener.contractCompleted();
+					fulfilledCurrentContract(activePlayer);
+				}
+				if(activePlayer.isContractOutOfTime()) {
+					gameListener.contractFailed();
+					failedCurrentContract(activePlayer);
+				}
+			}
+			//check has contract
+			//check for win/game end states
+			if(nowTime-turnStartTime >= timePerTurn) {
+				switchPlayer();
+			}
+			
+		}
+	}
+	
+	public void addGameEventListener(GameEventListener gameEventListener) {
+		gameListener = gameEventListener;
+	}
 }
