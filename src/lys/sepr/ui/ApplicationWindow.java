@@ -37,8 +37,8 @@ public class ApplicationWindow extends JFrame {
 
 		titleLabel.setHorizontalAlignment(JLabel.CENTER);
 		Font f = titleLabel.getFont();
-		Font font = new Font("Courier New", Font.PLAIN, f.getSize());
-		Font bigFont = new Font("Courier New", Font.PLAIN, f.getSize() + 5);
+		Font font = new Font("Courier New", Font.PLAIN, f.getSize()+6);
+		Font bigFont = new Font("Courier New", Font.PLAIN, f.getSize() + 10);
 		titleLabel.setFont(bigFont);
 		newGameButton.setFont(font);
 		loadGameButton.setFont(font);
