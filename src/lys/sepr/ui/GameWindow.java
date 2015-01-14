@@ -12,7 +12,7 @@ import lys.sepr.game.Game;
 public class GameWindow extends JFrame {
 	
 	public Game game = null;
-	
+		
 	private int trainPanelX = -230;
 	
 	JPanel mainMapPanel = new JPanel();
@@ -42,7 +42,7 @@ public class GameWindow extends JFrame {
 		setVisible(true);
 	}
 	
-	public void setLayout() {
+	public void setLayouts() {
 		int mapHeight = getHeight()-150;
 		int width = getWidth();
 		
@@ -57,7 +57,7 @@ public class GameWindow extends JFrame {
 	}
 	
 	public void paint(Graphics g) {
-		setLayout();
+		setLayouts();
 		super.paint(g);
 	}
 	
