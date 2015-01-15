@@ -31,10 +31,6 @@ public class MainMapPanel extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        double zoom = state.getZoom();
-        g2.scale(zoom, zoom);
-        g2.drawImage(map.getBackground(), 0, 0, null);
-        g2.scale(1/zoom, 1/zoom);
         lys.sepr.ui.Actions.drawMap(map, locationSize, state, g2);
     }
 

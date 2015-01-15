@@ -27,6 +27,10 @@ public class Actions {
     }
 
     public static void drawMap(Map map, double locationSize, State state, Graphics2D g2){
+        double zoom = state.getZoom();
+        g2.scale(zoom, zoom);
+        g2.drawImage(map.getBackground(), 0, 0, null);
+        g2.scale(1/zoom, 1/zoom);
         
         for (Track track : map.getTracks()) {
             drawTrack(track, state, g2);
