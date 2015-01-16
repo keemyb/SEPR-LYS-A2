@@ -1,7 +1,10 @@
 package lys.sepr.ui;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,23 +30,50 @@ public class GameWindow extends JFrame {
 	private int trainPanelX = -230;
 	private double lastZoom;
 
+	Image coinstack = new ImageIcon(
+			"files/coinstack.png").getImage().getScaledInstance(60, 60,
+					Image.SCALE_SMOOTH);
+	
 	MainMapPanel mainMapPanel = new MainMapPanel();
 	JScrollPane mainMapScrollPane = new JScrollPane();
-	JPanel mainInfoPanel = new JPanel();
-	JPanel contractPanel = new JPanel();
-	JPanel miniMapPanel = new JPanel();
+	JPanel mainInfoPanel = new JPanel() {
+		public void paintComponent(Graphics g) {
+			super.paintComponent(g);
+			g.setColor(Color.BLACK);
+			g.drawRect(0, 0, getWidth()-1, getHeight()-1);
+			
+			//Money
+			g.drawImage(coinstack, 90, 80, this);
+			g.setFont(new Font("Courier New", Font.PLAIN, 30));
+			g.drawString(""+game.getActivePlayer().getMoney(), 165, 115);
+			
+		}
+	};
+	JPanel contractPanel = new JPanel() {
+		public void paintComponent(Graphics g) {
+			super.paintComponent(g);
+			g.setColor(Color.BLACK);
+			g.drawRect(0, 0, getWidth()-1, getHeight()-1);	
+		}
+	};
+	JPanel miniMapPanel = new JPanel() {
+		public void paintComponent(Graphics g) {
+			super.paintComponent(g);
+			g.setColor(Color.BLACK);
+			g.drawRect(0, 0, getWidth()-1, getHeight()-1);	
+		}
+	};
 	JPanel trainInfoPanel = new JPanel();
 	State state = new lys.sepr.ui.State();
 
 	JButton pauseButton = new JButton(new ImageIcon("files/pause.png"));
-	JButton storeButton;
-	JButton inventoryButton;
+	JButton storeButton = new JButton("Store");
+	JButton inventoryButton = new JButton("Inventory");
 
 	GameEventListener gameListener = new GameEventListener() {
 
 		@Override
 		public void gameEnd() {
-			// TODO Auto-generated method stub
 			Player[] players = game.getPlayers().toArray(new Player[0]);
 			Player winner = null; // assume one winner, will deal with ties
 									// later
@@ -82,8 +112,6 @@ public class GameWindow extends JFrame {
 
 		@Override
 		public void contractChoose() {
-			// TODO Auto-generated method stub
-			// get contracts
 			Contract[] contracts = game.getContracts().toArray(new Contract[3]);
 			String start0 = game
 					.getMap()
@@ -236,13 +264,13 @@ public class GameWindow extends JFrame {
 		add(contractPanel);
 		add(miniMapPanel);
 		add(trainInfoPanel);
-		add(pauseButton);
+		//add(pauseButton); buggy; fix later
 		setVisible(true);
 	}
 
 	public void setLayouts() {
-		int mapHeight = getHeight() - 150;
-		int width = getWidth();
+		int mapHeight = getHeight() - 200;
+		int width = getWidth()-16;
 
 		// mainMapPanel.setBounds(0, 0, width, mapHeight);
 		mainMapScrollPane.setBounds(0, 0, width, mapHeight);
@@ -278,14 +306,11 @@ public class GameWindow extends JFrame {
 		List<Player> players = new ArrayList<Player>(Arrays.asList(
 				new Player(0), new Player(0)));
 		try {
-			new GameWindow(new Game(players, 1, Actions.loadMap()));
+			Game g = new Game(players, 1, Actions.loadMap());
+			new GameWindow(g);
+			g.startGame(players.get(0));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
-	public int getWidth() {
-		return super.getWidth() - 16;
-	}
-
 }
