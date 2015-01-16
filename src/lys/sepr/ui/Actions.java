@@ -19,6 +19,7 @@ import java.util.List;
 public class Actions {
 
     private static BufferedImage railAndWood;
+    private static final int railHeight = 20;
 
     static {
         railAndWood = null;
@@ -27,6 +28,7 @@ public class Actions {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        railAndWood = scaleImage(railAndWood, (double) railHeight/railAndWood.getHeight());
     }
 
     public static void drawTrains(Game game, State state, Graphics2D g2) {
@@ -38,12 +40,12 @@ public class Actions {
                 java.awt.Point currentPosition = mapPointToScreenPoint(activeTrain.getCurrentPosition(), state);
 
                 g2.setColor(Color.blue);
-                Rectangle2D train = new Rectangle(railAndWood.getHeight(), railAndWood.getHeight() / 3);
+                Rectangle2D train = new Rectangle(railAndWood.getHeight(), railAndWood.getHeight() / 2);
 
                 AffineTransform preTransform = new AffineTransform();
-                preTransform.translate(0, train.getHeight() / 2);
                 preTransform.translate(currentPosition.getX(), currentPosition.getY());
                 preTransform.rotate(-angle);
+                preTransform.translate(-train.getWidth(), -train.getHeight() / 2);
                 g2.setTransform(preTransform);
 
                 g2.fill(train);
@@ -80,9 +82,9 @@ public class Actions {
         g2.setPaint(texturePaint);
 
         AffineTransform preTransform = new AffineTransform();
-        preTransform.translate(0, -rectangle.getHeight() / 2);
         preTransform.translate(closestEndToOriginScreenPoint.getX(), closestEndToOriginScreenPoint.getY());
         preTransform.rotate(-angle);
+        preTransform.translate(0, -rectangle.getHeight() / 2);
         g2.setTransform(preTransform);
 
         g2.fill(rectangle);
@@ -100,12 +102,14 @@ public class Actions {
     }
 
     public static BufferedImage scaleImage(BufferedImage image, double scale) {
-        BufferedImage scaledImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D graphics2D = scaledImage.createGraphics();
-        AffineTransform affineTransform = AffineTransform.getScaleInstance(scale, scale);
-        graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-        graphics2D.drawImage(image, affineTransform, null);
-        graphics2D.dispose();
+        int newWidth = (int) (image.getWidth() * scale);
+        int newHeight = (int) (image.getHeight() * scale);
+        BufferedImage scaledImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
+
+        Graphics g = scaledImage.createGraphics();
+        g.drawImage(image, 0, 0, newWidth, newHeight, null);
+        g.dispose();
+
         return scaledImage;
     }
 
