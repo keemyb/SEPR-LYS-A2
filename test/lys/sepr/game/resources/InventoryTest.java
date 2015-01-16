@@ -61,6 +61,11 @@ public class InventoryTest {
     }
 
     @Test
+    public void testGetOccurrencesNonExisting() throws Exception {
+        assertEquals(0, inventory.getOccurrencesOfResource(TrainStorage.comfyCarriage));
+    }
+
+    @Test
     public void testAddTrainNonExisting() throws Exception {
         inventory.addNewResource(TrainStorage.comfyCarriage);
 
@@ -69,12 +74,29 @@ public class InventoryTest {
     }
 
     @Test
-    public void testTrainExisting() throws Exception {
+    public void testAddTrainExisting() throws Exception {
         inventory.addNewResource(TrainStorage.comfyCarriage);
         inventory.addNewResource(TrainStorage.comfyCarriage);
 
         assertEquals(2, inventory.getSize());
         assertTrue(inventory.containsResource(TrainStorage.comfyCarriage));
+    }
+
+    @Test
+    public void testAddTrainFullInventory() throws Exception {
+        inventory.addNewResource(TrainStorage.comfyCarriage);
+        inventory.addNewResource(TrainStorage.comfyCarriage);
+        inventory.addNewResource(TrainStorage.comfyCarriage);
+        inventory.addNewResource(TrainStorage.comfyCarriage);
+        inventory.addNewResource(TrainStorage.comfyCarriage);
+        inventory.addNewResource(TrainStorage.comfyCarriage);
+        inventory.addNewResource(TrainStorage.comfyCarriage);
+        //full inventory
+
+        assertEquals(7, inventory.getSize());
+
+        inventory.addNewResource(TrainStorage.comfyCarriage);
+        assertEquals(7, inventory.getSize());
     }
 
 }

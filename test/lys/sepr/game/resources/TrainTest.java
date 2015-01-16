@@ -26,6 +26,16 @@ public class TrainTest {
     }
 
     @Test
+    public void testRefillNegative() throws Exception {
+        int amountToAdd = -5;
+        train.setAmountOfFuel(70);
+        double leftover = train.refill(amountToAdd);
+
+        assertEquals(0, leftover, 0.0d);
+        assertEquals(70, train.getAmountOfFuel(), 0.0d);
+    }
+
+    @Test
     public void testRefillEqualToMax() throws Exception {
         int amountToAdd = 70;
         train.setAmountOfFuel(530);
@@ -52,6 +62,15 @@ public class TrainTest {
         train.repair(unitsToRepair);
 
         assertEquals(80, train.getHealth());
+    }
+
+    @Test
+    public void testRepairNegative() throws Exception {
+        int unitsToRepair = -5;
+        train.setHealth(70);
+        train.repair(unitsToRepair);
+
+        assertEquals(70, train.getHealth());
     }
 
     @Test

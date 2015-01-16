@@ -26,7 +26,7 @@ public class Fuel extends Resource {
         }
         Train train  = player.getActiveTrain().getTrain();
         double leftover = train.refill(quantity);
-        this.setQuantity(this.quantity + leftover - quantity); //minus amountToFill of fuel from inventory
+        this.setQuantity(this.quantity + leftover - quantity); //minus quantity of fuel from inventory
     }
 
     public int useDialog() {

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class Inventory {
 //trains, power-ups, fuel
 
-    private static final int MAX_CAPACITY = 7;
+    private static final int MAX_CAPACITY = 7; //can be edited at a later date
     private ArrayList<Resource> contents= new ArrayList<Resource>();
 
     public ArrayList<Resource> getContents() {

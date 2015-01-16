@@ -121,7 +121,9 @@ public class Train extends Resource{
     }
 
     public void repair(int unitsToRepair){
-        if ((health + unitsToRepair) > maxHealth) {
+        if (unitsToRepair < 0) {
+            return;
+        } else if ((health + unitsToRepair) > maxHealth) {
             health = maxHealth;
         } else {
             health += unitsToRepair;
