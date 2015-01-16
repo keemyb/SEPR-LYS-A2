@@ -62,7 +62,7 @@ public class Actions {
         }
 
         for (Location location : map.getLocations()) {
-            // draw locations
+            drawLocation(location, locationSize, state, g2);
         }
     }
 
@@ -86,6 +86,17 @@ public class Actions {
         g2.setTransform(preTransform);
 
         g2.fill(rectangle);
+
+        g2.setTransform(new AffineTransform());
+    }
+
+    private static void drawLocation(Location location, double size, State state, Graphics2D g2) {
+        g2.setColor(Color.RED);
+        g2.setStroke(new BasicStroke(5));
+        size *= state.getZoom();
+        java.awt.Point point = mapPointToScreenPoint(location.getPoint(), state);
+        Rectangle2D.Double rectangle = new Rectangle2D.Double(point.getX() - size / 2, point.getY() - size /2, size, size);
+        g2.draw(rectangle);
     }
 
     public static BufferedImage scaleImage(BufferedImage image, double scale) {
