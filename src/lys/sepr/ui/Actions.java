@@ -42,13 +42,15 @@ public class Actions {
                 g2.setColor(Color.blue);
                 Rectangle2D train = new Rectangle(railAndWood.getHeight(), railAndWood.getHeight() / 2);
 
-                AffineTransform preTransform = new AffineTransform();
-                preTransform.translate(currentPosition.getX(), currentPosition.getY());
-                preTransform.rotate(-angle);
-                preTransform.translate(-train.getWidth(), -train.getHeight() / 2);
-                g2.setTransform(preTransform);
+                g2.translate(currentPosition.getX(), currentPosition.getY());
+                g2.rotate(-angle);
+                g2.translate(-train.getWidth(), -train.getHeight() / 2);
 
                 g2.fill(train);
+
+                g2.translate(train.getWidth(), train.getHeight() / 2);
+                g2.rotate(angle);
+                g2.translate(-currentPosition.getX(), -currentPosition.getY());
             }
         }
     }
@@ -81,15 +83,15 @@ public class Actions {
         TexturePaint texturePaint = new TexturePaint(railAndWood, new Rectangle(railAndWood.getWidth(), railAndWood.getHeight()));
         g2.setPaint(texturePaint);
 
-        AffineTransform preTransform = new AffineTransform();
-        preTransform.translate(closestEndToOriginScreenPoint.getX(), closestEndToOriginScreenPoint.getY());
-        preTransform.rotate(-angle);
-        preTransform.translate(0, -rectangle.getHeight() / 2);
-        g2.setTransform(preTransform);
+        g2.translate(closestEndToOriginScreenPoint.getX(), closestEndToOriginScreenPoint.getY());
+        g2.rotate(-angle);
+        g2.translate(0, -rectangle.getHeight() / 2);
 
         g2.fill(rectangle);
 
-        g2.setTransform(new AffineTransform());
+        g2.translate(0, rectangle.getHeight() / 2);
+        g2.rotate(angle);
+        g2.translate(-closestEndToOriginScreenPoint.getX(), -closestEndToOriginScreenPoint.getY());
     }
 
     private static void drawLocation(Location location, double size, State state, Graphics2D g2) {
