@@ -46,7 +46,7 @@ public class Route {
         this.length = Utilities.routeLength(tracks);
     }
 
-    protected void addTrack(Track track) {
+    public void addTrack(Track track) {
         tracks.add(track);
         updateLength();
     }

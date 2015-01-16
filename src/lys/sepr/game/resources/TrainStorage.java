@@ -7,6 +7,8 @@ public class TrainStorage {
 
     private static List<Train> trains = new ArrayList<Train>();
 
+    //all max values are subject to change, all quantities are set to max_value initially
+
     static Train machineGunWagon = new Train("Machine-gun Wagon", 500, 0, Integer.MAX_VALUE,
             TrainType.PASSENGER, 15, 600, 1d, 0, 100, 100, 10);
 

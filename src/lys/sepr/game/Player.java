@@ -31,6 +31,10 @@ public class Player {
         return activeTrain;
     }
 
+    public void setActiveTrain(ActiveTrain activeTrain) {
+        this.activeTrain = activeTrain;
+    }
+
     public Contract getCurrentContract() {
         return currentContract;
     }
