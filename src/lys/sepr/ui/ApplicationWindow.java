@@ -71,7 +71,9 @@ public class ApplicationWindow extends JFrame {
 	}
 
 	private void newGame() {
-		// TODO - this
+		// TODO ask for player names and number of contracts
+		String[] args = {};
+		GameWindow.main(args);
 	}
 
 	private void setMenuLayout() {
