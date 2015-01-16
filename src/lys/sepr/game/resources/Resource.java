@@ -1,5 +1,8 @@
 package lys.sepr.game.resources;
 
+import lys.sepr.game.Player;
+import lys.sepr.ui.Dialog;
+
 public abstract class Resource {
 
     // Resources are considered equal if they have the same name
@@ -50,9 +53,7 @@ public abstract class Resource {
         this.name = name;
     }
 
-    public void useResource(Resource resource){
-
-    }
+    public abstract void use(double quantity, Player player);
 
     @Override
     public boolean equals(Object o) {

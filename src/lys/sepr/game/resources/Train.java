@@ -1,6 +1,6 @@
 package lys.sepr.game.resources;
 
-import java.util.ArrayList;
+import lys.sepr.game.Player;
 
 public class Train extends Resource{
 
@@ -107,16 +107,23 @@ public class Train extends Resource{
         return getAmountOfFuel() * getFuelEfficiency();
     }
 
-    public void refill(int fuelQuantity){
-        if ((amountOfFuel + fuelQuantity) > maxFuelCapacity) {
+    public double refill(double fuelQuantity){
+        if (fuelQuantity < 0) {
+            return 0;
+        } else if ((amountOfFuel + fuelQuantity) > maxFuelCapacity) {
+            double previousFuel = amountOfFuel;
             amountOfFuel = maxFuelCapacity;
+            return (previousFuel + fuelQuantity)- maxFuelCapacity;
         } else {
             amountOfFuel += fuelQuantity;
+            return 0;
         }
     }
 
     public void repair(int unitsToRepair){
-        if ((health + unitsToRepair) > maxHealth) {
+        if (unitsToRepair < 0) {
+            return;
+        } else if ((health + unitsToRepair) > maxHealth) {
             health = maxHealth;
         } else {
             health += unitsToRepair;
@@ -159,5 +166,9 @@ public class Train extends Resource{
                 train.getMaxFuelCapacity(), train.getFuelEfficiency(),
                 train.getRateOfHealthReduction(), train.getMaxHealth(),
                 train.getComfort(), train.getRepairUnitCost());
+    }
+
+    @Override
+    public void use(double quantity, Player player) {
     }
 }
