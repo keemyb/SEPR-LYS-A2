@@ -126,7 +126,10 @@ public class Game implements Runnable {
         Random r = new Random();
         while (contracts.size() < contractsToChooseFromEachTurn) {
             int nextContractIndex = r.nextInt(possibleContracts.size());
-            contracts.add(possibleContracts.get(nextContractIndex));
+            Contract nextContract = possibleContracts.get(nextContractIndex);
+            if (!contracts.contains(nextContract)) {
+                contracts.add(nextContract);
+            }
         }
         return contracts;
     }
