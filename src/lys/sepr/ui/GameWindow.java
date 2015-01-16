@@ -1,16 +1,24 @@
 package lys.sepr.ui;
 
-import java.awt.*;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JViewport;
 
+import lys.sepr.game.Contract;
 import lys.sepr.game.Game;
 import lys.sepr.game.GameEventListener;
 import lys.sepr.game.Player;
+import lys.sepr.game.resources.Train;
 
 public class GameWindow extends JFrame {
 
@@ -18,7 +26,7 @@ public class GameWindow extends JFrame {
 
 	private int trainPanelX = -230;
 	private double lastZoom;
-	
+
 	MainMapPanel mainMapPanel = new MainMapPanel();
 	JScrollPane mainMapScrollPane = new JScrollPane();
 	JPanel mainInfoPanel = new JPanel();
@@ -75,7 +83,118 @@ public class GameWindow extends JFrame {
 		@Override
 		public void contractChoose() {
 			// TODO Auto-generated method stub
+			// get contracts
+			Contract[] contracts = game.getContracts().toArray(new Contract[3]);
+			String start0 = game
+					.getMap()
+					.getLocationFromPoint(
+							contracts[0].getInitialRoute().getFrom()).getName();
+			String dest0 = game
+					.getMap()
+					.getLocationFromPoint(
+							contracts[0].getInitialRoute().getTo()).getName();
+			String requiredTrainType0 = contracts[0].getRequiredTrainType()
+					.toString();
+			String moneyPayout0 = "" + contracts[0].getMoneyPayout();
+			String repPayout0 = "" + contracts[0].getReputationPayout();
+			String timeLimit0 = "" + contracts[0].getTimeLimit() + "s";
 
+			String start1 = game
+					.getMap()
+					.getLocationFromPoint(
+							contracts[1].getInitialRoute().getFrom()).getName();
+			String dest1 = game
+					.getMap()
+					.getLocationFromPoint(
+							contracts[1].getInitialRoute().getTo()).getName();
+			String requiredTrainType1 = contracts[1].getRequiredTrainType()
+					.toString();
+			String moneyPayout1 = "" + contracts[1].getMoneyPayout();
+			String repPayout1 = "" + contracts[1].getReputationPayout();
+			String timeLimit1 = "" + contracts[1].getTimeLimit() + "s";
+
+			String start2 = game
+					.getMap()
+					.getLocationFromPoint(
+							contracts[2].getInitialRoute().getFrom()).getName();
+			String dest2 = game
+					.getMap()
+					.getLocationFromPoint(
+							contracts[2].getInitialRoute().getTo()).getName();
+			String requiredTrainType2 = contracts[2].getRequiredTrainType()
+					.toString();
+			String moneyPayout2 = "" + contracts[2].getMoneyPayout();
+			String repPayout2 = "" + contracts[2].getReputationPayout();
+			String timeLimit2 = "" + contracts[2].getTimeLimit() + "s";
+
+			String message = "Choose your contract\n\n" + "Contract 1:\n"
+					+ "\tStart: "
+					+ start0
+					+ "\n"
+					+ "\tDestination: "
+					+ dest0
+					+ "\n"
+					+ "\tTrain type: "
+					+ requiredTrainType0
+					+ "\n"
+					+ "\tMoney reward: "
+					+ moneyPayout0
+					+ "\n"
+					+ "\tReputation reward: "
+					+ repPayout0
+					+ "\n"
+					+ "\tTime limit: "
+					+ timeLimit0
+					+ "\n"
+					+ "\n"
+					+ "Contract 2:\n"
+					+ "\tStart: "
+					+ start1
+					+ "\n"
+					+ "\tDestination: "
+					+ dest1
+					+ "\n"
+					+ "\tTrain type: "
+					+ requiredTrainType1
+					+ "\n"
+					+ "\tMoney reward: "
+					+ moneyPayout1
+					+ "\n"
+					+ "\tReputation reward: "
+					+ repPayout1
+					+ "\n"
+					+ "\tTime limit: "
+					+ timeLimit1
+					+ "\n"
+					+ "\n"
+					+ "Contract 3:\n"
+					+ "\tStart: "
+					+ start2
+					+ "\n"
+					+ "\tDestination: "
+					+ dest2
+					+ "\n"
+					+ "\tTrain type: "
+					+ requiredTrainType2
+					+ "\n"
+					+ "\tMoney reward: "
+					+ moneyPayout2
+					+ "\n"
+					+ "\tReputation reward: "
+					+ repPayout2 + "\n" + "\tTime limit: " + timeLimit2 + "\n";
+
+			Object[] options = { "Contract 1", "Contract 2", "Contract 3" };
+
+			int n = JOptionPane.showOptionDialog(Dialog.parent, message,
+					"Choose a contract", JOptionPane.DEFAULT_OPTION,
+					JOptionPane.PLAIN_MESSAGE, null, options, null);
+
+			Contract chosenContract = contracts[n];
+			Object[] trains = game.getTrains(chosenContract).toArray();
+			Train chosenTrain = (Train) JOptionPane.showInputDialog(
+					Dialog.parent, "Choose a train", "Choose a train",
+					JOptionPane.PLAIN_MESSAGE, null, trains, trains[0]);
+			game.assignContract(chosenTrain, chosenContract);
 		}
 
 		@Override
@@ -88,7 +207,6 @@ public class GameWindow extends JFrame {
 		@Override
 		public void update() {
 			repaint();
-
 		}
 
 	};
@@ -108,7 +226,8 @@ public class GameWindow extends JFrame {
 		mainMapPanel.setGame(game);
 		mainMapPanel.setState(state);
 		mainMapScrollPane.setViewportView(mainMapPanel);
-		mainMapScrollPane.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
+		mainMapScrollPane.getViewport().setScrollMode(
+				JViewport.SIMPLE_SCROLL_MODE);
 		mainMapScrollPane.getHorizontalScrollBar().setUnitIncrement(16);
 		mainMapScrollPane.getVerticalScrollBar().setUnitIncrement(16);
 		add(mainMapScrollPane);
@@ -124,8 +243,8 @@ public class GameWindow extends JFrame {
 	public void setLayouts() {
 		int mapHeight = getHeight() - 150;
 		int width = getWidth();
-		
-//		mainMapPanel.setBounds(0, 0, width, mapHeight);
+
+		// mainMapPanel.setBounds(0, 0, width, mapHeight);
 		mainMapScrollPane.setBounds(0, 0, width, mapHeight);
 		mainInfoPanel.setBounds(0, mapHeight, width / 2, 150);
 		contractPanel.setBounds(width / 2, mapHeight, width / 4, 150);
@@ -137,9 +256,12 @@ public class GameWindow extends JFrame {
 
 		double zoom = state.getZoom();
 		if (lastZoom != zoom) {
-			int mapBackgroundWidth = (int) (game.getMap().getBackground().getWidth() * zoom);
-			int mapBackgroundHeight = (int) (game.getMap().getBackground().getHeight() * zoom);
-			mainMapPanel.setPreferredSize(new Dimension(mapBackgroundWidth, mapBackgroundHeight));
+			int mapBackgroundWidth = (int) (game.getMap().getBackground()
+					.getWidth() * zoom);
+			int mapBackgroundHeight = (int) (game.getMap().getBackground()
+					.getHeight() * zoom);
+			mainMapPanel.setPreferredSize(new Dimension(mapBackgroundWidth,
+					mapBackgroundHeight));
 			mainMapScrollPane.getViewport().revalidate();
 			mainMapScrollPane.getViewport().repaint();
 			lastZoom = zoom;
@@ -152,8 +274,9 @@ public class GameWindow extends JFrame {
 	}
 
 	public static void main(String[] args) {
-//		new GameWindow(null);
-		List<Player> players = new ArrayList<Player>(Arrays.asList(new Player(0), new Player(0)));
+		// new GameWindow(null);
+		List<Player> players = new ArrayList<Player>(Arrays.asList(
+				new Player(0), new Player(0)));
 		try {
 			new GameWindow(new Game(players, 1, Actions.loadMap()));
 		} catch (Exception e) {

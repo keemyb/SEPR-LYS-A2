@@ -1,11 +1,12 @@
 package lys.sepr.game.world;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 /**
  * The Map Class represents a collection of Tracks, Intersection and Locations,
@@ -326,6 +327,18 @@ public class Map {
      */
     public ArrayList<Location> getLocations() {
         return locations;
+    }
+    
+    public Location getLocationFromPoint(Point p) {
+    	Location l = null;
+    	Location[] ls = locations.toArray(new Location[0]);
+    	for(Location ll : ls) {
+    		if(ll.getPoint().equals(p)) {
+    			l = ll;
+    			break;
+    		}
+    	}
+    	return l;
     }
 
     // TODO remove europe hard-coding

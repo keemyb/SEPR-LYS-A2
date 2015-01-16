@@ -154,10 +154,19 @@ public class Train extends Resource{
     }
 
     public Train(Train train) {
-        new Train(train.getName(), train.getPrice(), train.getReqReputation(),
+        this(train.getName(), train.getPrice(), train.getReqReputation(),
                 train.getMaxAllowed(), train.getType(), train.getMaxSpeed(),
                 train.getMaxFuelCapacity(), train.getFuelEfficiency(),
                 train.getRateOfHealthReduction(), train.getMaxHealth(),
                 train.getComfort(), train.getRepairUnitCost());
+    }
+    
+    public String toString() {
+    	return "" + getName() + "; Max Speed: "
+				+ getMaxSpeed() + "; Fuel Efficiency: "
+				+ getFuelEfficiency() + "; Max Health: "
+				+ getMaxHealth() + "; Comfort: " + getComfort()
+				+ "; Repair unit cost: " + getRepairUnitCost()
+				+ "; Overall Rating:" + getRating();
     }
 }
