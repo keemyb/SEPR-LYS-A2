@@ -1,5 +1,6 @@
 package lys.sepr.ui;
 
+import lys.sepr.game.Game;
 import lys.sepr.game.world.Map;
 
 import javax.imageio.ImageIO;
@@ -12,6 +13,7 @@ public class MainMapPanel extends JPanel {
 
     private Map map;
     private State state;
+    private Game game;
 
     private final double locationSize = 10d;
 
@@ -19,12 +21,13 @@ public class MainMapPanel extends JPanel {
 
     private boolean painting;
 
-    public void setMap(Map map) {
-        this.map = map;
-    }
-
     public void setState(State state) {
         this.state = state;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+        this.map = game.getMap();
     }
 
     @Override
@@ -32,6 +35,7 @@ public class MainMapPanel extends JPanel {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
         lys.sepr.ui.Actions.drawMap(map, locationSize, state, g2);
+        lys.sepr.ui.Actions.drawTrains(game, state, g2);
     }
 
 }

@@ -90,8 +90,8 @@ public class ActiveTrain {
     }
 
     private void updateOrientation() {
-        orientation = Math.toDegrees(Math.atan2(facing.getY() - currentPosition.getY(),
-                facing.getX() - currentPosition.getX()));
+        orientation = Math.atan2(-(facing.getY() - currentPosition.getY()),
+                facing.getX() - currentPosition.getX());
     }
 
     public void move(long timePassed) {

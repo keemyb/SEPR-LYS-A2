@@ -105,10 +105,12 @@ public class GameWindow extends JFrame {
 		setLayout(null);
 		pauseButton.setFocusPainted(false);
 
-		mainMapPanel.setMap(game.getMap());
+		mainMapPanel.setGame(game);
 		mainMapPanel.setState(state);
 		mainMapScrollPane.setViewportView(mainMapPanel);
 		mainMapScrollPane.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
+		mainMapScrollPane.getHorizontalScrollBar().setUnitIncrement(16);
+		mainMapScrollPane.getVerticalScrollBar().setUnitIncrement(16);
 		add(mainMapScrollPane);
 
 		add(mainInfoPanel);

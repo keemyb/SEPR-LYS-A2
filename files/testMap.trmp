@@ -3,35 +3,78 @@
     <lys.sepr.game.world.Track>
       <points>
         <lys.sepr.game.world.Point>
-          <x>95.0</x>
-          <y>199.0</y>
+          <x>313.0</x>
+          <y>355.0</y>
         </lys.sepr.game.world.Point>
         <lys.sepr.game.world.Point>
-          <x>274.0</x>
-          <y>242.0</y>
+          <x>508.0</x>
+          <y>289.0</y>
         </lys.sepr.game.world.Point>
       </points>
       <intersections>
         <lys.sepr.game.world.Intersection>
           <point>
-            <x>274.0</x>
-            <y>242.0</y>
+            <x>508.0</x>
+            <y>289.0</y>
           </point>
           <tracks>
             <lys.sepr.game.world.Track reference="../../../.."/>
             <lys.sepr.game.world.Track>
               <points>
                 <lys.sepr.game.world.Point>
-                  <x>417.0</x>
-                  <y>273.0</y>
+                  <x>733.0</x>
+                  <y>312.0</y>
                 </lys.sepr.game.world.Point>
                 <lys.sepr.game.world.Point>
-                  <x>274.0</x>
-                  <y>242.0</y>
+                  <x>508.0</x>
+                  <y>289.0</y>
                 </lys.sepr.game.world.Point>
               </points>
               <intersections>
                 <lys.sepr.game.world.Intersection reference="../../../.."/>
+                <lys.sepr.game.world.Intersection>
+                  <point>
+                    <x>733.0</x>
+                    <y>312.0</y>
+                  </point>
+                  <tracks>
+                    <lys.sepr.game.world.Track reference="../../../.."/>
+                    <lys.sepr.game.world.Track>
+                      <points>
+                        <lys.sepr.game.world.Point>
+                          <x>733.0</x>
+                          <y>312.0</y>
+                        </lys.sepr.game.world.Point>
+                        <lys.sepr.game.world.Point>
+                          <x>997.0</x>
+                          <y>245.0</y>
+                        </lys.sepr.game.world.Point>
+                      </points>
+                      <intersections>
+                        <lys.sepr.game.world.Intersection reference="../../../.."/>
+                      </intersections>
+                      <broken>false</broken>
+                    </lys.sepr.game.world.Track>
+                  </tracks>
+                  <validConnections>
+                    <entry>
+                      <lys.sepr.game.world.Track reference="../../../../.."/>
+                      <list>
+                        <lys.sepr.game.world.Track reference="../../../../tracks/lys.sepr.game.world.Track[2]"/>
+                      </list>
+                    </entry>
+                    <entry>
+                      <lys.sepr.game.world.Track reference="../../../tracks/lys.sepr.game.world.Track[2]"/>
+                      <list>
+                        <lys.sepr.game.world.Track reference="../../../../../.."/>
+                      </list>
+                    </entry>
+                  </validConnections>
+                  <activeConnection>
+                    <lys.sepr.game.world.Track reference="../../../.."/>
+                    <lys.sepr.game.world.Track reference="../../tracks/lys.sepr.game.world.Track[2]"/>
+                  </activeConnection>
+                </lys.sepr.game.world.Intersection>
               </intersections>
               <broken>false</broken>
             </lys.sepr.game.world.Track>
@@ -58,26 +101,68 @@
       </intersections>
       <broken>false</broken>
     </lys.sepr.game.world.Track>
-    <lys.sepr.game.world.Track>
-      <points>
-        <lys.sepr.game.world.Point>
-          <x>518.0</x>
-          <y>248.0</y>
-        </lys.sepr.game.world.Point>
-        <lys.sepr.game.world.Point>
-          <x>693.0</x>
-          <y>204.0</y>
-        </lys.sepr.game.world.Point>
-      </points>
-      <intersections/>
-      <broken>false</broken>
-    </lys.sepr.game.world.Track>
     <lys.sepr.game.world.Track reference="../lys.sepr.game.world.Track/intersections/lys.sepr.game.world.Intersection/tracks/lys.sepr.game.world.Track[2]"/>
+    <lys.sepr.game.world.Track reference="../lys.sepr.game.world.Track/intersections/lys.sepr.game.world.Intersection/tracks/lys.sepr.game.world.Track[2]/intersections/lys.sepr.game.world.Intersection[2]/tracks/lys.sepr.game.world.Track[2]"/>
   </tracks>
   <intersections>
     <lys.sepr.game.world.Intersection reference="../../tracks/lys.sepr.game.world.Track/intersections/lys.sepr.game.world.Intersection"/>
+    <lys.sepr.game.world.Intersection reference="../../tracks/lys.sepr.game.world.Track/intersections/lys.sepr.game.world.Intersection/tracks/lys.sepr.game.world.Track[2]/intersections/lys.sepr.game.world.Intersection[2]"/>
   </intersections>
-  <locations/>
-  <possibleRoutes/>
+  <locations>
+    <lys.sepr.game.world.Location>
+      <point>
+        <x>309.0</x>
+        <y>354.0</y>
+      </point>
+      <name>Location 1 </name>
+    </lys.sepr.game.world.Location>
+    <lys.sepr.game.world.Location>
+      <point>
+        <x>997.0</x>
+        <y>244.0</y>
+      </point>
+      <name>Location 2 </name>
+    </lys.sepr.game.world.Location>
+  </locations>
+  <possibleRoutes>
+    <entry>
+      <lys.sepr.game.world.Map_-RouteKey>
+        <from reference="../../../../locations/lys.sepr.game.world.Location/point"/>
+        <to reference="../../../../locations/lys.sepr.game.world.Location[2]/point"/>
+        <outer-class reference="../../../.."/>
+      </lys.sepr.game.world.Map_-RouteKey>
+      <list>
+        <lys.sepr.game.world.Route>
+          <length>704.4081967901216</length>
+          <tracks>
+            <lys.sepr.game.world.Track reference="../../../../../../tracks/lys.sepr.game.world.Track"/>
+            <lys.sepr.game.world.Track reference="../../../../../../tracks/lys.sepr.game.world.Track/intersections/lys.sepr.game.world.Intersection/tracks/lys.sepr.game.world.Track[2]"/>
+            <lys.sepr.game.world.Track reference="../../../../../../tracks/lys.sepr.game.world.Track/intersections/lys.sepr.game.world.Intersection/tracks/lys.sepr.game.world.Track[2]/intersections/lys.sepr.game.world.Intersection[2]/tracks/lys.sepr.game.world.Track[2]"/>
+          </tracks>
+          <from reference="../../../../../locations/lys.sepr.game.world.Location/point"/>
+          <to reference="../../../../../locations/lys.sepr.game.world.Location[2]/point"/>
+        </lys.sepr.game.world.Route>
+      </list>
+    </entry>
+    <entry>
+      <lys.sepr.game.world.Map_-RouteKey>
+        <from reference="../../../../locations/lys.sepr.game.world.Location[2]/point"/>
+        <to reference="../../../../locations/lys.sepr.game.world.Location/point"/>
+        <outer-class reference="../../../.."/>
+      </lys.sepr.game.world.Map_-RouteKey>
+      <list>
+        <lys.sepr.game.world.Route>
+          <length>704.4081967901217</length>
+          <tracks>
+            <lys.sepr.game.world.Track reference="../../../../../../tracks/lys.sepr.game.world.Track/intersections/lys.sepr.game.world.Intersection/tracks/lys.sepr.game.world.Track[2]/intersections/lys.sepr.game.world.Intersection[2]/tracks/lys.sepr.game.world.Track[2]"/>
+            <lys.sepr.game.world.Track reference="../../../../../../tracks/lys.sepr.game.world.Track/intersections/lys.sepr.game.world.Intersection/tracks/lys.sepr.game.world.Track[2]"/>
+            <lys.sepr.game.world.Track reference="../../../../../../tracks/lys.sepr.game.world.Track"/>
+          </tracks>
+          <from reference="../../../../../locations/lys.sepr.game.world.Location[2]/point"/>
+          <to reference="../../../../../locations/lys.sepr.game.world.Location/point"/>
+        </lys.sepr.game.world.Route>
+      </list>
+    </entry>
+  </possibleRoutes>
   <pointTrackThreshold>10.0</pointTrackThreshold>
 </lys.sepr.game.world.Map>

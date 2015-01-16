@@ -1,6 +1,9 @@
 package lys.sepr.ui;
 
 import com.thoughtworks.xstream.XStream;
+import lys.sepr.game.ActiveTrain;
+import lys.sepr.game.Game;
+import lys.sepr.game.Player;
 import lys.sepr.game.world.*;
 import lys.sepr.game.world.Point;
 
@@ -26,7 +29,29 @@ public class Actions {
         }
     }
 
-    public static void drawMap(Map map, double locationSize, State state, Graphics2D g2){
+    public static void drawTrains(Game game, State state, Graphics2D g2) {
+        for (Player player : game.getPlayers()) {
+            ActiveTrain activeTrain = player.getActiveTrain();
+            if (activeTrain != null) {
+                // TODO sort orientation
+                double angle = activeTrain.getOrientation();
+                java.awt.Point currentPosition = mapPointToScreenPoint(activeTrain.getCurrentPosition(), state);
+
+                g2.setColor(Color.blue);
+                Rectangle2D train = new Rectangle(railAndWood.getHeight(), railAndWood.getHeight() / 3);
+
+                AffineTransform preTransform = new AffineTransform();
+                preTransform.translate(0, train.getHeight() / 2);
+                preTransform.translate(currentPosition.getX(), currentPosition.getY());
+                preTransform.rotate(-angle);
+                g2.setTransform(preTransform);
+
+                g2.fill(train);
+            }
+        }
+    }
+
+    public static void drawMap(Map map, double locationSize, State state, Graphics2D g2) {
         double zoom = state.getZoom();
         g2.scale(zoom, zoom);
         g2.drawImage(map.getBackground(), 0, 0, null);
