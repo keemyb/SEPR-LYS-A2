@@ -17,21 +17,7 @@ import java.util.List;
 
 public class Actions {
 
-    private static BufferedImage railAndWood;
-    private static final int railHeight = 20;
-
-    static {
-        railAndWood = null;
-        try {
-            railAndWood = ImageIO.read(Actions.class.getResourceAsStream("/RailAndWood.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        railAndWood = scaleImage(railAndWood, (double) railHeight/railAndWood.getHeight());
-    }
-
     public static void drawTrains(Game game, State state, Graphics2D g2) {
-        double zoom = state.getZoom();
         for (Player player : game.getPlayers()) {
             ActiveTrain activeTrain = player.getActiveTrain();
             if (activeTrain != null) {
@@ -39,7 +25,8 @@ public class Actions {
                 java.awt.Point currentPosition = mapPointToScreenPoint(activeTrain.getCurrentPosition(), state);
 
                 g2.setColor(Color.blue);
-                Rectangle2D train = new Rectangle((int) (railAndWood.getHeight() * zoom), (int) (zoom * railAndWood.getHeight() / 2));
+                BufferedImage scaledRailAndWood = state.getScaledRailAndWood();
+                Rectangle2D train = new Rectangle(scaledRailAndWood.getHeight(), scaledRailAndWood.getHeight() / 2);
 
                 g2.translate(currentPosition.getX(), currentPosition.getY());
                 g2.rotate(-angle);
@@ -79,7 +66,8 @@ public class Actions {
         List<Double> vector = Utilities.getVector(closestEndToOrigin, furthestEndToOrigin);
         double angle = Math.atan2(-vector.get(1), vector.get(0));
 
-        Rectangle2D rectangle =  new Rectangle((int) (zoom * trackLength), (int) (zoom * railAndWood.getHeight() * 0.6));
+        BufferedImage scaledRailAndWood = state.getScaledRailAndWood();
+        Rectangle2D rectangle =  new Rectangle((int) (zoom * trackLength), (int) (scaledRailAndWood.getHeight() * 0.6));
 
         Color transparentColour = new Color(color.getRed(), color.getGreen(), color.getBlue(), 76);
         g2.setColor(transparentColour);
@@ -105,7 +93,7 @@ public class Actions {
             List<Double> vector = Utilities.getVector(intersectionPoint, track.getOtherPoint(intersectionPoint));
             double angle = Math.atan2(-vector.get(1), vector.get(0));
 
-            int triangleHeight = (int) (zoom * railAndWood.getHeight() * 0.8);
+            int triangleHeight = (int) (state.getScaledRailAndWood().getHeight() * 0.8);
 
             int[] xPoints = {0, 0, triangleHeight};
             int[] yPoints = {0, triangleHeight, triangleHeight/2};
@@ -152,9 +140,10 @@ public class Actions {
         List<Double> vector = Utilities.getVector(closestEndToOrigin, furthestEndToOrigin);
         double angle = Math.atan2(-vector.get(1), vector.get(0));
 
-        Rectangle2D rectangle =  new Rectangle((int) trackLength, railAndWood.getHeight());
+        BufferedImage scaledRailAndWood = state.getScaledRailAndWood();
+        Rectangle2D rectangle =  new Rectangle((int) (trackLength * zoom), scaledRailAndWood.getHeight());
 
-        TexturePaint texturePaint = new TexturePaint(railAndWood, new Rectangle(railAndWood.getWidth(), railAndWood.getHeight()));
+        TexturePaint texturePaint = new TexturePaint(scaledRailAndWood, new Rectangle(scaledRailAndWood.getWidth(), scaledRailAndWood.getHeight()));
         g2.setPaint(texturePaint);
 
         g2.translate(closestEndToOriginScreenPoint.getX(), closestEndToOriginScreenPoint.getY());
