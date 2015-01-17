@@ -36,6 +36,7 @@ public class MainMapPanel extends JPanel {
         Graphics2D g2 = (Graphics2D) g;
         lys.sepr.ui.Actions.drawMap(map, locationSize, state, g2);
         lys.sepr.ui.Actions.drawTrains(game, state, g2);
+        lys.sepr.ui.Actions.drawTrainPathOverlay(game.getActivePlayer(), state, g2);
     }
 
 }

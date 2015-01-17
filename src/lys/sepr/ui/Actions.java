@@ -35,7 +35,6 @@ public class Actions {
         for (Player player : game.getPlayers()) {
             ActiveTrain activeTrain = player.getActiveTrain();
             if (activeTrain != null) {
-                // TODO sort orientation
                 double angle = activeTrain.getOrientation();
                 java.awt.Point currentPosition = mapPointToScreenPoint(activeTrain.getCurrentPosition(), state);
 
@@ -53,6 +52,46 @@ public class Actions {
                 g2.translate(-currentPosition.getX(), -currentPosition.getY());
             }
         }
+    }
+
+    public static void drawTrainPathOverlay(Player player, State state, Graphics2D g2) {
+        ActiveTrain activeTrain = player.getActiveTrain();
+        if (activeTrain == null) return;
+        if (activeTrain.getRemainderOfRoute().isEmpty()) return;
+
+        Track currentTrack = activeTrain.getRemainderOfRoute().get(0);
+        // We only want to paint the part of the track left to cover.
+        Track partialTrackToPaint = new Track(activeTrain.getCurrentPosition(), activeTrain.getFacing());
+        drawTrackOverlay(partialTrackToPaint, Color.ORANGE, state, g2);
+
+        for (Track track : activeTrain.getRemainderOfRoute()) {
+            if (currentTrack ==  track) continue;
+            drawTrackOverlay(track, Color.ORANGE, state, g2);
+        }
+    }
+
+    private static void drawTrackOverlay(Track track, Color color, State state, Graphics2D g2) {
+        double trackLength = Utilities.length(track);
+        Point closestEndToOrigin = Utilities.closestPoint(new Point(0d, 0d), track.getPoints());
+        java.awt.Point closestEndToOriginScreenPoint = mapPointToScreenPoint(closestEndToOrigin, state);
+        Point furthestEndToOrigin = track.getOtherPoint(closestEndToOrigin);
+        List<Double> vector = Utilities.getVector(closestEndToOrigin, furthestEndToOrigin);
+        double angle = Math.atan2(-vector.get(1), vector.get(0));
+
+        Rectangle2D rectangle =  new Rectangle((int) trackLength, (int) (railAndWood.getHeight() * 0.6));
+
+        Color transparentColour = new Color(color.getRed(), color.getGreen(), color.getBlue(), 127);
+        g2.setColor(transparentColour);
+
+        g2.translate(closestEndToOriginScreenPoint.getX(), closestEndToOriginScreenPoint.getY());
+        g2.rotate(-angle);
+        g2.translate(0, -rectangle.getHeight() / 2);
+
+        g2.fill(rectangle);
+
+        g2.translate(0, rectangle.getHeight() / 2);
+        g2.rotate(angle);
+        g2.translate(-closestEndToOriginScreenPoint.getX(), -closestEndToOriginScreenPoint.getY());
     }
 
     public static void drawMap(Map map, double locationSize, State state, Graphics2D g2) {
