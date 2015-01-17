@@ -28,6 +28,7 @@ public class MainMapPanel extends JPanel {
     private static Cursor cursorNormal;
     private static Cursor cursorIntersection;
     private static Cursor cursorRouteChange;
+    private static Cursor cursorInvisible;
 
     static {
         cursorNormalImage = null;
@@ -50,16 +51,20 @@ public class MainMapPanel extends JPanel {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        cursorInvisible = Toolkit.getDefaultToolkit().createCustomCursor(new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB), new Point(0, 0), "invisible");
+        cursorNormal = Toolkit.getDefaultToolkit().createCustomCursor(cursorNormalImage, new Point(1, 1), "normal");
+        cursorIntersection = Toolkit.getDefaultToolkit().createCustomCursor(cursorIntersectionImage, new Point(1, 1), "intersection");
+        cursorRouteChange = Toolkit.getDefaultToolkit().createCustomCursor(cursorRouteChangeImage, new Point(1, 1), "route change");
     }
 
     MainMapPanel() {
         addMouseListener(mouseHandler);
         addMouseMotionListener(mouseHandler);
 
-        Toolkit toolkit= getToolkit();
-        cursorNormal = toolkit.createCustomCursor(cursorNormalImage, new Point(0,0), "normal");
-        cursorIntersection = toolkit.createCustomCursor(cursorIntersectionImage, new Point(0,0), "intersection");
-        cursorRouteChange = toolkit.createCustomCursor(cursorRouteChangeImage, new Point(0,0), "route change");
+        setCursor(cursorNormal);
+
+        minPickupDistance = (double) State.getRailHeight() / 2;
     }
 
     public void setState(State state) {
@@ -84,6 +89,7 @@ public class MainMapPanel extends JPanel {
             lys.sepr.game.world.Point mousePoint = Actions.screenPointToMapPoint(e.getPoint(), state);
             Actions.deselectTrackIntersection(state);
             Actions.selectIntersectionOrTrack(game, mousePoint, minPickupDistance, state);
+            state.setMousePosition(mousePoint);
 
             if (state.getSelectedIntersection() != null) {
                 setCursor(cursorIntersection);
@@ -105,6 +111,5 @@ public class MainMapPanel extends JPanel {
             Actions.drawIntersectionOverlay(intersection, state, g2);
         }
         lys.sepr.ui.Actions.drawTrains(game, state, g2);
-        lys.sepr.ui.Actions.drawMouseCursor(state, g2);
     }
 }

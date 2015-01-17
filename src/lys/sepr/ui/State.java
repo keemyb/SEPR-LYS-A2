@@ -11,13 +11,13 @@ import java.io.IOException;
 
 public class State {
     private double zoom = 1d;
-    private double lastZoom = zoom;
+    private double lastZoom;
     private final double zoomLevels = 4;
     private final double zoomConstant = 1.5;
     private final double maxZoom = Math.pow(zoomConstant, zoomLevels - 1);
     private final double minZoom = Math.pow(zoomConstant, -(zoomLevels - 1));
 
-    private lys.sepr.game.world.Point clickPoint;
+    private lys.sepr.game.world.Point mousePosition;
     private boolean hasSelectedTrackOrIntersection;
 
     private Track selectedTrack;
@@ -25,6 +25,7 @@ public class State {
 
     private static BufferedImage originalRailAndWood;
     private static BufferedImage scaledRailAndWood;
+
     private static final int railHeight = 20;
 
     private static final double relativeTrainWidthToRail = 0.8;
@@ -82,12 +83,12 @@ public class State {
         resetZoom();
     }
 
-    public Point getClickPoint() {
-        return clickPoint;
+    public Point getMousePosition() {
+        return mousePosition;
     }
 
-    public void setClickPoint(Point clickPoint) {
-        this.clickPoint = clickPoint;
+    public void setMousePosition(Point mousePosition) {
+        this.mousePosition = mousePosition;
     }
 
     public BufferedImage getScaledRailAndWood() {
@@ -166,5 +167,9 @@ public class State {
 
     public Track getSelectedTrack() {
         return selectedTrack;
+    }
+
+    public static int getRailHeight() {
+        return railHeight;
     }
 }

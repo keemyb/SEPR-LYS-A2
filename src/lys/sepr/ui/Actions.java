@@ -247,7 +247,8 @@ public class Actions {
 
         Map map = game.getMap();
 
-        Intersection intersection = selectIntersection(map, mapMousePoint, minPickUpDistance);
+        // Increased pickup distance for intersections for easier selection
+        Intersection intersection = selectIntersection(map, mapMousePoint, minPickUpDistance * 1.2);
         if (intersection != null) {
             state.selectIntersection(intersection);
             state.setHasSelectedTrackOrIntersection(true);
@@ -278,9 +279,5 @@ public class Actions {
         state.setHasSelectedTrackOrIntersection(false);
         state.selectIntersection(null);
         state.setSelectedTrack(null);
-    }
-
-    public static void drawMouseCursor(State state, Graphics2D g2) {
-
     }
 }
