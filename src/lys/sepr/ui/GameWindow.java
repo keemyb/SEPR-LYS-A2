@@ -47,6 +47,8 @@ public class GameWindow extends JFrame {
 			g.setFont(new Font("Courier New", Font.PLAIN, 30));
 			g.drawString(""+game.getActivePlayer().getMoney(), 165, 115);
 			
+			g.drawString("" + game.getTurnClock() + "s", getWidth()-60, 30);
+			
 		}
 	};
 	JPanel contractPanel = new JPanel() {
@@ -223,6 +225,8 @@ public class GameWindow extends JFrame {
 					Dialog.parent, "Choose a train", "Choose a train",
 					JOptionPane.PLAIN_MESSAGE, null, trains, trains[0]);
 			game.assignContract(chosenTrain, chosenContract);
+			//set a speed for testing, comment out later
+			game.getActivePlayer().getActiveTrain().setCurrentSpeed(3);
 		}
 
 		@Override

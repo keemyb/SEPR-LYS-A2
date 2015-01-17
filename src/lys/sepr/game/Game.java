@@ -149,6 +149,10 @@ public class Game implements Runnable {
         }
         return suitableTrains;
     }
+    
+    public int getTurnClock() {
+    	return (int) (timePerTurn - (System.currentTimeMillis()-turnStartTime))/1000;
+    }
 
     private void generatePossibleContracts() {
         for (List<Route> routeList : map.getPossibleRoutes().values()) {
