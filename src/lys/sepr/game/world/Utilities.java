@@ -267,4 +267,13 @@ public final class Utilities {
         }
         return newString.toString();
     }
+
+    public static Track getScaledTrack(Track track, Point about, double scale) {
+        Point otherPoint = track.getOtherPoint(about);
+        List<Double> vector = getVector(about, otherPoint);
+        vector = Utilities.multiply(vector, scale);
+        Point scaledOtherPoint = new Point(about);
+        scaledOtherPoint.translate(vector.get(0), vector.get(1));
+        return new Track(about, scaledOtherPoint);
+    }
 }
