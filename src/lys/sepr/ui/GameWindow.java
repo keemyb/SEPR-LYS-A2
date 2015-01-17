@@ -301,7 +301,7 @@ public class GameWindow extends JFrame {
 		super.paint(g);
 	}
 
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		// new GameWindow(null);
 		List<Player> players = new ArrayList<Player>(Arrays.asList(
 				new Player(0), new Player(0)));
@@ -312,5 +312,5 @@ public class GameWindow extends JFrame {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 }

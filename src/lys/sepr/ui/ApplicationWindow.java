@@ -5,12 +5,18 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import lys.sepr.game.Game;
+import lys.sepr.game.Player;
 
 public class ApplicationWindow extends JFrame {
 
@@ -72,8 +78,16 @@ public class ApplicationWindow extends JFrame {
 
 	private void newGame() {
 		// TODO ask for player names and number of contracts
-		String[] args = {};
-		GameWindow.main(args);
+		// Don't call a main method
+		List<Player> players = new ArrayList<Player>(Arrays.asList(
+				new Player(0), new Player(0)));
+		try {
+			Game g = new Game(players, 1, Actions.loadMap());
+			new GameWindow(g);
+			g.startGame(players.get(0));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void setMenuLayout() {
@@ -94,7 +108,7 @@ public class ApplicationWindow extends JFrame {
 		super.paint(g);
 	}
 
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		new ApplicationWindow().setVisible(true);
-	}
+	}*/
 }
