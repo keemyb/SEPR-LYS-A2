@@ -211,7 +211,9 @@ public class Game implements Runnable {
     // faliedCurrentContract, else fulfilledCurrentContract
     public boolean hasCompletedContract(Player player) {
         ActiveTrain activeTrain = player.getActiveTrain();
-        return activeTrain.getDestination().equals(activeTrain.getCurrentPosition());
+        // fix for imperfect moving trains
+//        return Utilities.distance(activeTrain.getDestination().equals(activeTrain.getCurrentPosition());
+        return Utilities.distance(activeTrain.getDestination(),activeTrain.getCurrentPosition()) < 5;
     }
 
     public void fulfilledCurrentContract(Player player) {
@@ -244,6 +246,8 @@ public class Game implements Runnable {
         for (Player player : players) {
             ActiveTrain activeTrain = player.getActiveTrain();
             if (activeTrain != null) {
+                // Infinite fuel
+                activeTrain.getTrain().refill(Integer.MAX_VALUE);
                 activeTrain.move(timePassed);
             }
         }
