@@ -47,11 +47,11 @@ public class Actions {
         Track currentTrack = activeTrain.getRemainderOfRoute().get(0);
         // We only want to paint the part of the track left to cover.
         Track partialTrackToPaint = new Track(activeTrain.getCurrentPosition(), activeTrain.getFacing());
-        drawTrackOverlay(partialTrackToPaint, Color.ORANGE, state, g2);
+        drawTrackOverlay(partialTrackToPaint, player.getColor(), state, g2);
 
         for (Track track : activeTrain.getRemainderOfRoute()) {
             if (currentTrack ==  track) continue;
-            drawTrackOverlay(track, Color.ORANGE, state, g2);
+            drawTrackOverlay(track, player.getColor(), state, g2);
         }
     }
 

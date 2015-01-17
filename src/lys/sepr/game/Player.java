@@ -4,12 +4,28 @@ import lys.sepr.game.resources.Inventory;
 import lys.sepr.game.resources.Train;
 import lys.sepr.profile.Profile;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
 
     public static enum PlayerColor { RED, GREEN, BLUE, YELLOW }
+
+    public static Color getColor (PlayerColor playerColor) {
+        switch (playerColor) {
+            case RED:
+                return Color.RED;
+            case GREEN:
+                return Color.GREEN;
+            case BLUE:
+                return Color.BLUE;
+            case YELLOW:
+                return Color.YELLOW;
+            default:
+                return Color.WHITE;
+        }
+    }
 
     private Contract currentContract;
     private long contractStartTime;
@@ -116,5 +132,9 @@ public class Player {
 
     public PlayerColor getPlayerColor() {
         return playerColor;
+    }
+
+    public Color getColor() {
+        return getColor(playerColor);
     }
 }
