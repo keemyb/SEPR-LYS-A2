@@ -216,8 +216,6 @@ public class GameWindow extends JFrame {
 					Dialog.parent, "Choose a train", "Choose a train",
 					JOptionPane.PLAIN_MESSAGE, null, trains, trains[0]);
 			game.assignContract(chosenTrain, chosenContract);
-			//set a speed for testing, comment out later
-			game.getActivePlayer().getActiveTrain().setCurrentSpeed(3);
 		}
 
 		@Override
