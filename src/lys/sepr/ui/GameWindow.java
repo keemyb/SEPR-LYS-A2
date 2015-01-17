@@ -290,13 +290,14 @@ public class GameWindow extends JFrame {
 
 		// Container contentPane = getContentPane();
 
+		trainInfoPanel.add(speedSlider);
+		
 		add(pauseButton);
 		add(trainInfoPanelShowButton);
 		add(mainInfoPanel);
 		add(contractPanel);
 		add(miniMapPanel);
 		add(trainInfoPanel);
-		mainInfoPanel.add(speedSlider);
 		add(mainMapScrollPane);
 
 	}

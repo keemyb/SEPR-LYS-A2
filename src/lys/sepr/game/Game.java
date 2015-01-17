@@ -17,274 +17,317 @@ import lys.sepr.game.world.Utilities;
 
 public class Game implements Runnable {
 
-    private static int timePerTurn = 30000; //ms
-    private static int contractsToChooseFromEachTurn = 3;
-    private List<Player> players;
-    private int maxContracts;
-    private Player activePlayer;
-    private Map map;
-    private boolean gameRunning = false;
-    private List<Contract> possibleContracts = new ArrayList<Contract>();
+	private static int timePerTurn = 30000; // ms
+	private static int contractsToChooseFromEachTurn = 3;
+	private List<Player> players;
+	private int maxContracts;
+	private Player activePlayer;
+	private Map map;
+	private boolean gameRunning = false;
+	private List<Contract> possibleContracts = new ArrayList<Contract>();
 
-    //thread variables
-    private long turnStartTime = 0;
-    private long loopTime = 0;
-    
-    private GameEventListener gameListener = null;
-    
-    //TODO proper exceptions
-    public Game(List<Player> players, int maxContracts, Map map) throws Exception {
-        this.players = players;
-        if (players.size() < 2) throw new Exception("Not Enough Players");
-        for (Player player : players) {
-            if (players.indexOf(player) != players.lastIndexOf(player))
-                throw new Exception("Duplicate Player");
-        }
+	// thread variables
+	private long turnStartTime = 0;
+	private long loopTime = 0;
 
-        if (maxContracts < 0) maxContracts = 3;
-        this.maxContracts = maxContracts;
+	// An empty listener so we can stop messages after game has closed without
+	// NullPointerExceptions
+	private GameEventListener dummyListener = new GameEventListener() {
+		@Override
+		public void gameEnd() {}
+		@Override
+		public void contractCompleted() {}
+		@Override
+		public void contractFailed() {}
+		@Override
+		public void contractChoose() {}
+		@Override
+		public void turnBegin() {}
+		@Override
+		public void update() {}
 
-//        if (map == null) throw new Exception("No Map Selected");
-        // May want to disable this when testing the game on a small test map
-//        if (map.numberOfPossibleRoutes() < players.size() * maxContracts)
-//            throw new Exception("Not enough routes");
+	};
 
-        this.map = map;
+	private GameEventListener gameListener = dummyListener;
 
-        generatePossibleContracts();
-    }
+	// TODO proper exceptions
+	public Game(List<Player> players, int maxContracts, Map map)
+			throws Exception {
+		this.players = players;
+		if (players.size() < 2)
+			throw new Exception("Not Enough Players");
+		for (Player player : players) {
+			if (players.indexOf(player) != players.lastIndexOf(player))
+				throw new Exception("Duplicate Player");
+		}
 
-    public List<Player> getPlayers() {
-        return players;
-    }
+		if (maxContracts < 0)
+			maxContracts = 3;
+		this.maxContracts = maxContracts;
 
-    public int getMaxContracts() {
-        return maxContracts;
-    }
+		// if (map == null) throw new Exception("No Map Selected");
+		// May want to disable this when testing the game on a small test map
+		// if (map.numberOfPossibleRoutes() < players.size() * maxContracts)
+		// throw new Exception("Not enough routes");
 
-    public Player getActivePlayer() {
-        return activePlayer;
-    }
+		this.map = map;
 
-    public Map getMap() {
-        return map;
-    }
+		generatePossibleContracts();
+	}
 
-    public void startGame(Player playerToStart) {
-        if (gameRunning) return;
-        gameRunning = true;
+	public List<Player> getPlayers() {
+		return players;
+	}
 
-        for (Player player : players) {
-            giveStarterTrains(player);
-        }
+	public int getMaxContracts() {
+		return maxContracts;
+	}
 
-        if (players.contains(playerToStart)) {
-            activePlayer = playerToStart;
-        } else {
-            activePlayer = players.get(0);
-        }
-        Thread runner = new Thread(this);
-        runner.start();
-    }
+	public Player getActivePlayer() {
+		return activePlayer;
+	}
 
-    // Gives a player a train from each type with the lowest stats
-    private void giveStarterTrains(Player player) {
-        for (TrainType trainType : TrainType.values()) {
-            Train train = TrainStorage.getStarterTrain(trainType);
-            if (train != null) player.getInventory().addNewResource(train);
-        }
-    }
+	public Map getMap() {
+		return map;
+	}
 
-    public void switchPlayer() {
-        int nextPlayerIndex;
-        int currentPlayerIndex = players.indexOf(activePlayer);
+	public void startGame(Player playerToStart) {
+		if (gameRunning)
+			return;
+		gameRunning = true;
 
-        // Going round in a cycle instead of a simple toggle
-        // for 2+ player support.
-        if (players.size() == currentPlayerIndex + 1) {
-            nextPlayerIndex = 0;
-        } else {
-            nextPlayerIndex = currentPlayerIndex + 1;
-        }
-        activePlayer = players.get(nextPlayerIndex);
-        turnStartTime = System.currentTimeMillis();
-        gameListener.turnBegin();
-    }
+		for (Player player : players) {
+			giveStarterTrains(player);
+		}
 
-    // Starting the players turn by giving them the contract and
-    // train they have chosen.
-    // Note there is no choose method in here, should be handled in GUI after
-    // presenting them contracts and then trains as shown below.
-    public void assignContract(Train train, Contract contract) {
-        activePlayer.acceptContract(train, contract);
-        possibleContracts.remove(contract);
-    }
+		if (players.contains(playerToStart)) {
+			activePlayer = playerToStart;
+		} else {
+			activePlayer = players.get(0);
+		}
+		Thread runner = new Thread(this);
+		runner.start();
+	}
 
-    // Returns a list of contracts for player to choose from
-    public List<Contract> getContracts() {
-        List<Contract> contracts = new ArrayList<Contract>();
-        Random r = new Random();
-        while (contracts.size() < contractsToChooseFromEachTurn) {
-            int nextContractIndex = r.nextInt(possibleContracts.size());
-            Contract nextContract = possibleContracts.get(nextContractIndex);
-            if (!contracts.contains(nextContract)) {
-                contracts.add(nextContract);
-            }
-        }
-        return contracts;
-    }
+	// only to be used by the windowClosing call in ApplicationWindow
+	public void stopGame() {
+		gameListener = dummyListener;
+		gameRunning = false;
+	}
 
-    // Returns the trains that the activePlayer can choose subject to their
-    // contract
-    public List<Train> getTrains(Contract contract) {
-        TrainType requiredTrainType = contract.getRequiredTrainType();
-        List<Train> suitableTrains = new ArrayList<Train>();
-        for (Resource resource : activePlayer.getInventory().getContents()) {
-            if (resource.getClass() != Train.class) continue;
+	// Gives a player a train from each type with the lowest stats
+	private void giveStarterTrains(Player player) {
+		for (TrainType trainType : TrainType.values()) {
+			Train train = TrainStorage.getStarterTrain(trainType);
+			if (train != null)
+				player.getInventory().addNewResource(train);
+		}
+	}
 
-            Train train = (Train) resource;
-            if (requiredTrainType == train.getType()) {
-                suitableTrains.add((Train) resource);
-            }
-        }
-        return suitableTrains;
-    }
-    
-    public int getTurnClock() {
-    	return (int) (timePerTurn - (System.currentTimeMillis()-turnStartTime))/1000;
-    }
+	public void switchPlayer() {
+		int nextPlayerIndex;
+		int currentPlayerIndex = players.indexOf(activePlayer);
 
-    private void generatePossibleContracts() {
-        for (List<Route> routeList : map.getPossibleRoutes().values()) {
-            int numberOfRoutes = routeList.size();
-            if (numberOfRoutes == 0) continue;
-            int averageDistance = 0;
-            for (Route route : routeList) {
-                averageDistance += Utilities.routeLength(route.getTracks());
-            }
-            averageDistance = averageDistance / numberOfRoutes;
+		// Going round in a cycle instead of a simple toggle
+		// for 2+ player support.
+		if (players.size() == currentPlayerIndex + 1) {
+			nextPlayerIndex = 0;
+		} else {
+			nextPlayerIndex = currentPlayerIndex + 1;
+		}
+		activePlayer = players.get(nextPlayerIndex);
+		turnStartTime = System.currentTimeMillis();
+		gameListener.turnBegin();
+	}
 
-            // Doing a random route and not the fastest route as the initial
-            // route because we want the user to have a bit of choice!
-            Random r = new Random();
-            int nextRouteIndex = r.nextInt(numberOfRoutes);
-            Route nextRoute = routeList.get(nextRouteIndex);
+	// Starting the players turn by giving them the contract and
+	// train they have chosen.
+	// Note there is no choose method in here, should be handled in GUI after
+	// presenting them contracts and then trains as shown below.
+	public void assignContract(Train train, Contract contract) {
+		activePlayer.acceptContract(train, contract);
+		possibleContracts.remove(contract);
+	}
 
-            int nextTrainTypeIndex = r.nextInt(TrainType.values().length);
-            TrainType trainType = TrainType.values()[nextTrainTypeIndex];
+	// Returns a list of contracts for player to choose from
+	public List<Contract> getContracts() {
+		List<Contract> contracts = new ArrayList<Contract>();
+		Random r = new Random();
+		while (contracts.size() < contractsToChooseFromEachTurn) {
+			int nextContractIndex = r.nextInt(possibleContracts.size());
+			Contract nextContract = possibleContracts.get(nextContractIndex);
+			if (!contracts.contains(nextContract)) {
+				contracts.add(nextContract);
+			}
+		}
+		return contracts;
+	}
 
-            Contract contract = new Contract(nextRoute, new ArrayList<Location>(),
-                    averageDistance, trainType, averageDistance, averageDistance, 0);
+	// Returns the trains that the activePlayer can choose subject to their
+	// contract
+	public List<Train> getTrains(Contract contract) {
+		TrainType requiredTrainType = contract.getRequiredTrainType();
+		List<Train> suitableTrains = new ArrayList<Train>();
+		for (Resource resource : activePlayer.getInventory().getContents()) {
+			if (resource.getClass() != Train.class)
+				continue;
 
-            possibleContracts.add(contract);
-        }
+			Train train = (Train) resource;
+			if (requiredTrainType == train.getType()) {
+				suitableTrains.add((Train) resource);
+			}
+		}
+		return suitableTrains;
+	}
 
-        // TODO filter contracts based on most available routes and length
-        // while there are atleast players.size() * maxContracts (+ 2 for a choice of three),
-        // drop short contracts and then contracts with fewer routes.
-    }
+	public int getTurnClock() {
+		return (int) (timePerTurn - (System.currentTimeMillis() - turnStartTime)) / 1000;
+	}
 
-    // Changing the intersection/junction, setting which track a train will move to next
-    // Note the distinction between this and the changeRoute method.
-    // Returns true if the change was successful
-    public boolean changeActiveConnection(Track track, Track prospectiveNextTrack) {
-        Point commonPoint = track.getCommonPoint(prospectiveNextTrack);
+	private void generatePossibleContracts() {
+		for (List<Route> routeList : map.getPossibleRoutes().values()) {
+			int numberOfRoutes = routeList.size();
+			if (numberOfRoutes == 0)
+				continue;
+			int averageDistance = 0;
+			for (Route route : routeList) {
+				averageDistance += Utilities.routeLength(route.getTracks());
+			}
+			averageDistance = averageDistance / numberOfRoutes;
 
-        if (commonPoint != null) {
-            track.setActiveConnection(commonPoint, prospectiveNextTrack);
-        }
+			// Doing a random route and not the fastest route as the initial
+			// route because we want the user to have a bit of choice!
+			Random r = new Random();
+			int nextRouteIndex = r.nextInt(numberOfRoutes);
+			Route nextRoute = routeList.get(nextRouteIndex);
 
-        return prospectiveNextTrack == track.getActiveConnectedTrackTowards(commonPoint);
-    }
+			int nextTrainTypeIndex = r.nextInt(TrainType.values().length);
+			TrainType trainType = TrainType.values()[nextTrainTypeIndex];
 
-    // This method modifies where the active players train.
-    // Note the distinction between this and changeActiveConnection
-    // A train will wait at an intersection until there is an activeConnection
-    // between the track it is on currently and the next track it wants to go to
-    // (the next track in the route).
-    public void changeRoute(Track trackInRoute, Track prospectiveNextTrack) {
-        activePlayer.getActiveTrain().changeRoute(trackInRoute, prospectiveNextTrack);
-    }
+			Contract contract = new Contract(nextRoute,
+					new ArrayList<Location>(), averageDistance, trainType,
+					averageDistance, averageDistance, 0);
 
-    // A test to see if a player trains is where the contract says the destination is
-    // if it has not been finished before the time runs out then call
-    // faliedCurrentContract, else fulfilledCurrentContract
-    public boolean hasCompletedContract(Player player) {
-        ActiveTrain activeTrain = player.getActiveTrain();
-        // fix for imperfect moving trains
-//        return Utilities.distance(activeTrain.getDestination().equals(activeTrain.getCurrentPosition());
-        return Utilities.distance(activeTrain.getDestination(),activeTrain.getCurrentPosition()) < 5;
-    }
+			possibleContracts.add(contract);
+		}
 
-    public void fulfilledCurrentContract(Player player) {
-        player.fulfilledCurrentContract();
-    }
+		// TODO filter contracts based on most available routes and length
+		// while there are atleast players.size() * maxContracts (+ 2 for a
+		// choice of three),
+		// drop short contracts and then contracts with fewer routes.
+	}
 
-    public void failedCurrentContract(Player player) {
-        player.failedCurrentContract();
-    }
+	// Changing the intersection/junction, setting which track a train will move
+	// to next
+	// Note the distinction between this and the changeRoute method.
+	// Returns true if the change was successful
+	public boolean changeActiveConnection(Track track,
+			Track prospectiveNextTrack) {
+		Point commonPoint = track.getCommonPoint(prospectiveNextTrack);
 
-    public boolean hasAContract(Player player){
-        return player.getCurrentContract() != null;
-    }
+		if (commonPoint != null) {
+			track.setActiveConnection(commonPoint, prospectiveNextTrack);
+		}
 
-    public void setTrainSpeed(double percentage) {
-        ActiveTrain activeTrain = activePlayer.getActiveTrain();
-        if (activeTrain == null) return;
-        double newSpeed = activeTrain.getTrain().getMaxSpeed() * percentage;
-        activeTrain.setCurrentSpeed(newSpeed);
-    }
+		return prospectiveNextTrack == track
+				.getActiveConnectedTrackTowards(commonPoint);
+	}
 
-    public void reverseTrain() {
-        ActiveTrain activeTrain = activePlayer.getActiveTrain();
-        if (activeTrain == null) return;
-        activeTrain.reverse();
-    }
+	// This method modifies where the active players train.
+	// Note the distinction between this and changeActiveConnection
+	// A train will wait at an intersection until there is an activeConnection
+	// between the track it is on currently and the next track it wants to go to
+	// (the next track in the route).
+	public void changeRoute(Track trackInRoute, Track prospectiveNextTrack) {
+		activePlayer.getActiveTrain().changeRoute(trackInRoute,
+				prospectiveNextTrack);
+	}
 
-    // timePassed = time since last frame update
-    public void update(long timePassed) {
-        for (Player player : players) {
-            ActiveTrain activeTrain = player.getActiveTrain();
-            if (activeTrain != null) {
-                // Infinite fuel
-                activeTrain.getTrain().refill(Integer.MAX_VALUE);
-                activeTrain.move(timePassed);
-            }
-        }
-    }
+	// A test to see if a player trains is where the contract says the
+	// destination is
+	// if it has not been finished before the time runs out then call
+	// faliedCurrentContract, else fulfilledCurrentContract
+	public boolean hasCompletedContract(Player player) {
+		ActiveTrain activeTrain = player.getActiveTrain();
+		// fix for imperfect moving trains
+		// return
+		// Utilities.distance(activeTrain.getDestination().equals(activeTrain.getCurrentPosition());
+		return Utilities.distance(activeTrain.getDestination(),
+				activeTrain.getCurrentPosition()) < 5;
+	}
+
+	public void fulfilledCurrentContract(Player player) {
+		player.fulfilledCurrentContract();
+	}
+
+	public void failedCurrentContract(Player player) {
+		player.failedCurrentContract();
+	}
+
+	public boolean hasAContract(Player player) {
+		return player.getCurrentContract() != null;
+	}
+
+	public void setTrainSpeed(double percentage) {
+		ActiveTrain activeTrain = activePlayer.getActiveTrain();
+		if (activeTrain == null)
+			return;
+		double newSpeed = activeTrain.getTrain().getMaxSpeed() * percentage;
+		activeTrain.setCurrentSpeed(newSpeed);
+	}
+
+	public void reverseTrain() {
+		ActiveTrain activeTrain = activePlayer.getActiveTrain();
+		if (activeTrain == null)
+			return;
+		activeTrain.reverse();
+	}
+
+	// timePassed = time since last frame update
+	public void update(long timePassed) {
+		for (Player player : players) {
+			ActiveTrain activeTrain = player.getActiveTrain();
+			if (activeTrain != null) {
+				// Infinite fuel
+				activeTrain.getTrain().refill(Integer.MAX_VALUE);
+				activeTrain.move(timePassed);
+			}
+		}
+	}
 
 	@Override
 	public void run() {
 		turnStartTime = System.currentTimeMillis();
 		loopTime = System.currentTimeMillis();
-		while(gameRunning) {
+		while (gameRunning) {
 			long nowTime = System.currentTimeMillis();
-			update(nowTime-loopTime);
+			update(nowTime - loopTime);
 			gameListener.update();
-			if(hasAContract(activePlayer)) {
-				if(hasCompletedContract(activePlayer)) {
+			if (hasAContract(activePlayer)) {
+				if (hasCompletedContract(activePlayer)) {
 					gameListener.contractCompleted();
 					fulfilledCurrentContract(activePlayer);
 				}
-				if(activePlayer.isContractOutOfTime()) {
+				if (activePlayer.isContractOutOfTime()) {
 					gameListener.contractFailed();
 					failedCurrentContract(activePlayer);
 				}
 			}
-			if(activePlayer.getNumberOfAttemptedContracts() >= maxContracts) {
+			if (activePlayer.getNumberOfAttemptedContracts() >= maxContracts) {
 				gameListener.gameEnd();
 				gameRunning = false;
 				break;
 			}
-			if(!hasAContract(activePlayer)) {
-				gameListener.contractChoose(); //will be handled all in GameWindow
+			if (!hasAContract(activePlayer)) {
+				gameListener.contractChoose(); // will be handled all in
+												// GameWindow
 			}
-			if(nowTime-turnStartTime >= timePerTurn) {
+			if (nowTime - turnStartTime >= timePerTurn) {
 				switchPlayer();
 			}
 		}
 	}
-	
+
 	public void addGameEventListener(GameEventListener gameEventListener) {
 		gameListener = gameEventListener;
 	}

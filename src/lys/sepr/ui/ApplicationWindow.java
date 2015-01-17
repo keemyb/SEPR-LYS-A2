@@ -34,6 +34,9 @@ public class ApplicationWindow extends JFrame {
 	JLabel titleLabel = new JLabel("World War Trains");
 
 	JPanel menuPanel = new JPanel();
+	
+	//reference for the windowListener only
+	private Game g = null;
 
 	public static final String TITLE = "World War Trains";
 
@@ -84,7 +87,7 @@ public class ApplicationWindow extends JFrame {
 		List<Player> players = new ArrayList<Player>(Arrays.asList(
 				new Player(0), new Player(0)));
 		try {
-			Game g = new Game(players, 1, Actions.loadMap());
+			g = new Game(players, 1, Actions.loadMap());
 			GameWindow gw = new GameWindow(g);
 			gw.addWindowListener(new WindowListener() {
 
@@ -102,7 +105,7 @@ public class ApplicationWindow extends JFrame {
 
 				@Override
 				public void windowClosing(WindowEvent arg0) {
-					
+					g.stopGame();
 				}
 
 				@Override
