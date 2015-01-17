@@ -1,21 +1,11 @@
 package lys.sepr.ui;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Image;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JViewport;
+import javax.swing.*;
 
 import lys.sepr.game.Contract;
 import lys.sepr.game.Game;
@@ -67,6 +57,7 @@ public class GameWindow extends JFrame {
 	State state = new lys.sepr.ui.State();
 
 	JButton pauseButton = new JButton(new ImageIcon("files/pause.png"));
+	JSlider speedSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
 	JButton storeButton = new JButton("Store");
 	JButton inventoryButton = new JButton("Inventory");
 
@@ -234,6 +225,7 @@ public class GameWindow extends JFrame {
 
 		@Override
 		public void update() {
+			game.setTrainSpeed(((double) speedSlider.getValue() / 100) * 0.0000000005);
 			repaint();
 		}
 
@@ -264,7 +256,7 @@ public class GameWindow extends JFrame {
 		add(contractPanel);
 		add(miniMapPanel);
 		add(trainInfoPanel);
-		//add(pauseButton); buggy; fix later
+		mainInfoPanel.add(speedSlider);
 		setVisible(true);
 	}
 
