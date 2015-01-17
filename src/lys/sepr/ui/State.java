@@ -4,8 +4,6 @@ import lys.sepr.game.Player;
 import lys.sepr.game.world.Point;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -23,10 +21,15 @@ public class State {
     private static BufferedImage scaledRailAndWood;
     private static final int railHeight = 20;
 
-    private static final double relativeTrainHeightToRail = 0.8;
+    private static final double relativeTrainWidthToRail = 0.8;
     private static String[] trainPaths;
     private static BufferedImage[] originalTrains;
     private static BufferedImage[] scaledTrains;
+
+    private static final int flagSize = 40;
+    private static String[] flagPaths;
+    private static BufferedImage[] originalFlags;
+    private static BufferedImage[] scaledFlags;
 
     static {
         originalRailAndWood = null;
@@ -38,7 +41,6 @@ public class State {
         scaledRailAndWood = Actions.scaleImage(originalRailAndWood, (double) railHeight / originalRailAndWood.getHeight());
 
         trainPaths = new String[]{"/Train_red.png", "/Train_green.png", "/Train_blue.png", "/Train_yellow.png"};
-
         originalTrains = new BufferedImage[trainPaths.length];
         scaledTrains = new BufferedImage[trainPaths.length];
 
@@ -50,8 +52,23 @@ public class State {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-// Using train width as the train images are vertical
-            scaledTrains[i] = Actions.scaleImage(originalTrains[i], (double) railHeight * relativeTrainHeightToRail / originalTrains[i].getWidth());
+            // Using train width as the train images are vertical
+            scaledTrains[i] = Actions.scaleImage(originalTrains[i], (double) railHeight * relativeTrainWidthToRail / originalTrains[i].getWidth());
+        }
+
+        flagPaths = new String[]{"/Flag_red.png", "/Flag_green.png", "/Flag_blue.png", "/Flag_yellow.png"};
+        originalFlags = new BufferedImage[trainPaths.length];
+        scaledFlags = new BufferedImage[trainPaths.length];
+
+        for (int i=0; i < flagPaths.length; i++) {
+            String path = flagPaths[i];
+
+            try {
+                originalFlags[i] = ImageIO.read(State.class.getResourceAsStream(path));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            scaledFlags[i] = Actions.scaleImage(originalFlags[i], flagSize / (double) originalFlags[i].getWidth());
         }
     }
 
@@ -79,10 +96,24 @@ public class State {
         if (lastZoom != zoom) {
             for (int i=0; i < trainPaths.length; i++) {
                 // Using train width as the train images are vertical
-                scaledTrains[i] = Actions.scaleImage(originalTrains[i], zoom * railHeight * relativeTrainHeightToRail / originalTrains[i].getWidth());
+                scaledTrains[i] = Actions.scaleImage(originalTrains[i], zoom * railHeight * relativeTrainWidthToRail / originalTrains[i].getWidth());
             }
         }
         return scaledTrains[playerColorIndex];
+    }
+
+    public BufferedImage getScaledFlag(Player player) {
+        int playerColorIndex = Player.PlayerColor.valueOf(player.getPlayerColor().toString()).ordinal();
+        if (lastZoom != zoom) {
+            for (int i=0; i < scaledFlags.length; i++) {
+                scaledFlags[i] = Actions.scaleImage(originalFlags[i], zoom * flagSize / (double) originalFlags[i].getWidth());
+            }
+        }
+        return scaledFlags[playerColorIndex];
+    }
+
+    public static int getFlagSize() {
+        return flagSize;
     }
 
     public void zoomIn() {

@@ -10,8 +10,10 @@ import java.util.List;
 
 public class Player {
 
+    // ensure you update assets and paths to this if making new colours.
     public static enum PlayerColor { RED, GREEN, BLUE, YELLOW }
 
+    // defining the actual colours used to paint routes etc with.
     public static Color getColor (PlayerColor playerColor) {
         switch (playerColor) {
             case RED:

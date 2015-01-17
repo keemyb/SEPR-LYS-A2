@@ -114,8 +114,10 @@ public class Actions {
         }
     }
 
-    public static void drawMap(Map map, double locationSize, State state, Graphics2D g2) {
+    public static void drawMap(Game game, State state, Graphics2D g2) {
         double zoom = state.getZoom();
+        Map map = game.getMap();
+
         g2.scale(zoom, zoom);
         g2.drawImage(map.getBackground(), 0, 0, null);
         g2.scale(1/zoom, 1/zoom);
@@ -124,9 +126,7 @@ public class Actions {
             drawTrack(track, state, g2);
         }
 
-        for (Location location : map.getLocations()) {
-            drawLocation(location, locationSize, state, g2);
-        }
+        drawLocations(game, state, g2);
     }
 
     private static void drawTrack(Track track, State state, Graphics2D g2) {
@@ -155,13 +155,52 @@ public class Actions {
         g2.translate(-closestEndToOriginScreenPoint.getX(), -closestEndToOriginScreenPoint.getY());
     }
 
-    private static void drawLocation(Location location, double size, State state, Graphics2D g2) {
-        g2.setColor(Color.RED);
-        g2.setStroke(new BasicStroke(5));
-        size *= state.getZoom();
-        java.awt.Point point = mapPointToScreenPoint(location.getPoint(), state);
-        Rectangle2D.Double rectangle = new Rectangle2D.Double(point.getX() - size / 2, point.getY() - size /2, size, size);
+    private static void drawLocations(Game game, State state, Graphics2D g2) {
+        Map map = game.getMap();
+
+        for (Location location : game.getMap().getLocations()) {
+            drawRegularLocation(location, state, g2);
+        }
+
+        for (Player player : game.getPlayers()) {
+            ActiveTrain activeTrain = player.getActiveTrain();
+            if (activeTrain == null) continue;
+            Location destinationLocation = map.getLocationFromPoint(activeTrain.getDestination());
+            drawDestinationLocation(destinationLocation, player, state, g2);
+        }
+    }
+
+    private static void drawRegularLocation(Location location, State state, Graphics2D g2) {
+        g2.setColor(Color.WHITE);
+        double locationSize = state.getZoom() * state.getFlagSize() * 0.5;
+        g2.setStroke(new BasicStroke((float) locationSize / 4));
+        java.awt.Point locationPoint = mapPointToScreenPoint(location.getPoint(), state);
+        Rectangle2D.Double rectangle = new Rectangle2D.Double(locationPoint.getX() - locationSize / 2, locationPoint.getY() - locationSize /2, locationSize, locationSize);
         g2.draw(rectangle);
+
+        g2.setColor(Color.BLACK);
+        int fontSize = 18;
+        g2.setFont(new Font("Courier New", Font.BOLD, fontSize));
+        String locationName = location.getName();
+        // To be horizontally centered
+        int xOffset = locationName.length() * fontSize / 4;
+        // To be positioned under location.
+        int yOffset = (int) locationSize;
+        g2.drawString(locationName, (float) (locationPoint.getX() - xOffset),
+                (float) (locationPoint.getY() + yOffset));
+    }
+
+    private static void drawDestinationLocation(Location location, Player player, State state, Graphics2D g2) {
+        BufferedImage flag = state.getScaledFlag(player);
+        java.awt.Point point = mapPointToScreenPoint(location.getPoint(), state);
+
+        g2.translate(point.getX(), point.getY());
+        g2.translate(0, -flag.getHeight());
+
+        g2.drawImage(flag, new AffineTransform(), null);
+
+        g2.translate(0, flag.getHeight());
+        g2.translate(-point.getX(), -point.getY());
     }
 
     public static BufferedImage scaleImage(BufferedImage image, double scale) {
