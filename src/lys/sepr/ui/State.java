@@ -1,8 +1,11 @@
 package lys.sepr.ui;
 
+import lys.sepr.game.Player;
 import lys.sepr.game.world.Point;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -20,14 +23,36 @@ public class State {
     private static BufferedImage scaledRailAndWood;
     private static final int railHeight = 20;
 
+    private static final double relativeTrainHeightToRail = 0.8;
+    private static String[] trainPaths;
+    private static BufferedImage[] originalTrains;
+    private static BufferedImage[] scaledTrains;
+
     static {
         originalRailAndWood = null;
         try {
-            originalRailAndWood = ImageIO.read(Actions.class.getResourceAsStream("/RailAndWood.png"));
+            originalRailAndWood = ImageIO.read(State.class.getResourceAsStream("/RailAndWood.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
         scaledRailAndWood = Actions.scaleImage(originalRailAndWood, (double) railHeight / originalRailAndWood.getHeight());
+
+        trainPaths = new String[]{"/Train_red.png", "/Train_green.png", "/Train_blue.png", "/Train_yellow.png"};
+
+        originalTrains = new BufferedImage[trainPaths.length];
+        scaledTrains = new BufferedImage[trainPaths.length];
+
+        for (int i=0; i < trainPaths.length; i++) {
+            String path = trainPaths[i];
+
+            try {
+                originalTrains[i] = ImageIO.read(State.class.getResourceAsStream(path));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+// Using train width as the train images are vertical
+            scaledTrains[i] = Actions.scaleImage(originalTrains[i], (double) railHeight * relativeTrainHeightToRail / originalTrains[i].getWidth());
+        }
     }
 
     public void reset() {
@@ -47,6 +72,17 @@ public class State {
             scaledRailAndWood = Actions.scaleImage(originalRailAndWood, (double) railHeight * zoom / originalRailAndWood.getHeight());
         }
         return scaledRailAndWood;
+    }
+
+    public BufferedImage getScaledTrain(Player player) {
+        int playerColorIndex = Player.PlayerColor.valueOf(player.getPlayerColor().toString()).ordinal();
+        if (lastZoom != zoom) {
+            for (int i=0; i < trainPaths.length; i++) {
+                // Using train width as the train images are vertical
+                scaledTrains[i] = Actions.scaleImage(originalTrains[i], zoom * railHeight * relativeTrainHeightToRail / originalTrains[i].getWidth());
+            }
+        }
+        return scaledTrains[playerColorIndex];
     }
 
     public void zoomIn() {

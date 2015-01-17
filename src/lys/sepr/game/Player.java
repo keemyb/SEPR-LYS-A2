@@ -9,9 +9,12 @@ import java.util.List;
 
 public class Player {
 
+    public static enum PlayerColor { RED, GREEN, BLUE, YELLOW }
+
     private Contract currentContract;
     private long contractStartTime;
     private int money;
+    private PlayerColor playerColor;
 
     private Inventory inventory = new Inventory();
 
@@ -23,8 +26,9 @@ public class Player {
     private int reputation = 0;
     private Profile profile;
 
-    public Player(int money) {
+    public Player(int money, PlayerColor playerColor) {
         this.money = money;
+        this.playerColor = playerColor;
     }
 
     public ActiveTrain getActiveTrain() {
@@ -108,5 +112,9 @@ public class Player {
 
     public int getReputation() {
         return reputation;
+    }
+
+    public PlayerColor getPlayerColor() {
+        return playerColor;
     }
 }

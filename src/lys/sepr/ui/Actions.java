@@ -7,12 +7,12 @@ import lys.sepr.game.Player;
 import lys.sepr.game.world.*;
 import lys.sepr.game.world.Point;
 
-import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 public class Actions {
@@ -24,18 +24,16 @@ public class Actions {
                 double angle = activeTrain.getOrientation();
                 java.awt.Point currentPosition = mapPointToScreenPoint(activeTrain.getCurrentPosition(), state);
 
-                g2.setColor(Color.blue);
-                BufferedImage scaledRailAndWood = state.getScaledRailAndWood();
-                Rectangle2D train = new Rectangle(scaledRailAndWood.getHeight(), scaledRailAndWood.getHeight() / 2);
+                BufferedImage train = state.getScaledTrain(player);
 
                 g2.translate(currentPosition.getX(), currentPosition.getY());
-                g2.rotate(-angle);
-                g2.translate(-train.getWidth(), -train.getHeight() / 2);
+                g2.rotate(Math.PI / 2 - angle);
+                g2.translate(-train.getWidth() / 2, -train.getHeight() / 2);
 
-                g2.fill(train);
+                g2.drawImage(train, new AffineTransform(), null);
 
-                g2.translate(train.getWidth(), train.getHeight() / 2);
-                g2.rotate(angle);
+                g2.translate(train.getWidth() / 2, train.getHeight() / 2);
+                g2.rotate(angle - Math.PI / 2);
                 g2.translate(-currentPosition.getX(), -currentPosition.getY());
             }
         }

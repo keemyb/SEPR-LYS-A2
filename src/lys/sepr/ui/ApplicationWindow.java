@@ -82,7 +82,7 @@ public class ApplicationWindow extends JFrame {
 		// TODO ask for player names and number of contracts
 		// Don't call a main method
 		List<Player> players = new ArrayList<Player>(Arrays.asList(
-				new Player(0), new Player(0)));
+				new Player(0, Player.PlayerColor.BLUE), new Player(0, Player.PlayerColor.GREEN)));
 		try {
 			Game g = new Game(players, 1, Actions.loadMap());
 			GameWindow gw = new GameWindow(g);
@@ -91,44 +91,44 @@ public class ApplicationWindow extends JFrame {
 				@Override
 				public void windowActivated(WindowEvent arg0) {
 					// TODO Auto-generated method stub
-					
+
 				}
 
 				@Override
 				public void windowClosed(WindowEvent arg0) {
 					setVisible(true);
-					
+
 				}
 
 				@Override
 				public void windowClosing(WindowEvent arg0) {
-					
+
 				}
 
 				@Override
 				public void windowDeactivated(WindowEvent arg0) {
 					// TODO Auto-generated method stub
-					
+
 				}
 
 				@Override
 				public void windowDeiconified(WindowEvent arg0) {
 					// TODO Auto-generated method stub
-					
+
 				}
 
 				@Override
 				public void windowIconified(WindowEvent arg0) {
 					// TODO Auto-generated method stub
-					
+
 				}
 
 				@Override
 				public void windowOpened(WindowEvent arg0) {
 					// TODO Auto-generated method stub
-					
+
 				}
-				
+
 			});
 			setVisible(false);
 			gw.setVisible(true);

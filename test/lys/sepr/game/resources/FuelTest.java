@@ -23,7 +23,7 @@ public class FuelTest {
     public void setUp() throws Exception {
         train = new Train("Test Train", 500, 0, Integer.MAX_VALUE,
                 TrainType.PASSENGER, 15, 600, 1d, 0, 100, 100, 10);
-        player = new Player(1);
+        player = new Player(1, Player.PlayerColor.BLUE);
         Route route = new Route(new Point(0,0), new Point(1,1));
         route.addTrack(new Track(new Point(0,0), new Point(1,1)));
         player.setActiveTrain(new ActiveTrain(train, route));
