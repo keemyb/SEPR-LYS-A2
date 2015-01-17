@@ -226,29 +226,17 @@ public class Game implements Runnable {
         return player.getCurrentContract() != null;
     }
 
-    public void increaseTrainSpeed() {
-        double currentSpeed = activePlayer.getActiveTrain().getCurrentSpeed();
-        double maxSpeed = activePlayer.getActiveTrain().getTrain().getMaxSpeed();
-        double increment = maxSpeed / 10;
-        activePlayer.getActiveTrain().setCurrentSpeed(currentSpeed - increment);
-    }
-
-    public void decreaseTrainSpeed() {
-        double currentSpeed = activePlayer.getActiveTrain().getCurrentSpeed();
-        double maxSpeed = activePlayer.getActiveTrain().getTrain().getMaxSpeed();
-        double increment = maxSpeed / 10;
-        activePlayer.getActiveTrain().setCurrentSpeed(currentSpeed + increment);
-    }
-
-    // TODO decide on which way to set train speed, discretely or continuously?
-    // Leaving both sets of methods in for the mean time.
     public void setTrainSpeed(double percentage) {
-        double newSpeed = activePlayer.getActiveTrain().getTrain().getMaxSpeed() * percentage;
-        activePlayer.getActiveTrain().setCurrentSpeed(newSpeed);
+        ActiveTrain activeTrain = activePlayer.getActiveTrain();
+        if (activeTrain == null) return;
+        double newSpeed = activeTrain.getTrain().getMaxSpeed() * percentage;
+        activeTrain.setCurrentSpeed(newSpeed);
     }
 
     public void reverseTrain() {
-        activePlayer.getActiveTrain().reverse();
+        ActiveTrain activeTrain = activePlayer.getActiveTrain();
+        if (activeTrain == null) return;
+        activeTrain.reverse();
     }
 
     // timePassed = time since last frame update
