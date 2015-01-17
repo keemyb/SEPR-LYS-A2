@@ -1,6 +1,8 @@
 package lys.sepr.ui;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -60,6 +62,10 @@ public class GameWindow extends JFrame {
 
 	JButton pauseButton = new JButton(new ImageIcon("files/pause.png"));
 	JSlider speedSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
+	JButton zoomInButton = new JButton("Zoom In");
+	JButton zoomOutButton = new JButton("Zoom Out");
+	JButton zoomResetButton = new JButton("Zoom Reset");
+
 	JButton storeButton = new JButton("Store");
 	JButton inventoryButton = new JButton("Inventory");
 
@@ -254,11 +260,35 @@ public class GameWindow extends JFrame {
 		mainMapScrollPane.getVerticalScrollBar().setUnitIncrement(16);
 		add(mainMapScrollPane);
 
+		zoomInButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				state.zoomIn();
+				setZoom();
+			}
+		});
+
+		zoomOutButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				state.zoomOut();
+				setZoom();
+			}
+		});
+
+		zoomResetButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				state.resetZoom();
+				setZoom();
+			}
+		});
+
 		add(mainInfoPanel);
 		add(contractPanel);
 		add(miniMapPanel);
 		add(trainInfoPanel);
 		mainInfoPanel.add(speedSlider);
+		mainInfoPanel.add(zoomInButton);
+		mainInfoPanel.add(zoomOutButton);
+		mainInfoPanel.add(zoomResetButton);
 	}
 
 	public void setLayouts() {
@@ -275,6 +305,10 @@ public class GameWindow extends JFrame {
 
 		pauseButton.setBounds(width - 80, 0, 80, 60);
 
+		setZoom();
+	}
+
+	private void setZoom() {
 		double zoom = state.getZoom();
 		if (lastZoom != zoom) {
 			int mapBackgroundWidth = (int) (game.getMap().getBackground()

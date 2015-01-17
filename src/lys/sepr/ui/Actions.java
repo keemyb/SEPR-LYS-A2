@@ -9,7 +9,6 @@ import lys.sepr.game.world.Point;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -32,6 +31,7 @@ public class Actions {
     }
 
     public static void drawTrains(Game game, State state, Graphics2D g2) {
+        double zoom = state.getZoom();
         for (Player player : game.getPlayers()) {
             ActiveTrain activeTrain = player.getActiveTrain();
             if (activeTrain != null) {
@@ -39,7 +39,7 @@ public class Actions {
                 java.awt.Point currentPosition = mapPointToScreenPoint(activeTrain.getCurrentPosition(), state);
 
                 g2.setColor(Color.blue);
-                Rectangle2D train = new Rectangle(railAndWood.getHeight(), railAndWood.getHeight() / 2);
+                Rectangle2D train = new Rectangle((int) (railAndWood.getHeight() * zoom), (int) (zoom * railAndWood.getHeight() / 2));
 
                 g2.translate(currentPosition.getX(), currentPosition.getY());
                 g2.rotate(-angle);
@@ -71,6 +71,7 @@ public class Actions {
     }
 
     private static void drawTrackOverlay(Track track, Color color, State state, Graphics2D g2) {
+        double zoom = state.getZoom();
         double trackLength = Utilities.length(track);
         Point closestEndToOrigin = Utilities.closestPoint(new Point(0d, 0d), track.getPoints());
         java.awt.Point closestEndToOriginScreenPoint = mapPointToScreenPoint(closestEndToOrigin, state);
@@ -78,7 +79,7 @@ public class Actions {
         List<Double> vector = Utilities.getVector(closestEndToOrigin, furthestEndToOrigin);
         double angle = Math.atan2(-vector.get(1), vector.get(0));
 
-        Rectangle2D rectangle =  new Rectangle((int) trackLength, (int) (railAndWood.getHeight() * 0.6));
+        Rectangle2D rectangle =  new Rectangle((int) (zoom * trackLength), (int) (zoom * railAndWood.getHeight() * 0.6));
 
         Color transparentColour = new Color(color.getRed(), color.getGreen(), color.getBlue(), 76);
         g2.setColor(transparentColour);
@@ -96,6 +97,7 @@ public class Actions {
 
     public static void drawIntersectionOverlay(Intersection intersection, State state, Graphics2D g2) {
         Point intersectionPoint = intersection.getPoint();
+        java.awt.Point scaledIntersectionPoint = mapPointToScreenPoint(intersectionPoint, state);
         int distanceFromIntersection = 6;
         double zoom = state.getZoom();
 
@@ -103,7 +105,7 @@ public class Actions {
             List<Double> vector = Utilities.getVector(intersectionPoint, track.getOtherPoint(intersectionPoint));
             double angle = Math.atan2(-vector.get(1), vector.get(0));
 
-            int triangleHeight = (int) (railAndWood.getHeight() * 0.8);
+            int triangleHeight = (int) (zoom * railAndWood.getHeight() * 0.8);
 
             int[] xPoints = {0, 0, triangleHeight};
             int[] yPoints = {0, triangleHeight, triangleHeight/2};
@@ -112,7 +114,7 @@ public class Actions {
             Color transparentColour = new Color(Color.GREEN.getRed(), Color.GREEN.getGreen(), Color.GREEN.getBlue(), 220);
             g2.setColor(transparentColour);
 
-            g2.translate(intersectionPoint.getX(), intersectionPoint.getY());
+            g2.translate(scaledIntersectionPoint.getX(), scaledIntersectionPoint.getY());
             g2.rotate(-angle);
             g2.translate(distanceFromIntersection * zoom, 0);
             g2.translate(0, -triangleHeight / 2);
@@ -122,7 +124,7 @@ public class Actions {
             g2.translate(0, triangleHeight / 2);
             g2.translate(-distanceFromIntersection * zoom, 0);
             g2.rotate(angle);
-            g2.translate(-intersectionPoint.getX(), -intersectionPoint.getY());
+            g2.translate(-scaledIntersectionPoint.getX(), -scaledIntersectionPoint.getY());
         }
     }
 
@@ -142,6 +144,7 @@ public class Actions {
     }
 
     private static void drawTrack(Track track, State state, Graphics2D g2) {
+        double zoom = state.getZoom();
         double trackLength = Utilities.length(track);
         Point closestEndToOrigin = Utilities.closestPoint(new Point(0d, 0d), track.getPoints());
         java.awt.Point closestEndToOriginScreenPoint = mapPointToScreenPoint(closestEndToOrigin, state);
