@@ -5,6 +5,8 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -83,8 +85,56 @@ public class ApplicationWindow extends JFrame {
 				new Player(0), new Player(0)));
 		try {
 			Game g = new Game(players, 1, Actions.loadMap());
-			new GameWindow(g);
+			GameWindow gw = new GameWindow(g);
+			gw.addWindowListener(new WindowListener() {
+
+				@Override
+				public void windowActivated(WindowEvent arg0) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void windowClosed(WindowEvent arg0) {
+					setVisible(true);
+					
+				}
+
+				@Override
+				public void windowClosing(WindowEvent arg0) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void windowDeactivated(WindowEvent arg0) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void windowDeiconified(WindowEvent arg0) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void windowIconified(WindowEvent arg0) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void windowOpened(WindowEvent arg0) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+			});
+			setVisible(false);
+			gw.setVisible(true);
 			g.startGame(players.get(0));
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

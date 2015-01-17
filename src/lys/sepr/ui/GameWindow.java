@@ -243,7 +243,7 @@ public class GameWindow extends JFrame {
 		Dialog.setParent(this);
 		setTitle("World War Trains");
 		setSize(1280, 720);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setLayout(null);
 		pauseButton.setFocusPainted(false);
 
@@ -261,7 +261,6 @@ public class GameWindow extends JFrame {
 		add(miniMapPanel);
 		add(trainInfoPanel);
 		mainInfoPanel.add(speedSlider);
-		setVisible(true);
 	}
 
 	public void setLayouts() {
