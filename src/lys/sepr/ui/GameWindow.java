@@ -335,7 +335,6 @@ public class GameWindow extends JFrame {
 		int mapHeight = getHeight() - 200;
 		int width = getWidth() - 16;
 
-		// mainMapPanel.setBounds(0, 0, width, mapHeight);
 		mainMapScrollPane.setBounds(0, 0, width, mapHeight);
 		mainInfoPanel.setBounds(0, mapHeight, width / 2, 150);
 		contractPanel.setBounds(width / 2, mapHeight, width / 4, 150);
@@ -364,7 +363,6 @@ public class GameWindow extends JFrame {
 			mainMapPanel.setPreferredSize(new Dimension(mapBackgroundWidth,
 					mapBackgroundHeight));
 			mainMapScrollPane.getViewport().revalidate();
-			// mainMapScrollPane.getViewport().repaint();
 			lastZoom = zoom;
 		}
 	}

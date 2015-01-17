@@ -7,13 +7,15 @@ import lys.sepr.game.Player;
 import lys.sepr.game.world.*;
 import lys.sepr.game.world.Point;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
+
+import static lys.sepr.game.world.Utilities.closestTrack;
+import static lys.sepr.game.world.Utilities.distance;
 
 public class Actions {
 
@@ -238,5 +240,47 @@ public class Actions {
         File mapXml = new File("files/testMap.trmp");
         Map map = (Map) xstream.fromXML(mapXml);
         return map;
+    }
+
+    public static void selectIntersectionOrTrack(Game game, Point mapMousePoint, Double minPickUpDistance, State state) {
+        // Priority = Intersection > Tracks
+
+        Map map = game.getMap();
+
+        Intersection intersection = selectIntersection(map, mapMousePoint, minPickUpDistance);
+        if (intersection != null) {
+            state.selectIntersection(intersection);
+            state.setHasSelectedTrackOrIntersection(true);
+            return;
+        }
+
+        Track track = selectTrack(map, mapMousePoint, minPickUpDistance);
+        if (track != null) {
+            state.setSelectedTrack(track);
+            state.setHasSelectedTrackOrIntersection(true);
+        }
+    }
+
+    public static Intersection selectIntersection(Map map, Point clickPoint, Double minPickUpDistance) {
+        for (Intersection intersection : map.getIntersections()) {
+            if (distance(clickPoint, intersection.getPoint()) < minPickUpDistance) {
+                return intersection;
+            }
+        }
+        return null;
+    }
+
+    public static Track selectTrack(Map map, Point clickPoint, Double minPickUpDistance) {
+        return closestTrack(clickPoint, map.getTracks(), minPickUpDistance);
+    }
+
+    public static void deselectTrackIntersection(State state) {
+        state.setHasSelectedTrackOrIntersection(false);
+        state.selectIntersection(null);
+        state.setSelectedTrack(null);
+    }
+
+    public static void drawMouseCursor(State state, Graphics2D g2) {
+
     }
 }

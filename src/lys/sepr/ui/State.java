@@ -1,7 +1,9 @@
 package lys.sepr.ui;
 
 import lys.sepr.game.Player;
+import lys.sepr.game.world.Intersection;
 import lys.sepr.game.world.Point;
+import lys.sepr.game.world.Track;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -16,6 +18,10 @@ public class State {
     private final double minZoom = Math.pow(zoomConstant, -(zoomLevels - 1));
 
     private lys.sepr.game.world.Point clickPoint;
+    private boolean hasSelectedTrackOrIntersection;
+
+    private Track selectedTrack;
+    private Intersection selectedIntersection;
 
     private static BufferedImage originalRailAndWood;
     private static BufferedImage scaledRailAndWood;
@@ -134,5 +140,31 @@ public class State {
 
     public double getZoom() {
         return zoom;
+    }
+
+    public void setSelectedTrack(Track track) {
+        this.selectedTrack = track;
+        selectedIntersection = null;
+    }
+
+    public void selectIntersection(Intersection intersection) {
+        this.selectedIntersection = intersection;
+        selectedTrack = null;
+    }
+
+    public void setHasSelectedTrackOrIntersection(boolean hasSelectedTrackOrIntersection) {
+        this.hasSelectedTrackOrIntersection = hasSelectedTrackOrIntersection;
+    }
+
+    public boolean hasSelectedTrackOrIntersection() {
+        return hasSelectedTrackOrIntersection;
+    }
+
+    public Intersection getSelectedIntersection() {
+        return selectedIntersection;
+    }
+
+    public Track getSelectedTrack() {
+        return selectedTrack;
     }
 }
