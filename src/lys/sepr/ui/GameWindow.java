@@ -264,6 +264,7 @@ public class GameWindow extends JFrame {
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setLayout(null);
 		pauseButton.setFocusPainted(false);
+		trainInfoPanelShowButton.setFont(new Font("Courier New", Font.BOLD, 12));
 		trainInfoPanelShowButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
