@@ -1,13 +1,22 @@
 package lys.sepr.ui;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSlider;
+import javax.swing.JViewport;
 
 import lys.sepr.game.Contract;
 import lys.sepr.game.Game;
@@ -20,47 +29,56 @@ public class GameWindow extends JFrame {
 	public Game game = null;
 
 	private int trainPanelX = -230;
+	private boolean trainPanelShow = false;
 	private double lastZoom;
 
-	Image coinstack = new ImageIcon(
-			"files/coinstack.png").getImage().getScaledInstance(60, 60,
-					Image.SCALE_SMOOTH);
-	
+	Image coinstack = new ImageIcon("files/coinstack.png").getImage()
+			.getScaledInstance(60, 60, Image.SCALE_SMOOTH);
+
 	MainMapPanel mainMapPanel = new MainMapPanel();
 	JScrollPane mainMapScrollPane = new JScrollPane();
 	JPanel mainInfoPanel = new JPanel() {
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			g.setColor(Color.BLACK);
-			g.drawRect(0, 0, getWidth()-1, getHeight()-1);
-			
-			//Money
+			g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
+
+			// Money
 			g.drawImage(coinstack, 90, 80, this);
 			g.setFont(new Font("Courier New", Font.PLAIN, 30));
-			g.drawString(""+game.getActivePlayer().getMoney(), 165, 115);
-			
-			g.drawString("" + game.getTurnClock() + "s", getWidth()-60, 30);
-			
+			g.drawString("" + game.getActivePlayer().getMoney(), 165, 115);
+
+			g.drawString("" + game.getTurnClock() + "s", getWidth() - 60, 30);
+
 		}
 	};
 	JPanel contractPanel = new JPanel() {
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			g.setColor(Color.BLACK);
-			g.drawRect(0, 0, getWidth()-1, getHeight()-1);	
+			g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
 		}
 	};
 	JPanel miniMapPanel = new JPanel() {
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			g.setColor(Color.BLACK);
-			g.drawRect(0, 0, getWidth()-1, getHeight()-1);	
+			g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
 		}
 	};
-	JPanel trainInfoPanel = new JPanel();
+	JPanel trainInfoPanel = new JPanel() {
+		public void paintComponent(Graphics g) {
+			super.paintComponent(g);
+			g.setColor(Color.BLACK);
+			g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
+		}
+	};
+	JButton trainInfoPanelShowButton = new JButton(">");
 	State state = new lys.sepr.ui.State();
 
-	JButton pauseButton = new JButton(new ImageIcon("files/pause.png"));
+	JButton pauseButton = new JButton(new ImageIcon(new ImageIcon(
+			"files/pause.png").getImage().getScaledInstance(40, 40,
+			Image.SCALE_SMOOTH)));
 	JSlider speedSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
 	JButton zoomInButton = new JButton("Zoom In");
 	JButton zoomOutButton = new JButton("Zoom Out");
@@ -250,6 +268,21 @@ public class GameWindow extends JFrame {
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setLayout(null);
 		pauseButton.setFocusPainted(false);
+		trainInfoPanelShowButton.setFont(new Font("Courier New", Font.BOLD, 12));
+		trainInfoPanelShowButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if (trainPanelShow) {
+					trainPanelX = -230;
+					trainPanelShow = false;
+					trainInfoPanelShowButton.setText(">");
+				} else {
+					trainPanelX = 0;
+					trainPanelShow = true;
+					trainInfoPanelShowButton.setText("<");
+				}
+			}
+		});
 
 		mainMapPanel.setGame(game);
 		mainMapPanel.setState(state);
@@ -258,7 +291,6 @@ public class GameWindow extends JFrame {
 				JViewport.SIMPLE_SCROLL_MODE);
 		mainMapScrollPane.getHorizontalScrollBar().setUnitIncrement(16);
 		mainMapScrollPane.getVerticalScrollBar().setUnitIncrement(16);
-		add(mainMapScrollPane);
 
 		zoomInButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -281,6 +313,10 @@ public class GameWindow extends JFrame {
 			}
 		});
 
+		// Container contentPane = getContentPane();
+
+		add(pauseButton);
+		add(trainInfoPanelShowButton);
 		add(mainInfoPanel);
 		add(contractPanel);
 		add(miniMapPanel);
@@ -289,11 +325,12 @@ public class GameWindow extends JFrame {
 		mainInfoPanel.add(zoomInButton);
 		mainInfoPanel.add(zoomOutButton);
 		mainInfoPanel.add(zoomResetButton);
+		add(mainMapScrollPane);
 	}
 
 	public void setLayouts() {
 		int mapHeight = getHeight() - 200;
-		int width = getWidth()-16;
+		int width = getWidth() - 16;
 
 		// mainMapPanel.setBounds(0, 0, width, mapHeight);
 		mainMapScrollPane.setBounds(0, 0, width, mapHeight);
@@ -301,9 +338,15 @@ public class GameWindow extends JFrame {
 		contractPanel.setBounds(width / 2, mapHeight, width / 4, 150);
 		miniMapPanel.setBounds(3 * (width / 4), mapHeight, width / 4, 150);
 
-		trainInfoPanel.setBounds(trainPanelX, 0, 230, mapHeight);
+		int scrollBarWidth = 17;
+		int trainPanelHeight = mapHeight-scrollBarWidth;
+		trainInfoPanel.setBounds(trainPanelX, 0, 230, trainPanelHeight);
+		int trainPanelButtonHeight = trainInfoPanelShowButton.getMinimumSize().height;
+		int trainPanelButtonWidth = trainInfoPanelShowButton.getMinimumSize().width;
+		trainInfoPanelShowButton.setBounds(trainPanelX + 230,
+				(trainPanelHeight-trainPanelButtonHeight)/ 2, trainPanelButtonWidth, trainPanelButtonHeight);
 
-		pauseButton.setBounds(width - 80, 0, 80, 60);
+		pauseButton.setBounds(width - (60+scrollBarWidth), 0, 60, 50);
 
 		setZoom();
 	}
@@ -318,7 +361,7 @@ public class GameWindow extends JFrame {
 			mainMapPanel.setPreferredSize(new Dimension(mapBackgroundWidth,
 					mapBackgroundHeight));
 			mainMapScrollPane.getViewport().revalidate();
-			mainMapScrollPane.getViewport().repaint();
+			// mainMapScrollPane.getViewport().repaint();
 			lastZoom = zoom;
 		}
 	}
@@ -328,16 +371,11 @@ public class GameWindow extends JFrame {
 		super.paint(g);
 	}
 
-	/*public static void main(String[] args) {
-		// new GameWindow(null);
-		List<Player> players = new ArrayList<Player>(Arrays.asList(
-				new Player(0), new Player(0)));
-		try {
-			Game g = new Game(players, 1, Actions.loadMap());
-			new GameWindow(g);
-			g.startGame(players.get(0));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}*/
+	/*
+	 * public static void main(String[] args) { // new GameWindow(null);
+	 * List<Player> players = new ArrayList<Player>(Arrays.asList( new
+	 * Player(0), new Player(0))); try { Game g = new Game(players, 1,
+	 * Actions.loadMap()); new GameWindow(g); g.startGame(players.get(0)); }
+	 * catch (Exception e) { e.printStackTrace(); } }
+	 */
 }
