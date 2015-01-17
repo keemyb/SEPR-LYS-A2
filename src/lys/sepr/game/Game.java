@@ -224,14 +224,16 @@ public class Game implements Runnable {
 
     public void increaseTrainSpeed() {
         double currentSpeed = activePlayer.getActiveTrain().getCurrentSpeed();
-        double newSpeed = currentSpeed * 1.25;
-        activePlayer.getActiveTrain().setCurrentSpeed(newSpeed);
+        double maxSpeed = activePlayer.getActiveTrain().getTrain().getMaxSpeed();
+        double increment = maxSpeed / 10;
+        activePlayer.getActiveTrain().setCurrentSpeed(currentSpeed - increment);
     }
 
     public void decreaseTrainSpeed() {
         double currentSpeed = activePlayer.getActiveTrain().getCurrentSpeed();
-        double newSpeed = currentSpeed / 1.25;
-        activePlayer.getActiveTrain().setCurrentSpeed(newSpeed);
+        double maxSpeed = activePlayer.getActiveTrain().getTrain().getMaxSpeed();
+        double increment = maxSpeed / 10;
+        activePlayer.getActiveTrain().setCurrentSpeed(currentSpeed + increment);
     }
 
     // TODO decide on which way to set train speed, discretely or continuously?
