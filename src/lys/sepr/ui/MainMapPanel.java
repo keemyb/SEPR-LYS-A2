@@ -23,6 +23,8 @@ public class MainMapPanel extends JPanel {
 
     private MouseHandler mouseHandler = new MouseHandler();
 
+    private BufferedImage mapBackground;
+
     private static BufferedImage cursorNormalImage;
     private static BufferedImage cursorIntersectionImage;
     private static BufferedImage cursorRouteChangeImage;
@@ -75,6 +77,11 @@ public class MainMapPanel extends JPanel {
     public void setGame(Game game) {
         this.game = game;
         this.map = game.getMap();
+        mapBackground = Actions.getBackground(map);
+    }
+
+    public BufferedImage getMapBackground() {
+        return mapBackground;
     }
 
     private class MouseHandler extends MouseAdapter {
@@ -126,7 +133,7 @@ public class MainMapPanel extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        lys.sepr.ui.Actions.drawMap(game, state, g2);
+        lys.sepr.ui.Actions.drawMap(game, mapBackground, state, g2);
         lys.sepr.ui.Actions.drawTrainPathOverlay(game.getActivePlayer(), state, g2);
         for (Intersection intersection : map.getIntersections()) {
             Actions.drawIntersectionOverlay(intersection, state, g2);

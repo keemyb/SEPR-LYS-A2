@@ -12,10 +12,8 @@ import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -60,7 +58,7 @@ public final class Actions {
 
     public static Color randomColor() {
         Random r = new Random();
-        int rgb = Color.HSBtoRGB(r.nextFloat(),0.9f,1.0f);
+        int rgb = Color.HSBtoRGB(r.nextFloat(), 0.9f, 1.0f);
         return new Color(rgb);
     }
 
@@ -465,11 +463,12 @@ public final class Actions {
         g2.draw(circle);
     }
 
-    public static void loadMapAndBackground(MapView mapView, JPanel jPanel) {
+    public static void loadMap(MapView mapView, JPanel jPanel) {
         XStream xstream = new XStream();
 
         JFileChooser chooser = new JFileChooser();
         FileFilter fileFilter = new FileNameExtensionFilter("Map Files", "trmp");
+
         chooser.setFileFilter(fileFilter);
         chooser.setDialogTitle("Load map");
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -478,27 +477,32 @@ public final class Actions {
         if (resultMap == chooser.APPROVE_OPTION) {
             File mapXml = chooser.getSelectedFile();
             Map map = (Map) xstream.fromXML(mapXml);
-            mapView.setMap(map);
-        } else return;
+            mapView.setMap(map, chooser.getSelectedFile().getParent());
+        }
+    }
 
-        chooser = new JFileChooser();
-        fileFilter = new FileNameExtensionFilter("Images", ImageIO.getReaderFileSuffixes());
+    public static void setBackground(MapView mapView, JPanel jPanel) {
+        JFileChooser chooser = new JFileChooser();
+        FileFilter fileFilter = new FileNameExtensionFilter("Images", ImageIO.getReaderFileSuffixes());
+
         chooser.setFileFilter(fileFilter);
         chooser.setDialogTitle("Load background");
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         int resultBackground = chooser.showOpenDialog(jPanel);
 
         if (resultBackground == chooser.APPROVE_OPTION) {
-            try {
-                BufferedImage background = ImageIO.read(chooser.getSelectedFile());
-                mapView.setBackground(background);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            mapView.getMap().setBackgroundFileName(chooser.getSelectedFile().getName());
+            mapView.showBackgroundFullPath(chooser.getSelectedFile().getPath());
         }
     }
 
     public static void saveMap(Map map, JPanel jPanel) {
+        if (map.getBackgroundFileName() == null) {
+            JOptionPane.showMessageDialog(jPanel, "You must set a background to save a map. \n" +
+                    "Please ensure this background file stays with your map file.", "No Background set", JOptionPane.OK_OPTION);
+            return;
+        }
+
         XStream xstream = new XStream();
         String mapXml = xstream.toXML(map);
 

@@ -6,12 +6,19 @@ import lys.sepr.game.Game;
 import lys.sepr.game.Player;
 import lys.sepr.game.world.*;
 import lys.sepr.game.world.Point;
+import lys.sepr.mapCreator.MapView;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import static lys.sepr.game.world.Utilities.closestTrack;
@@ -116,12 +123,12 @@ public class Actions {
         }
     }
 
-    public static void drawMap(Game game, State state, Graphics2D g2) {
+    public static void drawMap(Game game, BufferedImage background, State state, Graphics2D g2) {
         double zoom = state.getZoom();
         Map map = game.getMap();
 
         g2.scale(zoom, zoom);
-        g2.drawImage(map.getBackground(), 0, 0, null);
+        g2.drawImage(background, 0, 0, null);
         g2.scale(1/zoom, 1/zoom);
         
         for (Track track : map.getTracks()) {
@@ -237,7 +244,12 @@ public class Actions {
     public static Map loadMap() {
         XStream xstream = new XStream();
 
-        File mapXml = new File("files/testMap.trmp");
+        File mapXml = null;
+        try {
+            mapXml = new File(Actions.class.getResource("/testMap.trmp").toURI());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
         Map map = (Map) xstream.fromXML(mapXml);
         return map;
     }
@@ -280,4 +292,14 @@ public class Actions {
         state.selectIntersection(null);
         state.setSelectedTrack(null);
     }
+
+    public static BufferedImage getBackground(Map map) {
+        try {
+            return ImageIO.read(Actions.class.getResourceAsStream("/" + map.getBackgroundFileName()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

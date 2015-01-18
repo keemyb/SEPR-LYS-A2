@@ -356,10 +356,8 @@ public class GameWindow extends JFrame {
 	private void setZoom() {
 		double zoom = state.getZoom();
 		if (lastZoom != zoom) {
-			int mapBackgroundWidth = (int) (game.getMap().getBackground()
-					.getWidth() * zoom);
-			int mapBackgroundHeight = (int) (game.getMap().getBackground()
-					.getHeight() * zoom);
+			int mapBackgroundWidth = (int) (mainMapPanel.getMapBackground().getWidth() * zoom);
+			int mapBackgroundHeight = (int) (mainMapPanel.getMapBackground().getHeight() * zoom);
 			mainMapPanel.setPreferredSize(new Dimension(mapBackgroundWidth,
 					mapBackgroundHeight));
 			mainMapScrollPane.getViewport().revalidate();

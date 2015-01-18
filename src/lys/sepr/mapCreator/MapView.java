@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
@@ -31,8 +32,6 @@ public class MapView {
     private Map map;
     private State state;
 
-    private double lastZoom;
-
     // This list represents the modes that the map will be redrawn in to
     // show new objects based on the users current mouse location.
     private List<Integer> liveUpdateModes = new ArrayList<Integer>(Arrays.asList(
@@ -40,6 +39,7 @@ public class MapView {
     ));
 
     BufferedImage background;
+    String defaultBackgroundName = "europe.png";
 
     JScrollPane scrollPane = new JScrollPane();
 
@@ -62,12 +62,12 @@ public class MapView {
 
         scrollPane.setViewportView(mapPanel);
         scrollPane.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
-        setDefaultBackground();
 
         scrollPane.getHorizontalScrollBar().setUnitIncrement(16);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
         map = new Map();
+        showDefaultBackground();
 
         mapPanel.addMouseListener(mouseHandler);
         mapPanel.addMouseMotionListener(mouseHandler);
@@ -75,43 +75,48 @@ public class MapView {
 
     public void setMapPanelSize() {
         double zoom = state.getZoom();
-        if (lastZoom != zoom) {
-            int width = (int) (background.getWidth() * zoom);
-            int height = (int) (background.getHeight() * zoom);
-            mapPanel.setPreferredSize(new Dimension(width, height));
-            scrollPane.getViewport().revalidate();
-            scrollPane.getViewport().repaint();
-            lastZoom = zoom;
-        }
+        int width = (int) (background.getWidth() * zoom);
+        int height = (int) (background.getHeight() * zoom);
+        mapPanel.setPreferredSize(new Dimension(width, height));
+        scrollPane.getViewport().revalidate();
+        scrollPane.getViewport().repaint();
     }
 
     public Map getMap() {
         return map;
     }
 
-    public BufferedImage getBackground() {
-        return background;
-    }
-
-    public void setMap(Map map) {
+    public void setMap(Map map, String mapPath) {
         this.map = map;
-        mapPanel.repaint();
+        showBackgroundFullPath(mapPath + "\\" + map.getBackgroundFileName());
         state.reset();
     }
 
-    public void setDefaultBackground() {
+    public void refreshBackground() {
+        setMapPanelSize();
+        mapPanel.repaint();
+    }
+    public void showDefaultBackground() {
         try {
-            background = ImageIO.read(getClass().getResourceAsStream("/europe.png"));
+            background = ImageIO.read(getClass().getResourceAsStream("/" + defaultBackgroundName));
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        setBackground(background);
+        refreshBackground();
     }
-    public void setBackground(BufferedImage background) {
-        this.background = background;
-        setMapPanelSize();
-        mapPanel.repaint();
+
+    public void showBackgroundFullPath(String backgroundFilePath) {
+        if (backgroundFilePath == null) {
+            showDefaultBackground();
+        } else {
+            try {
+                System.out.println(backgroundFilePath);
+                this.background = ImageIO.read(new File(backgroundFilePath));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            refreshBackground();
+        }
     }
 
     public JScrollPane getScrollPane() {

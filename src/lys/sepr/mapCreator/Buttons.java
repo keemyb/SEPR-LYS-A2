@@ -19,6 +19,7 @@ public class Buttons {
     JRadioButton renameLocationButton = new JRadioButton("Rename Location");
     JButton saveMapButton = new JButton("Save Map");
     JButton loadMapButton = new JButton("Load Map");
+    JButton setBackgroundButton = new JButton("Set Background");
     JButton zoomInButton = new JButton("Zoom In");
     JButton zoomOutButton = new JButton("Zoom Out");
     JButton zoomResetButton = new JButton("Reset Zoom");
@@ -55,8 +56,9 @@ public class Buttons {
         buttonPanel.add(deleteIntersectionModeButton);
         buttonPanel.add(breakTrackModeButton);
         buttonPanel.add(renameLocationButton);
-        buttonPanel.add(loadMapButton);
         buttonPanel.add(saveMapButton);
+        buttonPanel.add(loadMapButton);
+        buttonPanel.add(setBackgroundButton);
         buttonPanel.add(zoomInButton);
         buttonPanel.add(zoomOutButton);
         buttonPanel.add(zoomResetButton);
@@ -146,7 +148,7 @@ public class Buttons {
 
         loadMapButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                actions.loadMapAndBackground(mapView, mapView.getMapPanel());
+                actions.loadMap(mapView, mapView.getMapPanel());
             }
         });
 
@@ -187,6 +189,13 @@ public class Buttons {
         showIntersectionsCheckBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 state.setShowIntersections(!state.isShowingIntersections());
+                mapView.getMapPanel().repaint();
+            }
+        });
+
+        setBackgroundButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                actions.setBackground(mapView, mapView.getMapPanel());
                 mapView.getMapPanel().repaint();
             }
         });
