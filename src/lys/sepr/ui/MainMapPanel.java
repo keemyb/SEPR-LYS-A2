@@ -36,21 +36,21 @@ public class MainMapPanel extends JPanel {
     static {
         cursorNormalImage = null;
         try {
-            cursorNormalImage = ImageIO.read(State.class.getResourceAsStream("/Cursor_normal.png"));
+            cursorNormalImage = ImageIO.read(State.class.getResourceAsStream("/Cursor_normal_small.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         cursorIntersectionImage = null;
         try {
-            cursorIntersectionImage = ImageIO.read(State.class.getResourceAsStream("/Cursor_junction.png"));
+            cursorIntersectionImage = ImageIO.read(State.class.getResourceAsStream("/Cursor_junction_small.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         cursorRouteChangeImage = null;
         try {
-            cursorRouteChangeImage = ImageIO.read(State.class.getResourceAsStream("/Cursor_routeChange.png"));
+            cursorRouteChangeImage = ImageIO.read(State.class.getResourceAsStream("/Cursor_routeChange_small.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
