@@ -182,10 +182,13 @@ public class ActiveTrain {
     }
 
     public void reverse() {
-        Track currentTrack = remainderOfRoute.get(0);
+        // Simply clearing the list and then adding the first one back
+        // doesn't play nicely with move for some reason
+        for (int i = remainderOfRoute.size() - 1; i >= 1; i--) {
+            remainderOfRoute.remove(i);
+        }
 
-        remainderOfRoute.clear();
-        remainderOfRoute.add(currentTrack);
+        Track currentTrack = remainderOfRoute.get(0);
 
         facing = currentTrack.getOtherPoint(facing);
         updateOrientation();
