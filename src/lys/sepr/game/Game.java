@@ -305,7 +305,7 @@ public class Game implements Runnable {
 					failedCurrentContract(activePlayer);
 				}
 			}
-			if (activePlayer.getNumberOfAttemptedContracts() >= maxContracts) {
+			if (allPlayersAttemptedEnoughContracts()) {
 				gameListener.gameEnd();
 				gameRunning = false;
 				break;
@@ -318,6 +318,15 @@ public class Game implements Runnable {
 				switchPlayer();
 			}
 		}
+	}
+
+	private boolean allPlayersAttemptedEnoughContracts() {
+		for (Player player : players) {
+            if (player.getNumberOfAttemptedContracts() < maxContracts) {
+                return false;
+            }
+        }
+		return true;
 	}
 
 	public void addGameEventListener(GameEventListener gameEventListener) {
