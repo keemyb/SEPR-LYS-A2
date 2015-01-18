@@ -246,7 +246,7 @@ public class Actions {
 
         File mapXml = null;
         try {
-            mapXml = new File(Actions.class.getResource("/testMap.trmp").toURI());
+            mapXml = new File(Actions.class.getResource("/eu1.trmp").toURI());
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
