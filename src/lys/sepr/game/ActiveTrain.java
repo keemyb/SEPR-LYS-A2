@@ -15,6 +15,7 @@ public class ActiveTrain {
     private List<Track> remainderOfRoute = new ArrayList<Track>();
     private double orientation;
     private double currentSpeed;
+    private List<Double> directionOfTravel;
 
     // This changes if the trains route can be changed so that it is
     // not possible to move from one track to another. (This does
@@ -30,7 +31,6 @@ public class ActiveTrain {
         destination = initialRoute.getTo();
 
         updateFacing();
-        updateOrientation();
     }
 
     public Train getTrain() {
@@ -87,18 +87,17 @@ public class ActiveTrain {
         } else {
             facing = Utilities.closestPoint(destination, currentTrack);
         }
+        updateOrientation();
     }
 
     private void updateOrientation() {
-        orientation = Math.atan2(-(facing.getY() - currentPosition.getY()),
-                facing.getX() - currentPosition.getX());
+        directionOfTravel = Utilities.getVector(currentPosition, facing);
+        directionOfTravel = Utilities.unitVector(directionOfTravel);
+        orientation = Math.atan2(-directionOfTravel.get(1), directionOfTravel.get(0));
     }
 
     public void move(long timePassed) {
         Track currentTrack = remainderOfRoute.get(0);
-
-        List<Double> directionOfTravel = Utilities.getVector(currentPosition, facing);
-        directionOfTravel = Utilities.unitVector(directionOfTravel);
 
         Double distanceToTravel = timePassed * currentSpeed;
         if (train.getFuelRequired(distanceToTravel) > train.getAmountOfFuel()) {
