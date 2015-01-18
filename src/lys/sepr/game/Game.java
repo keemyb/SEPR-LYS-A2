@@ -243,17 +243,9 @@ public class Game implements Runnable {
 				prospectiveNextTrack);
 	}
 
-	// A test to see if a player trains is where the contract says the
-	// destination is
-	// if it has not been finished before the time runs out then call
-	// faliedCurrentContract, else fulfilledCurrentContract
 	public boolean hasCompletedContract(Player player) {
 		ActiveTrain activeTrain = player.getActiveTrain();
-		// fix for imperfect moving trains
-		// return
-		// Utilities.distance(activeTrain.getDestination().equals(activeTrain.getCurrentPosition());
-		return Utilities.distance(activeTrain.getDestination(),
-				activeTrain.getCurrentPosition()) < 5;
+		return activeTrain.hasReachedDestination();
 	}
 
 	public void fulfilledCurrentContract(Player player) {
