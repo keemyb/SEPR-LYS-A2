@@ -20,11 +20,11 @@ public class Contract {
     private int reputationPayout;
     private int requiredReputation;
 
-    Contract(Route initialRoute, List<Location> bonusStops, int timeLimit,
+    Contract(Route possibleRoute, List<Location> bonusStops, int timeLimit,
              TrainType requiredTrainType, int moneyPayout,
              int reputationPayout, int requiredReputation) {
 
-        this.initialRoute = initialRoute;
+        this.initialRoute = possibleRoute;
         this.bonusStops = bonusStops;
 
         if (timeLimit < 0) timeLimit = Integer.MAX_VALUE;
@@ -32,10 +32,10 @@ public class Contract {
 
         this.requiredTrainType = requiredTrainType;
 
-        if (moneyPayout < 0) moneyPayout = (int) Utilities.routeLength(initialRoute.getTracks());
+        if (moneyPayout < 0) moneyPayout = (int) Utilities.routeLength(possibleRoute.getTracks());
         this.moneyPayout = moneyPayout;
 
-        if (reputationPayout < 0) reputationPayout = (int) Utilities.routeLength(initialRoute.getTracks());
+        if (reputationPayout < 0) reputationPayout = (int) Utilities.routeLength(possibleRoute.getTracks());
         this.reputationPayout = reputationPayout;
 
         if (requiredReputation < 0) requiredReputation = 0;

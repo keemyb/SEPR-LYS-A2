@@ -259,8 +259,8 @@ public class Actions {
 
         Map map = game.getMap();
 
-        // Increased pickup distance for intersections for easier selection
-        Intersection intersection = selectIntersection(map, mapMousePoint, minPickUpDistance * 1.2);
+        // Decreased pickup distance for intersections as they have priority over tracks
+        Intersection intersection = selectIntersection(map, mapMousePoint, minPickUpDistance * 0.7);
         if (intersection != null) {
             state.selectIntersection(intersection);
             state.setHasSelectedTrackOrIntersection(true);

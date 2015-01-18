@@ -29,7 +29,7 @@ public class ActiveTrain {
 
     public ActiveTrain(Train train, Route initialRoute) {
         this.train = train;
-        remainderOfRoute.addAll(initialRoute.getTracks());
+        remainderOfRoute.add(initialRoute.getTracks().get(0));
         Track firstTrack = remainderOfRoute.get(0);
 
         currentPosition = Utilities.closestPoint(initialRoute.getFrom(), firstTrack);
