@@ -22,7 +22,7 @@ public class ActiveTrain {
         that direction vectors may not be calculated perfectly). Adjust this
         if trains look as if they have reached a point but are not recognised
         */
-    private static double distanceThreshold = 2;
+    private static double distanceThreshold = 0.0d;
 
     // This changes if the trains route can be changed so that it is
     // not possible to move from one track to another. (This does
@@ -157,7 +157,7 @@ public class ActiveTrain {
         } else {
             // If the closestPoint on the track is not point we are facing
             // we are still on the track.
-            currentPosition = projectedPosition;
+            currentPosition = closestPoint;
             train.useFuel(distanceToTravel);
         }
     }
