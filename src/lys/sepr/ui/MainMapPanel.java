@@ -89,16 +89,25 @@ public class MainMapPanel extends JPanel {
             Track clickedTrack1 = state.getClickedTrack1();
             Track clickedTrack2 = state.getClickedTrack2();
             Intersection clickedIntersection = state.getClickedIntersection();
+
+            if (clickedIntersection != null) {
+                setCursor(cursorIntersection);
+            } else if (clickedTrack1 != null) {
+                setCursor(cursorRouteChange);
+            }
+
             if (clickedIntersection == null) {
                 if (clickedTrack1 != null && clickedTrack2 != null) {
                     game.changeRoute(clickedTrack1, clickedTrack2);
                     state.clearClickedTrackAndIntersection();
+                    setCursor(cursorNormal);
                 }
             } else if (clickedTrack1 != null && clickedTrack2 != null) {
                 if (clickedIntersection.getTracks().contains(clickedTrack1) &&
                         clickedIntersection.getTracks().contains(clickedTrack2)) {
                     game.changeActiveConnection(clickedTrack1, clickedTrack2);
                     state.clearClickedTrackAndIntersection();
+                    setCursor(cursorNormal);
                 }
             }
         }
@@ -110,14 +119,6 @@ public class MainMapPanel extends JPanel {
             Actions.deselectTrackIntersection(state);
             Actions.selectIntersectionOrTrack(game, mousePoint, minPickupDistance, state);
             state.setMousePosition(mousePoint);
-
-            if (state.getSelectedIntersection() != null) {
-                setCursor(cursorIntersection);
-            } else if (state.getSelectedTrack() != null) {
-                setCursor(cursorRouteChange);
-            } else {
-                setCursor(cursorNormal);
-            }
         }
     }
 
