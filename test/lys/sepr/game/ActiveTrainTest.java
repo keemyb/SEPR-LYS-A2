@@ -311,4 +311,42 @@ public class ActiveTrainTest {
 
         assertEquals(50d, activeTrain.getTrain().getAmountOfFuel(), 0.0d);
     }
+
+    @Test
+    public void testNextTrackInRouteNotActiveConnection() throws Exception {
+        // This is a test to ensure a train remains at the end of it's current
+        // track if the next track (and current track) in route is not the
+        // active connection of the upcoming intersection.
+
+        // Creating a map that forks like a sideways Y
+        Track startTrack = new Track(new Point(0, 100), new Point(100, 100));
+        Track endTrack1 = new Track(new Point(100, 100), new Point(200, 125));
+        Track endTrack2 = new Track(new Point(100, 100), new Point(200, 75));
+        Location startLocation = new Location(new Point(0, 100), "start");
+        Location endLocation = new Location(new Point(200, 75), "end");
+
+        Map map = new Map();
+
+        map.addTrack(startTrack);
+        map.addTrack(endTrack1);
+        map.addTrack(endTrack2);
+        map.addLocation(startLocation);
+        map.addLocation(endLocation);
+
+//        endTrack2 should not be part of the activeConnection as it was added last
+        startTrack.setActiveConnection(new Point(100, 100), endTrack1);
+        assertTrue(map.getIntersections().get(0).getActiveConnection().contains(startTrack));
+        assertTrue(map.getIntersections().get(0).getActiveConnection().contains(endTrack1));
+
+        Route route = map.fastestRoute(startLocation, endLocation);
+
+        ActiveTrain activeTrain = new ActiveTrain(train, route);
+        activeTrain.getTrain().setAmountOfFuel(200d);
+
+        activeTrain.setCurrentSpeed(1d);
+
+        advanceTime(activeTrain, 1, 110);
+
+        assertTrue(Utilities.distance(new Point(100, 100), activeTrain.getCurrentPosition()) <= ActiveTrain.getDistanceThreshold());
+    }
 }

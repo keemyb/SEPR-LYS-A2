@@ -16,6 +16,13 @@ public class ActiveTrain {
     private double orientation;
     private double currentSpeed;
     private List<Double> directionOfTravel;
+    /* Have to be this close to a point to be considered "there".
+        This is due to points never really being able to perfectly align when
+        using arbitrary time-steps that will never be integers (and also the fact
+        that direction vectors may not be calculated perfectly). Adjust this
+        if trains look as if they have reached a point but are not recognised
+        */
+    private static double distanceThreshold = 2;
 
     // This changes if the trains route can be changed so that it is
     // not possible to move from one track to another. (This does
@@ -61,6 +68,10 @@ public class ActiveTrain {
         return currentSpeed;
     }
 
+    public static double getDistanceThreshold() {
+        return distanceThreshold;
+    }
+
     public void setCurrentSpeed(double newSpeed) {
         if (newSpeed < 0) {
             currentSpeed = 0d;
@@ -69,10 +80,6 @@ public class ActiveTrain {
         } else {
             currentSpeed = newSpeed;
         }
-    }
-
-    public static boolean isMustChooseValidConnectedTrack() {
-        return mustChooseValidConnectedTrack;
     }
 
     public static void setMustChooseValidConnectedTrack(boolean mustChooseValidConnectedTrack) {
@@ -97,9 +104,11 @@ public class ActiveTrain {
     }
 
     public void move(long timePassed) {
+        if (hasReachedDestination() || remainderOfRoute.isEmpty()) return;
+
         Track currentTrack = remainderOfRoute.get(0);
 
-        Double distanceToTravel = timePassed * currentSpeed;
+        double distanceToTravel = timePassed * currentSpeed;
         if (train.getFuelRequired(distanceToTravel) > train.getAmountOfFuel()) {
             distanceToTravel = train.getMileageLeft();
         }
@@ -109,10 +118,10 @@ public class ActiveTrain {
         projectedPosition.translate(vectorOfTravel.get(0), vectorOfTravel.get(1));
 
         Point closestPoint = Utilities.closestPoint(projectedPosition, currentTrack);
-        if (closestPoint.equals(facing)) {
-            // If the closestPoint on the track is the point we are facing
-            // we are at the end of track, and should go to the next track,
-            // if possible
+        if (Utilities.distance(closestPoint, facing) <= distanceThreshold) {
+            /* If the closestPoint on the track is (or near enough to) the point
+            we are facing then we are at the end of the track, and should go to
+            the next track, if possible */
 
             Point positionBeforeMove = new Point(currentPosition);
             currentPosition = new Point(facing);
@@ -151,6 +160,10 @@ public class ActiveTrain {
             currentPosition = projectedPosition;
             train.useFuel(distanceToTravel);
         }
+    }
+
+    public boolean hasReachedDestination() {
+        return Utilities.distance(currentPosition, destination) <= distanceThreshold;
     }
 
     public void changeRoute(Track trackInRoute, Track prospectiveNextTrack) {
