@@ -3,6 +3,7 @@ package lys.sepr.ui;
 import lys.sepr.game.Game;
 import lys.sepr.game.world.Intersection;
 import lys.sepr.game.world.Map;
+import lys.sepr.game.world.Track;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -79,8 +80,27 @@ public class MainMapPanel extends JPanel {
     private class MouseHandler extends MouseAdapter {
         @Override
         public void mousePressed(MouseEvent e) {
-            lys.sepr.game.world.Point clickPoint = Actions.screenPointToMapPoint(e.getPoint(), state);
+            if (state.getSelectedIntersection() != null) {
+                state.setClickedIntersection();
+            } else if (state.getSelectedTrack() != null) {
+                state.setClickedTrack();
+            }
 
+            Track clickedTrack1 = state.getClickedTrack1();
+            Track clickedTrack2 = state.getClickedTrack2();
+            Intersection clickedIntersection = state.getClickedIntersection();
+            if (clickedIntersection == null) {
+                if (clickedTrack1 != null && clickedTrack2 != null) {
+                    game.changeRoute(clickedTrack1, clickedTrack2);
+                    state.clearClickedTrackAndIntersection();
+                }
+            } else if (clickedTrack1 != null && clickedTrack2 != null) {
+                if (clickedIntersection.getTracks().contains(clickedTrack1) &&
+                        clickedIntersection.getTracks().contains(clickedTrack2)) {
+                    game.changeActiveConnection(clickedTrack1, clickedTrack2);
+                    state.clearClickedTrackAndIntersection();
+                }
+            }
         }
 
         @Override

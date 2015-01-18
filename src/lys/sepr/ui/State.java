@@ -23,6 +23,10 @@ public class State {
     private Track selectedTrack;
     private Intersection selectedIntersection;
 
+    private Track clickedTrack1;
+    private Track clickedTrack2;
+    private Intersection clickedIntersection;
+
     private static BufferedImage originalRailAndWood;
     private static BufferedImage scaledRailAndWood;
 
@@ -171,5 +175,39 @@ public class State {
 
     public static int getRailHeight() {
         return railHeight;
+    }
+
+    public Track getClickedTrack1() {
+        return clickedTrack1;
+    }
+
+    public Track getClickedTrack2() {
+        return clickedTrack2;
+    }
+
+    public void setClickedTrack() {
+        if (clickedTrack1 != null && clickedTrack2 != null) {
+            clickedTrack1 = selectedTrack;
+            clickedTrack2 = null;
+        } else if (clickedTrack1 == null) {
+            clickedTrack1 = selectedTrack;
+        } else if (clickedTrack2 == null) {
+            clickedTrack2 = selectedTrack;
+        }
+    }
+
+    public Intersection getClickedIntersection() {
+        return clickedIntersection;
+    }
+
+    public void setClickedIntersection() {
+        clearClickedTrackAndIntersection();
+        this.clickedIntersection = selectedIntersection;
+    }
+
+    public void clearClickedTrackAndIntersection() {
+        clickedTrack1 = null;
+        clickedTrack2 = null;
+        clickedIntersection = null;
     }
 }
