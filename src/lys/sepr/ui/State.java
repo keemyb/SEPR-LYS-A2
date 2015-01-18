@@ -51,7 +51,7 @@ public class State {
         }
         scaledRailAndWood = Actions.scaleImage(originalRailAndWood, (double) railHeight / originalRailAndWood.getHeight());
 
-        trainPaths = new String[]{"/Train_red.png", "/Train_green.png", "/Train_blue.png", "/Train_yellow.png"};
+        trainPaths = new String[]{"/Train_red_small.png", "/Train_green_small.png", "/Train_blue_small.png", "/Train_yellow_small.png"};
         originalTrains = new BufferedImage[trainPaths.length];
         scaledTrains = new BufferedImage[trainPaths.length];
 
