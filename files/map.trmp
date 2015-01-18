@@ -1,7 +1,0 @@
-<lys.sepr.game.world.Map>
-  <tracks/>
-  <intersections/>
-  <locations/>
-  <possibleRoutes/>
-  <pointTrackThreshold>10.0</pointTrackThreshold>
-</lys.sepr.game.world.Map>

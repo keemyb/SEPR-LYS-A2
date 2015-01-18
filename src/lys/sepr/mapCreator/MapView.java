@@ -39,7 +39,7 @@ public class MapView {
     ));
 
     BufferedImage background;
-    String defaultBackgroundName = "europe.png";
+    String defaultBackgroundName = "EuropeMap.png";
 
     JScrollPane scrollPane = new JScrollPane();
 
