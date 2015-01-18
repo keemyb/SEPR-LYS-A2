@@ -80,6 +80,9 @@ public class GameWindow extends JFrame {
 			"files/pause.png").getImage().getScaledInstance(40, 40,
 			Image.SCALE_SMOOTH)));
 	JSlider speedSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
+	JButton reverseTrainButton = new JButton(new ImageIcon(new ImageIcon(
+			"files/Reverse.png").getImage().getScaledInstance(40, 40,
+			Image.SCALE_SMOOTH)));
 	JButton zoomInButton = new JButton("Zoom In");
 	JButton zoomOutButton = new JButton("Zoom Out");
 	JButton zoomResetButton = new JButton("Zoom Reset");
@@ -257,7 +260,7 @@ public class GameWindow extends JFrame {
 
 	};
 
-	public GameWindow(Game game) {
+	public GameWindow(final Game game) {
 		this.game = game;
 		if (game != null) {
 			game.addGameEventListener(gameListener);
@@ -313,6 +316,12 @@ public class GameWindow extends JFrame {
 			}
 		});
 
+		reverseTrainButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				game.reverseTrain();
+			}
+		});
+
 		// Container contentPane = getContentPane();
 
 		trainInfoPanel.add(speedSlider);
@@ -324,6 +333,7 @@ public class GameWindow extends JFrame {
 		add(miniMapPanel);
 		add(trainInfoPanel);
 
+		mainInfoPanel.add(reverseTrainButton);
 		mainInfoPanel.add(zoomInButton);
 		mainInfoPanel.add(zoomOutButton);
 		mainInfoPanel.add(zoomResetButton);
