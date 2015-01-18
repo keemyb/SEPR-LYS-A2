@@ -1,11 +1,12 @@
 package lys.sepr.ui;
 
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -32,23 +33,31 @@ public class GameWindow extends JFrame {
 	private boolean trainPanelShow = false;
 	private double lastZoom;
 
-	Image coinstack = new ImageIcon("files/coinstack.png").getImage()
+	Image coinstackImg = new ImageIcon("files/coinstack.png").getImage()
 			.getScaledInstance(60, 60, Image.SCALE_SMOOTH);
+	Image clockImg = new ImageIcon("files/clock.png").getImage()
+			.getScaledInstance(35, 35, Image.SCALE_SMOOTH);
 
 	MainMapPanel mainMapPanel = new MainMapPanel();
 	JScrollPane mainMapScrollPane = new JScrollPane();
 	JPanel mainInfoPanel = new JPanel() {
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
-			g.setColor(Color.BLACK);
-			g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
+			Graphics2D g2 = (Graphics2D) g;
+			g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+					RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			g2.setColor(Color.BLACK);
+			g2.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
 
 			// Money
-			g.drawImage(coinstack, 90, 80, this);
-			g.setFont(new Font("Courier New", Font.PLAIN, 30));
-			g.drawString("" + game.getActivePlayer().getMoney(), 165, 115);
+			g2.drawImage(coinstackImg, 85, 15, this);
+			g2.setFont(new Font("Courier New", Font.PLAIN, 24));
+			g2.drawString("" + game.getActivePlayer().getMoney(), 160, 50);
+			g2.drawImage(clockImg, getWidth() - 115, 5, this);
+			g2.drawString("" + game.getTurnClock() + "s", getWidth() - 60, 30);
 
-			g.drawString("" + game.getTurnClock() + "s", getWidth() - 60, 30);
+			g2.setFont(new Font("Courier New", Font.PLAIN, 14));
+			g2.drawString("Train Speed:", 200, 25);
 
 		}
 	};
@@ -66,14 +75,6 @@ public class GameWindow extends JFrame {
 			g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
 		}
 	};
-	JPanel trainInfoPanel = new JPanel() {
-		public void paintComponent(Graphics g) {
-			super.paintComponent(g);
-			g.setColor(Color.BLACK);
-			g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
-		}
-	};
-	JButton trainInfoPanelShowButton = new JButton(">");
 	State state = new lys.sepr.ui.State();
 
 	JButton pauseButton = new JButton(new ImageIcon(new ImageIcon(
@@ -84,8 +85,8 @@ public class GameWindow extends JFrame {
 	JButton zoomOutButton = new JButton("Zoom Out");
 	JButton zoomResetButton = new JButton("Zoom Reset");
 
-	JButton storeButton = new JButton("Store");
-	JButton inventoryButton = new JButton("Inventory");
+	JButton storeButton = new JButton("S");
+	JButton inventoryButton = new JButton("I");
 
 	GameEventListener gameListener = new GameEventListener() {
 
@@ -268,21 +269,6 @@ public class GameWindow extends JFrame {
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setLayout(null);
 		pauseButton.setFocusPainted(false);
-		trainInfoPanelShowButton.setFont(new Font("Courier New", Font.BOLD, 12));
-		trainInfoPanelShowButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				if (trainPanelShow) {
-					trainPanelX = -230;
-					trainPanelShow = false;
-					trainInfoPanelShowButton.setText(">");
-				} else {
-					trainPanelX = 0;
-					trainPanelShow = true;
-					trainInfoPanelShowButton.setText("<");
-				}
-			}
-		});
 
 		mainMapPanel.setGame(game);
 		mainMapPanel.setState(state);
@@ -313,20 +299,18 @@ public class GameWindow extends JFrame {
 			}
 		});
 
-		// Container contentPane = getContentPane();
-
-		trainInfoPanel.add(speedSlider);
-		
 		add(pauseButton);
-		add(trainInfoPanelShowButton);
 		add(mainInfoPanel);
 		add(contractPanel);
 		add(miniMapPanel);
-		add(trainInfoPanel);
 
+		mainInfoPanel.setLayout(null);
+		mainInfoPanel.add(speedSlider);
 		mainInfoPanel.add(zoomInButton);
 		mainInfoPanel.add(zoomOutButton);
 		mainInfoPanel.add(zoomResetButton);
+		mainInfoPanel.add(storeButton);
+		mainInfoPanel.add(inventoryButton);
 
 		add(mainMapScrollPane);
 	}
@@ -340,15 +324,19 @@ public class GameWindow extends JFrame {
 		contractPanel.setBounds(width / 2, mapHeight, width / 4, 150);
 		miniMapPanel.setBounds(3 * (width / 4), mapHeight, width / 4, 150);
 
-		int scrollBarWidth = 17;
-		int trainPanelHeight = mapHeight-scrollBarWidth;
-		trainInfoPanel.setBounds(trainPanelX, 0, 230, trainPanelHeight);
-		int trainPanelButtonHeight = trainInfoPanelShowButton.getMinimumSize().height;
-		int trainPanelButtonWidth = trainInfoPanelShowButton.getMinimumSize().width;
-		trainInfoPanelShowButton.setBounds(trainPanelX + 230,
-				(trainPanelHeight-trainPanelButtonHeight)/ 2, trainPanelButtonWidth, trainPanelButtonHeight);
+		pauseButton.setBounds(width - 77, 0, 60, 50);
+		storeButton.setBounds(15, 80, 60, 60);
+		inventoryButton.setBounds(15, 15, 60, 60);
 
-		pauseButton.setBounds(width - (60+scrollBarWidth), 0, 60, 50);
+		speedSlider.setBounds(300, 15, mainInfoPanel.getWidth() - 415,
+				speedSlider.getPreferredSize().height);
+		
+		int zoomButtonWidth = zoomResetButton.getPreferredSize().width;
+		int zoomButtonHeight = zoomResetButton.getPreferredSize().height;
+		int zoomX = mainInfoPanel.getWidth() - (zoomButtonWidth + 10);
+		zoomInButton.setBounds(zoomX, 45, zoomButtonWidth, zoomButtonHeight);
+		zoomOutButton.setBounds(zoomX, 55+zoomButtonHeight, zoomButtonWidth, zoomButtonHeight);
+		zoomResetButton.setBounds(zoomX, 65+(2*zoomButtonHeight), zoomButtonWidth, zoomButtonHeight);
 
 		setZoom();
 	}
@@ -356,8 +344,10 @@ public class GameWindow extends JFrame {
 	private void setZoom() {
 		double zoom = state.getZoom();
 		if (lastZoom != zoom) {
-			int mapBackgroundWidth = (int) (mainMapPanel.getMapBackground().getWidth() * zoom);
-			int mapBackgroundHeight = (int) (mainMapPanel.getMapBackground().getHeight() * zoom);
+			int mapBackgroundWidth = (int) (mainMapPanel.getMapBackground()
+					.getWidth() * zoom);
+			int mapBackgroundHeight = (int) (mainMapPanel.getMapBackground()
+					.getHeight() * zoom);
 			mainMapPanel.setPreferredSize(new Dimension(mapBackgroundWidth,
 					mapBackgroundHeight));
 			mainMapScrollPane.getViewport().revalidate();
