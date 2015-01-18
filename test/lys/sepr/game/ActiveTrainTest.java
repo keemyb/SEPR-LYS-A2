@@ -347,6 +347,6 @@ public class ActiveTrainTest {
 
         advanceTime(activeTrain, 1, 110);
 
-        assertTrue(Utilities.distance(new Point(100, 100), activeTrain.getCurrentPosition()) <= ActiveTrain.getDistanceThreshold());
+        assertEquals(new Point(100, 100), activeTrain.getCurrentPosition());
     }
 }
