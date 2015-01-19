@@ -3,6 +3,7 @@ package lys.sepr.ui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -19,6 +20,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JViewport;
 
+import lys.sepr.game.ActiveTrain;
 import lys.sepr.game.Contract;
 import lys.sepr.game.Game;
 import lys.sepr.game.GameEventListener;
@@ -122,6 +124,25 @@ public class GameWindow extends JFrame {
 
 			g2.setFont(new Font("Courier New", Font.PLAIN, 14));
 			g2.drawString("Train Speed:", 10, 25);
+			ActiveTrain train = game.getActivePlayer().getActiveTrain();
+			if(train != null) {
+				g2.drawString("Train:", 10, 46);
+				g2.drawString(train.getTrain().getName(), 20, 67);
+				int hp = train.getTrain().getHealth();
+				int maxhp = train.getTrain().getMaxHealth();
+				g2.drawString("Health: " + hp + "/" + maxhp , 10, 88);
+				int healthBarWidth = getWidth() - 90;
+				int healthBarFill = (healthBarWidth * hp)/maxhp;
+				g2.setColor(Color.RED);
+				g2.fillRect(10, 97, healthBarFill, 15);
+				g2.setColor(Color.BLACK);
+				g2.drawRect(10, 97, healthBarWidth, 15);
+				FontMetrics fm = g2.getFontMetrics(new Font("Courier New", Font.PLAIN, 14));
+				String fuel = "" + Math.round(train.getTrain().getAmountOfFuel()) + "/" + Math.round(train.getTrain().getMaxFuelCapacity());
+				g2.drawString("Fuel: " + fuel, 10, 130);
+			} else {
+				g2.drawString("No train", 10, 46);
+			}
 		}
 	};
 	State state = new lys.sepr.ui.State();
@@ -137,8 +158,13 @@ public class GameWindow extends JFrame {
 	JButton zoomOutButton = new JButton("Zoom Out");
 	JButton zoomResetButton = new JButton("Zoom Reset");
 
-	JButton storeButton = new JButton("S");
-	JButton inventoryButton = new JButton("I");
+	JButton storeButton = new JButton(new ImageIcon(new ImageIcon(
+			"files/Shop_icon.png").getImage().getScaledInstance(52, 52,
+			Image.SCALE_SMOOTH)));
+
+	JButton inventoryButton = new JButton(new ImageIcon(new ImageIcon(
+			"files/Inventory_icon.png").getImage().getScaledInstance(52, 52,
+			Image.SCALE_SMOOTH)));
 
 	GameEventListener gameListener = new GameEventListener() {
 

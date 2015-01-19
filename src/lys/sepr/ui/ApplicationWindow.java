@@ -1,12 +1,11 @@
 package lys.sepr.ui;
 
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,15 +16,23 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.thoughtworks.xstream.mapper.Mapper;
 import lys.sepr.game.Game;
 import lys.sepr.game.Player;
 
 public class ApplicationWindow extends JFrame {
 
-	JButton newGameButton = new JButton("New Game");
-	JButton loadGameButton = new JButton("Load Game");
-	JButton tutorialButton = new JButton("Tutorial");
-	JButton exitButton = new JButton("Exit");
+	JButton newGameButton = new JButton(new ImageIcon(new ImageIcon(
+			"files/New_Game_button.png").getImage()));
+	JButton loadGameButton = new JButton(new ImageIcon(new ImageIcon(
+			"files/Load_Game_button.png").getImage()));
+	JButton tutorialButton = new JButton(new ImageIcon(new ImageIcon(
+			"files/Tutorial_button.png").getImage()));
+	JButton exitButton = new JButton(new ImageIcon(new ImageIcon(
+			"files/Exit_button.png").getImage()));
+
+
+
 
 	JButton settingsButton = new JButton(new ImageIcon(new ImageIcon(
 			"files/gearicon.png").getImage().getScaledInstance(52, 52,
@@ -34,9 +41,10 @@ public class ApplicationWindow extends JFrame {
 	JLabel titleLabel = new JLabel("World War Trains");
 
 	JPanel menuPanel = new JPanel();
-	
+
 	//reference for the windowListener only
 	private Game g = null;
+
 
 	public static final String TITLE = "World War Trains";
 
@@ -48,13 +56,9 @@ public class ApplicationWindow extends JFrame {
 
 		titleLabel.setHorizontalAlignment(JLabel.CENTER);
 		Font f = titleLabel.getFont();
-		Font font = new Font("Courier New", Font.PLAIN, f.getSize()+6);
 		Font bigFont = new Font("Courier New", Font.PLAIN, f.getSize() + 10);
 		titleLabel.setFont(bigFont);
-		newGameButton.setFont(font);
-		loadGameButton.setFont(font);
-		tutorialButton.setFont(font);
-		exitButton.setFont(font);
+
 		
 		settingsButton.setFocusPainted(false);
 		
@@ -144,12 +148,12 @@ public class ApplicationWindow extends JFrame {
 
 	private void setMenuLayout() {
 		int vgap = (getHeight() - 360) / 5;
-		int hinset = (getWidth() - 400) / 2;
-		titleLabel.setBounds(hinset, 0, 400, 60);
-		newGameButton.setBounds(hinset, vgap + 60, 400, 60);
-		loadGameButton.setBounds(hinset, 2 * vgap + 120, 400, 60);
-		tutorialButton.setBounds(hinset, 3 * vgap + 180, 400, 60);
-		exitButton.setBounds(hinset, 4 * vgap + 240, 400, 60);
+		int hinset = (getWidth() - 260) / 2;
+		titleLabel.setBounds(hinset, 0, 260, 60);
+		newGameButton.setBounds(hinset, vgap + 60, 260, 55);
+		loadGameButton.setBounds(hinset, 2 * (vgap + 60), 260, 55);
+		tutorialButton.setBounds(hinset,3 * (vgap + 60), 260, 55);
+		exitButton.setBounds(hinset,4 * (vgap + 60), 260, 55);
 
 		settingsButton.setBounds(getWidth() - 96, 0, 80, 60);
 
