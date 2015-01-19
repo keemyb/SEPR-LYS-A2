@@ -128,20 +128,28 @@ public class GameWindow extends JFrame {
 			if(train != null) {
 				g2.drawString("Train:", 10, 46);
 				g2.drawString(train.getTrain().getName(), 20, 67);
-				int hp = train.getTrain().getHealth();
-				int maxhp = train.getTrain().getMaxHealth();
+				int currentHealth = train.getTrain().getHealth();
+				int maxHealth = train.getTrain().getMaxHealth();
 				int currentFuel = (int) train.getTrain().getAmountOfFuel();
 				int maxFuel = (int) train.getTrain().getMaxFuelCapacity();
-				g2.drawString("Health: " + hp + "/" + maxhp , 10, 88);
+				g2.drawString("Health: " + currentHealth + "/" + maxHealth , 10, 88);
 				int healthBarWidth = getWidth() - 90;
-				int healthBarFill = (healthBarWidth * hp)/maxhp;
+				int healthBarFill = (healthBarWidth * currentHealth)/maxHealth;
 				int fuelBarWidth = getWidth() - 90;
 				int fuelBarFill = (fuelBarWidth * currentFuel)/maxFuel;
-				g2.setColor(Color.RED);
+				if ((float) currentHealth / maxHealth > 0.5) {
+					g2.setColor(Color.GREEN);
+				} else {
+					g2.setColor(Color.RED);
+				}
 				g2.fillRect(10, 97, healthBarFill, 15);
 				g2.setColor(Color.BLACK);
 				g2.drawRect(10, 97, healthBarWidth, 15);
-				g2.setColor(Color.RED);
+				if ((float) currentFuel / maxFuel > 0.5) {
+					g2.setColor(Color.GREEN);
+				} else {
+					g2.setColor(Color.RED);
+				}
 				g2.fillRect(10, 117, fuelBarFill, 15);
 				g2.setColor(Color.BLACK);
 				g2.drawRect(10, 117, fuelBarWidth, 15);
