@@ -53,6 +53,9 @@ public class Player {
         return activeTrain;
     }
 
+    public long getContractStartTime() {
+    	return contractStartTime;
+    }
     public void setActiveTrain(ActiveTrain activeTrain) {
         this.activeTrain = activeTrain;
     }
