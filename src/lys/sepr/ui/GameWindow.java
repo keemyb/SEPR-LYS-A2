@@ -60,9 +60,6 @@ public class GameWindow extends JFrame {
 			g2.drawImage(clockImg, getWidth() - 115, 5, this);
 			g2.drawString("" + game.getTurnClock() + "s", getWidth() - 60, 30);
 
-			g2.setFont(new Font("Courier New", Font.PLAIN, 14));
-			g2.drawString("Train Speed:", 200, 25);
-
 		}
 	};
 	JPanel contractPanel = new JPanel() {
@@ -72,11 +69,17 @@ public class GameWindow extends JFrame {
 			g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
 		}
 	};
-	JPanel miniMapPanel = new JPanel() {
+	JPanel trainInfoPanel = new JPanel() {
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
-			g.setColor(Color.BLACK);
-			g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
+			Graphics2D g2 = (Graphics2D) g;
+			g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+					RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			g2.setColor(Color.BLACK);
+			g2.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
+
+			g2.setFont(new Font("Courier New", Font.PLAIN, 14));
+			g2.drawString("Train Speed:", 10, 25);
 		}
 	};
 	State state = new lys.sepr.ui.State();
@@ -181,72 +184,33 @@ public class GameWindow extends JFrame {
 			String timeLimit2 = "" + contracts[2].getTimeLimit() + "s";
 
 			String message = "Choose your contract\n\n" + "Contract 1:\n"
-					+ "\tStart: "
-					+ start0
-					+ "\n"
-					+ "\tDestination: "
-					+ dest0
-					+ "\n"
-					+ "\tTrain type: "
-					+ requiredTrainType0
-					+ "\n"
-					+ "\tMoney reward: "
-					+ moneyPayout0
-					+ "\n"
-					+ "\tReputation reward: "
-					+ repPayout0
-					+ "\n"
-					+ "\tTime limit: "
-					+ timeLimit0
-					+ "\n"
+					+ Actions.getContractSummary(contracts[0], game.getMap())
 					+ "\n"
 					+ "Contract 2:\n"
-					+ "\tStart: "
-					+ start1
-					+ "\n"
-					+ "\tDestination: "
-					+ dest1
-					+ "\n"
-					+ "\tTrain type: "
-					+ requiredTrainType1
-					+ "\n"
-					+ "\tMoney reward: "
-					+ moneyPayout1
-					+ "\n"
-					+ "\tReputation reward: "
-					+ repPayout1
-					+ "\n"
-					+ "\tTime limit: "
-					+ timeLimit1
-					+ "\n"
+					+ Actions.getContractSummary(contracts[1], game.getMap())
 					+ "\n"
 					+ "Contract 3:\n"
-					+ "\tStart: "
-					+ start2
-					+ "\n"
-					+ "\tDestination: "
-					+ dest2
-					+ "\n"
-					+ "\tTrain type: "
-					+ requiredTrainType2
-					+ "\n"
-					+ "\tMoney reward: "
-					+ moneyPayout2
-					+ "\n"
-					+ "\tReputation reward: "
-					+ repPayout2 + "\n" + "\tTime limit: " + timeLimit2 + "\n";
+					+ Actions.getContractSummary(contracts[2], game.getMap());
 
 			Object[] options = { "Contract 1", "Contract 2", "Contract 3" };
-
-			int n = JOptionPane.showOptionDialog(Dialog.parent, message,
+			
+			int n = -1;
+			while(n == -1) {
+					n = JOptionPane.showOptionDialog(Dialog.parent, message,
 					"Choose a contract", JOptionPane.DEFAULT_OPTION,
 					JOptionPane.PLAIN_MESSAGE, null, options, null);
-
+			}
+			
 			Contract chosenContract = contracts[n];
 			Object[] trains = game.getTrains(chosenContract).toArray();
-			Train chosenTrain = (Train) JOptionPane.showInputDialog(
+			Train chosenTrain = null;
+			while(chosenTrain == null) {
+				
+			chosenTrain = (Train) JOptionPane.showInputDialog(
 					Dialog.parent, "Choose a train", "Choose a train",
 					JOptionPane.PLAIN_MESSAGE, null, trains, trains[0]);
+			}
+			
 			game.assignContract(chosenTrain, chosenContract);
 		}
 
@@ -318,11 +282,11 @@ public class GameWindow extends JFrame {
 		add(pauseButton);
 		add(mainInfoPanel);
 		add(contractPanel);
-		add(miniMapPanel);
+		add(trainInfoPanel);
 
 		mainInfoPanel.setLayout(null);
-		mainInfoPanel.add(reverseTrainButton);
-		mainInfoPanel.add(speedSlider);
+		trainInfoPanel.add(reverseTrainButton);
+		trainInfoPanel.add(speedSlider);
 		mainInfoPanel.add(zoomInButton);
 		mainInfoPanel.add(zoomOutButton);
 		mainInfoPanel.add(zoomResetButton);
@@ -339,15 +303,18 @@ public class GameWindow extends JFrame {
 		mainMapScrollPane.setBounds(0, 0, width, mapHeight);
 		mainInfoPanel.setBounds(0, mapHeight, width / 2, 150);
 		contractPanel.setBounds(width / 2, mapHeight, width / 4, 150);
-		miniMapPanel.setBounds(3 * (width / 4), mapHeight, width / 4, 150);
+		trainInfoPanel.setBounds(3 * (width / 4), mapHeight, width / 4, 150);
 
 		pauseButton.setBounds(width - 77, 0, 60, 50);
 
 		storeButton.setBounds(15, 80, 60, 60);
 		inventoryButton.setBounds(15, 15, 60, 60);
 
-		speedSlider.setBounds(300, 15, mainInfoPanel.getWidth() - 415,
+		speedSlider.setBounds(110, 15, trainInfoPanel.getWidth()-120,
 				speedSlider.getPreferredSize().height);
+
+		reverseTrainButton.setBounds(trainInfoPanel.getWidth()-70,
+				speedSlider.getHeight()+25, 60, 60);
 
 		int zoomButtonWidth = zoomResetButton.getPreferredSize().width;
 		int zoomButtonHeight = zoomResetButton.getPreferredSize().height;
@@ -357,9 +324,6 @@ public class GameWindow extends JFrame {
 				zoomButtonHeight);
 		zoomResetButton.setBounds(zoomX, 65 + (2 * zoomButtonHeight),
 				zoomButtonWidth, zoomButtonHeight);
-
-		reverseTrainButton.setBounds(zoomX - 70, 55 + zoomButtonHeight, 60,
-				(2 * zoomButtonHeight) + 10);
 
 		setZoom();
 	}

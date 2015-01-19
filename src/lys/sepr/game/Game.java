@@ -332,4 +332,9 @@ public class Game implements Runnable {
 	public void addGameEventListener(GameEventListener gameEventListener) {
 		gameListener = gameEventListener;
 	}
+	
+	
+	public String getPlayerName(int playerNumber) {
+		return "Player"; //TODO this properly
+	}
 }
