@@ -36,7 +36,7 @@ public class Player {
 
     private Inventory inventory = new Inventory();
 
-    private ActiveTrain activeTrain;
+    private ActiveTrain activeTrain = null;
 
     private List<Contract> completedContracts = new ArrayList<Contract>();
     private List<Contract> failedContracts = new ArrayList<Contract>();
@@ -53,6 +53,9 @@ public class Player {
         return activeTrain;
     }
 
+    public long getContractStartTime() {
+    	return contractStartTime;
+    }
     public void setActiveTrain(ActiveTrain activeTrain) {
         this.activeTrain = activeTrain;
     }

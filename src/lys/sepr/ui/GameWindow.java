@@ -3,6 +3,7 @@ package lys.sepr.ui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -19,6 +20,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JViewport;
 
+import lys.sepr.game.ActiveTrain;
 import lys.sepr.game.Contract;
 import lys.sepr.game.Game;
 import lys.sepr.game.GameEventListener;
@@ -54,28 +56,61 @@ public class GameWindow extends JFrame {
 			g2.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
 
 			// Money
-			
+
 			Player[] players = game.getPlayers().toArray(new Player[0]);
-			int offset = (getWidth()-200)/players.length;
-			for(int i = 0; i < players.length; i++) {
+			int offset = (getWidth() - 200) / players.length;
+			for (int i = 0; i < players.length; i++) {
 				g2.setFont(new Font("Courier New", Font.PLAIN, 14));
-				g2.drawString("" + game.getPlayerName(i), 105+(offset*i), 25);
+				g2.drawString("" + game.getPlayerName(i), 105 + (offset * i),
+						25);
 				g2.setFont(new Font("Courier New", Font.PLAIN, 24));
-				g2.drawImage(coinstackImg, 85+(offset*i), 35, this);
-				g2.drawString("" + players[i].getMoney(), 160+(offset*i), 55);
-				g2.drawImage(repImg, 85+(offset*i), 90, this);
-				g2.drawString("" + players[i].getReputation(), 160+(offset*i), 125);
+				g2.drawImage(coinstackImg, 85 + (offset * i), 35, this);
+				g2.drawString("" + players[i].getMoney(), 160 + (offset * i),
+						55);
+				g2.drawImage(repImg, 85 + (offset * i), 90, this);
+				g2.drawString("" + players[i].getReputation(),
+						160 + (offset * i), 125);
 			}
 			g2.drawImage(clockImg, getWidth() - 115, 5, this);
-			g2.drawString("" + game.getTurnClock() + "s", getWidth() - 60, 30);
+			g2.drawString(
+					"" + (game.getTurnClock() < 0 ? 0 : game.getTurnClock())
+							+ "s", getWidth() - 60, 30);
 
 		}
 	};
 	JPanel contractPanel = new JPanel() {
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
-			g.setColor(Color.BLACK);
-			g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
+			Graphics2D g2 = (Graphics2D) g;
+			g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+					RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			g2.setColor(Color.BLACK);
+			g2.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
+			g2.setFont(new Font("Courier New", Font.PLAIN, 20));
+			g2.drawString("Contract Information", 10, 25);
+			g2.setFont(new Font("Courier New", Font.PLAIN, 14));
+			if (game.hasAContract(game.getActivePlayer())) {
+				String destination = game
+						.getMap()
+						.getLocationFromPoint(
+								game.getActivePlayer().getCurrentContract()
+										.getInitialRoute().getTo()).getName();
+				long timeStarted = game.getActivePlayer()
+						.getContractStartTime();
+				int moneyPayout = game.getActivePlayer().getCurrentContract()
+						.getMoneyPayout();
+				int repPayout = game.getActivePlayer().getCurrentContract()
+						.getReputationPayout();
+				g2.drawString("Destination:" + destination, 10, 45);
+				int timeleft = game.getActivePlayer().getCurrentContract().getTimeLimit() - (int) ((System.currentTimeMillis() - timeStarted)/1000);
+				String mins = (timeleft / 60 == 0 ? "" : "" + timeleft/60 + "m ");
+				String secs = ""  + timeleft%60 + "s";
+				g2.drawString("Time Left: " + mins + secs, 10, 65);
+				g2.drawString("Money Reward: " + moneyPayout, 10, 85);
+				g2.drawString("Reputation Reward: " + repPayout, 10, 105);
+			} else {
+				g2.drawString("No contract", 10, 45);
+			}
 		}
 	};
 	JPanel trainInfoPanel = new JPanel() {
@@ -89,6 +124,25 @@ public class GameWindow extends JFrame {
 
 			g2.setFont(new Font("Courier New", Font.PLAIN, 14));
 			g2.drawString("Train Speed:", 10, 25);
+			ActiveTrain train = game.getActivePlayer().getActiveTrain();
+			if(train != null) {
+				g2.drawString("Train:", 10, 46);
+				g2.drawString(train.getTrain().getName(), 20, 67);
+				int hp = train.getTrain().getHealth();
+				int maxhp = train.getTrain().getMaxHealth();
+				g2.drawString("Health: " + hp + "/" + maxhp , 10, 88);
+				int healthBarWidth = getWidth() - 90;
+				int healthBarFill = (healthBarWidth * hp)/maxhp;
+				g2.setColor(Color.RED);
+				g2.fillRect(10, 97, healthBarFill, 15);
+				g2.setColor(Color.BLACK);
+				g2.drawRect(10, 97, healthBarWidth, 15);
+				FontMetrics fm = g2.getFontMetrics(new Font("Courier New", Font.PLAIN, 14));
+				String fuel = "" + Math.round(train.getTrain().getAmountOfFuel()) + "/" + Math.round(train.getTrain().getMaxFuelCapacity());
+				g2.drawString("Fuel: " + fuel, 10, 130);
+			} else {
+				g2.drawString("No train", 10, 46);
+			}
 		}
 	};
 	State state = new lys.sepr.ui.State();
