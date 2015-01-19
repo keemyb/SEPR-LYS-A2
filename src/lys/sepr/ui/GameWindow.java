@@ -104,8 +104,13 @@ public class GameWindow extends JFrame {
 	JButton zoomOutButton = new JButton("Zoom Out");
 	JButton zoomResetButton = new JButton("Zoom Reset");
 
-	JButton storeButton = new JButton("S");
-	JButton inventoryButton = new JButton("I");
+	JButton storeButton = new JButton(new ImageIcon(new ImageIcon(
+			"files/Shop_icon.png").getImage().getScaledInstance(52, 52,
+			Image.SCALE_SMOOTH)));
+
+	JButton inventoryButton = new JButton(new ImageIcon(new ImageIcon(
+			"files/Inventory_icon.png").getImage().getScaledInstance(52, 52,
+			Image.SCALE_SMOOTH)));
 
 	GameEventListener gameListener = new GameEventListener() {
 
