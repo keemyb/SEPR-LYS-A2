@@ -14,7 +14,7 @@ import static lys.sepr.game.world.Utilities.getVector;
 public class Intersection {
 
     // Tracks must be have at least this angle between them for trains to be able to move from one to another
-    private static int minAngle = 120;
+    private static int minAngle = 100;
     private Point point;
     private ArrayList<Track> tracks = new ArrayList<Track>();
     private HashMap<Track,ArrayList<Track>> validConnections = new HashMap<Track,ArrayList<Track>>();
