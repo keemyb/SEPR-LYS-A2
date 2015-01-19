@@ -1,5 +1,6 @@
 package lys.sepr.ui;
 
+import lys.sepr.game.ActiveTrain;
 import lys.sepr.game.Game;
 import lys.sepr.game.world.Intersection;
 import lys.sepr.game.world.Map;
@@ -87,7 +88,9 @@ public class MainMapPanel extends JPanel {
     private class MouseHandler extends MouseAdapter {
         @Override
         public void mousePressed(MouseEvent e) {
+
             if (state.getSelectedIntersection() != null) {
+                state.clearClickedTrackAndIntersection();
                 state.setClickedIntersection();
             } else if (state.getSelectedTrack() != null) {
                 state.setClickedTrack();
@@ -99,23 +102,19 @@ public class MainMapPanel extends JPanel {
 
             if (clickedIntersection != null) {
                 setCursor(cursorIntersection);
-            } else if (clickedTrack1 != null) {
-                setCursor(cursorRouteChange);
             }
 
-            if (clickedIntersection == null) {
-                if (clickedTrack1 != null && clickedTrack2 != null) {
-                    game.changeRoute(clickedTrack1, clickedTrack2);
-                    state.clearClickedTrackAndIntersection();
-                    setCursor(cursorNormal);
-                }
-            } else if (clickedTrack1 != null && clickedTrack2 != null) {
+            if (clickedIntersection != null) {
                 if (clickedIntersection.getTracks().contains(clickedTrack1) &&
                         clickedIntersection.getTracks().contains(clickedTrack2)) {
                     game.changeActiveConnection(clickedTrack1, clickedTrack2);
                     state.clearClickedTrackAndIntersection();
                     setCursor(cursorNormal);
                 }
+            } else if (clickedTrack1 != null) {
+                game.changeRoute(clickedTrack1);
+                state.clearClickedTrackAndIntersection();
+                setCursor(cursorNormal);
             }
         }
 
@@ -126,6 +125,13 @@ public class MainMapPanel extends JPanel {
             Actions.deselectTrackIntersection(state);
             Actions.selectIntersectionOrTrack(game, mousePoint, minPickupDistance, state);
             state.setMousePosition(mousePoint);
+            if (state.getClickedIntersection() != null) {
+                setCursor(cursorIntersection);
+            } else if (state.getSelectedTrack() != null) {
+                setCursor(cursorRouteChange);
+            } else {
+                setCursor(cursorNormal);
+            }
         }
     }
 

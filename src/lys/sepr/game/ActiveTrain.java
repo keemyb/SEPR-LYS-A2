@@ -133,7 +133,7 @@ public class ActiveTrain {
             // Otherwise we should move again for the remainder of time left after
             // travelling to the point we were facing.
             if (remainderOfRoute.size() == 1) {
-                remainderOfRoute.clear();
+                currentPosition = facing;
                 return;
             } else {
                 Track nextTrack = remainderOfRoute.get(1);
@@ -170,19 +170,36 @@ public class ActiveTrain {
         return withinAcceptableDistance;
     }
 
-    public void changeRoute(Track trackInRoute, Track prospectiveNextTrack) {
-        if (!remainderOfRoute.contains(trackInRoute)) return;
+    public void changeRoute(Track prospectiveNextTrack) {
+        if (remainderOfRoute.contains(prospectiveNextTrack)) return;
 
-        if (mustChooseValidConnectedTrack) {
-            if (!trackInRoute.getValidConnections().contains(prospectiveNextTrack)) return;
+        Track currentTrack = remainderOfRoute.get(0);
+        if (currentTrack.getValidConnectionsComingFrom(facing).contains(prospectiveNextTrack)) {
+            reverse();
+            changeRoute(prospectiveNextTrack);
+            return;
         }
 
-        // Removing all tracks after the track in route as the route has changed.
-        for (int i=remainderOfRoute.size() - 1; i > remainderOfRoute.indexOf(trackInRoute); i--) {
-            remainderOfRoute.remove(remainderOfRoute.get(i));
+        Track connectedTrack = null;
+        for (Track track : remainderOfRoute) {
+            List<Track> validConnections = track.getValidConnections();
+            if (validConnections.contains(prospectiveNextTrack)) {
+                connectedTrack = track;
+                break;
+            }
         }
 
-        remainderOfRoute.add(prospectiveNextTrack);
+        if (connectedTrack != null) {
+            // Removing all tracks after the track in route as the route has changed.
+            for (int i=remainderOfRoute.size() - 1; i > remainderOfRoute.indexOf(connectedTrack); i--) {
+                remainderOfRoute.remove(remainderOfRoute.get(i));
+            }
+            remainderOfRoute.add(prospectiveNextTrack);
+        }
+    }
+
+    public boolean completedRoute() {
+        return !hasReachedDestination() && getCurrentPosition().equals(getFacing());
     }
 
     public void reverse() {

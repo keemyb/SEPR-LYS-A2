@@ -233,14 +233,8 @@ public class Game implements Runnable {
 				.getActiveConnectedTrackTowards(commonPoint);
 	}
 
-	// This method modifies where the active players train.
-	// Note the distinction between this and changeActiveConnection
-	// A train will wait at an intersection until there is an activeConnection
-	// between the track it is on currently and the next track it wants to go to
-	// (the next track in the route).
-	public void changeRoute(Track trackInRoute, Track prospectiveNextTrack) {
-		activePlayer.getActiveTrain().changeRoute(trackInRoute,
-				prospectiveNextTrack);
+	public void changeRoute(Track prospectiveNextTrack) {
+		activePlayer.getActiveTrain().changeRoute(prospectiveNextTrack);
 	}
 
 	public boolean hasCompletedContract(Player player) {
