@@ -36,11 +36,11 @@ public class GameWindow extends JFrame {
 	private static final double TRAIN_SPEED_CONST = 0.0000000005;
 
 	Image coinstackImg = new ImageIcon("files/coinstack.png").getImage()
-			.getScaledInstance(60, 60, Image.SCALE_SMOOTH);
+			.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
 	Image clockImg = new ImageIcon("files/clock.png").getImage()
 			.getScaledInstance(35, 35, Image.SCALE_SMOOTH);
 	Image repImg = new ImageIcon("files/Rep_badge.png").getImage()
-			.getScaledInstance(60, 60, Image.SCALE_SMOOTH);
+			.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
 
 	MainMapPanel mainMapPanel = new MainMapPanel();
 	JScrollPane mainMapScrollPane = new JScrollPane();
@@ -54,11 +54,18 @@ public class GameWindow extends JFrame {
 			g2.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
 
 			// Money
-			g2.drawImage(coinstackImg, 85, 15, this);
-			g2.setFont(new Font("Courier New", Font.PLAIN, 24));
-			g2.drawString("" + game.getActivePlayer().getMoney(), 160, 50);
-			g2.drawImage(repImg, 85, 80, this);
-			g2.drawString("" + game.getActivePlayer().getReputation(), 160, 115);
+			
+			Player[] players = game.getPlayers().toArray(new Player[0]);
+			int offset = (getWidth()-200)/players.length;
+			for(int i = 0; i < players.length; i++) {
+				g2.setFont(new Font("Courier New", Font.PLAIN, 14));
+				g2.drawString("" + game.getPlayerName(i), 105+(offset*i), 25);
+				g2.setFont(new Font("Courier New", Font.PLAIN, 24));
+				g2.drawImage(coinstackImg, 85+(offset*i), 35, this);
+				g2.drawString("" + players[i].getMoney(), 160+(offset*i), 55);
+				g2.drawImage(repImg, 85+(offset*i), 90, this);
+				g2.drawString("" + players[i].getReputation(), 160+(offset*i), 125);
+			}
 			g2.drawImage(clockImg, getWidth() - 115, 5, this);
 			g2.drawString("" + game.getTurnClock() + "s", getWidth() - 60, 30);
 
@@ -104,6 +111,7 @@ public class GameWindow extends JFrame {
 
 		@Override
 		public void gameEnd() {
+			repaint();
 			Player[] players = game.getPlayers().toArray(new Player[0]);
 			Player winner = null; // assume one winner, will deal with ties
 									// later
@@ -124,6 +132,7 @@ public class GameWindow extends JFrame {
 
 		@Override
 		public void contractCompleted() {
+			repaint();
 			int money = game.getActivePlayer().getCurrentContract()
 					.getMoneyPayout();
 			int reputation = game.getActivePlayer().getCurrentContract()
@@ -136,6 +145,7 @@ public class GameWindow extends JFrame {
 
 		@Override
 		public void contractFailed() {
+			repaint();
 			Dialog.info("You ran out of time and did not complete your contract!");
 
 		}
@@ -143,6 +153,7 @@ public class GameWindow extends JFrame {
 		@Override
 		public void contractChoose() {
 			speedSlider.setValue(0);
+			repaint();
 			Contract[] contracts = game.getContracts().toArray(new Contract[3]);
 			String start0 = game
 					.getMap()
