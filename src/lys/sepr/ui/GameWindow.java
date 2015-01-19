@@ -37,6 +37,8 @@ public class GameWindow extends JFrame {
 			.getScaledInstance(60, 60, Image.SCALE_SMOOTH);
 	Image clockImg = new ImageIcon("files/clock.png").getImage()
 			.getScaledInstance(35, 35, Image.SCALE_SMOOTH);
+	Image repImg = new ImageIcon("files/Rep_badge.png").getImage()
+			.getScaledInstance(60, 60, Image.SCALE_SMOOTH);
 
 	MainMapPanel mainMapPanel = new MainMapPanel();
 	JScrollPane mainMapScrollPane = new JScrollPane();
@@ -53,6 +55,8 @@ public class GameWindow extends JFrame {
 			g2.drawImage(coinstackImg, 85, 15, this);
 			g2.setFont(new Font("Courier New", Font.PLAIN, 24));
 			g2.drawString("" + game.getActivePlayer().getMoney(), 160, 50);
+			g2.drawImage(repImg, 85, 80, this);
+			g2.drawString("" + game.getActivePlayer().getReputation(), 160, 115);
 			g2.drawImage(clockImg, getWidth() - 115, 5, this);
 			g2.drawString("" + game.getTurnClock() + "s", getWidth() - 60, 30);
 
@@ -272,6 +276,7 @@ public class GameWindow extends JFrame {
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setLayout(null);
 		pauseButton.setFocusPainted(false);
+		reverseTrainButton.setFocusPainted(false);
 
 		mainMapPanel.setGame(game);
 		mainMapPanel.setState(state);
@@ -337,18 +342,24 @@ public class GameWindow extends JFrame {
 		miniMapPanel.setBounds(3 * (width / 4), mapHeight, width / 4, 150);
 
 		pauseButton.setBounds(width - 77, 0, 60, 50);
+
 		storeButton.setBounds(15, 80, 60, 60);
 		inventoryButton.setBounds(15, 15, 60, 60);
 
 		speedSlider.setBounds(300, 15, mainInfoPanel.getWidth() - 415,
 				speedSlider.getPreferredSize().height);
-		
+
 		int zoomButtonWidth = zoomResetButton.getPreferredSize().width;
 		int zoomButtonHeight = zoomResetButton.getPreferredSize().height;
 		int zoomX = mainInfoPanel.getWidth() - (zoomButtonWidth + 10);
 		zoomInButton.setBounds(zoomX, 45, zoomButtonWidth, zoomButtonHeight);
-		zoomOutButton.setBounds(zoomX, 55+zoomButtonHeight, zoomButtonWidth, zoomButtonHeight);
-		zoomResetButton.setBounds(zoomX, 65+(2*zoomButtonHeight), zoomButtonWidth, zoomButtonHeight);
+		zoomOutButton.setBounds(zoomX, 55 + zoomButtonHeight, zoomButtonWidth,
+				zoomButtonHeight);
+		zoomResetButton.setBounds(zoomX, 65 + (2 * zoomButtonHeight),
+				zoomButtonWidth, zoomButtonHeight);
+
+		reverseTrainButton.setBounds(zoomX - 70, 55 + zoomButtonHeight, 60,
+				(2 * zoomButtonHeight) + 10);
 
 		setZoom();
 	}
