@@ -130,16 +130,24 @@ public class GameWindow extends JFrame {
 				g2.drawString(train.getTrain().getName(), 20, 67);
 				int hp = train.getTrain().getHealth();
 				int maxhp = train.getTrain().getMaxHealth();
+				int currentFuel = (int) train.getTrain().getAmountOfFuel();
+				int maxFuel = (int) train.getTrain().getMaxFuelCapacity();
 				g2.drawString("Health: " + hp + "/" + maxhp , 10, 88);
 				int healthBarWidth = getWidth() - 90;
 				int healthBarFill = (healthBarWidth * hp)/maxhp;
+				int fuelBarWidth = getWidth() - 90;
+				int fuelBarFill = (fuelBarWidth * currentFuel)/maxFuel;
 				g2.setColor(Color.RED);
 				g2.fillRect(10, 97, healthBarFill, 15);
 				g2.setColor(Color.BLACK);
 				g2.drawRect(10, 97, healthBarWidth, 15);
+				g2.setColor(Color.RED);
+				g2.fillRect(10, 117, fuelBarFill, 15);
+				g2.setColor(Color.BLACK);
+				g2.drawRect(10, 117, fuelBarWidth, 15);
 				FontMetrics fm = g2.getFontMetrics(new Font("Courier New", Font.PLAIN, 14));
 				String fuel = "" + Math.round(train.getTrain().getAmountOfFuel()) + "/" + Math.round(train.getTrain().getMaxFuelCapacity());
-				g2.drawString("Fuel: " + fuel, 10, 130);
+				g2.drawString("Fuel: " + fuel, 10, 145);
 			} else {
 				g2.drawString("No train", 10, 46);
 			}
