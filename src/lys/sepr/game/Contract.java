@@ -16,13 +16,13 @@ public class Contract {
     private List<Location> bonusStops = new ArrayList<Location>();
     private int timeLimit;
     private TrainType requiredTrainType;
+    private int averageDistance;
     private int moneyPayout;
     private int reputationPayout;
     private int requiredReputation;
 
     Contract(Route possibleRoute, List<Location> bonusStops, int timeLimit,
-             TrainType requiredTrainType, int moneyPayout,
-             int reputationPayout, int requiredReputation) {
+             TrainType requiredTrainType, int averageDistance, int requiredReputation) {
 
         this.initialRoute = possibleRoute;
         this.bonusStops = bonusStops;
@@ -32,14 +32,18 @@ public class Contract {
 
         this.requiredTrainType = requiredTrainType;
 
-        if (moneyPayout < 0) moneyPayout = (int) Utilities.routeLength(possibleRoute.getTracks());
-        this.moneyPayout = moneyPayout;
+        this.averageDistance = averageDistance;
 
-        if (reputationPayout < 0) reputationPayout = (int) Utilities.routeLength(possibleRoute.getTracks());
-        this.reputationPayout = reputationPayout;
+        this.moneyPayout = averageDistance;
+
+        this.reputationPayout = averageDistance;
 
         if (requiredReputation < 0) requiredReputation = 0;
         this.requiredReputation = requiredReputation;
+    }
+
+    public List<Location> getBonusStops() {
+        return bonusStops;
     }
 
     public int getTimeLimit() {
@@ -48,6 +52,10 @@ public class Contract {
 
     public TrainType getRequiredTrainType() {
         return requiredTrainType;
+    }
+
+    public int getAverageDistance() {
+        return averageDistance;
     }
 
     public int getMoneyPayout() {

@@ -199,14 +199,13 @@ public class Game implements Runnable {
 			// route because we want the user to have a bit of choice!
 			Random r = new Random();
 			int nextRouteIndex = r.nextInt(numberOfRoutes);
-			Route nextRoute = routeList.get(nextRouteIndex);
+			Route randomRoute = routeList.get(nextRouteIndex);
 
 			int nextTrainTypeIndex = r.nextInt(TrainType.values().length);
 			TrainType trainType = TrainType.values()[nextTrainTypeIndex];
 
-			Contract contract = new Contract(nextRoute,
-					new ArrayList<Location>(), averageDistance, trainType,
-					averageDistance, averageDistance, 0);
+			Contract contract = new Contract(randomRoute, new ArrayList<Location>(), averageDistance, trainType,
+					averageDistance, 0);
 
 			possibleContracts.add(contract);
 		}
