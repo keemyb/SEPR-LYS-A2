@@ -1,7 +1,9 @@
 package lys.sepr.game.world;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -13,7 +15,7 @@ public class Map {
     private ArrayList<Track> tracks = new ArrayList<Track>();
     private ArrayList<Intersection> intersections = new ArrayList<Intersection>();
     private ArrayList<Location> locations = new ArrayList<Location>();
-    private HashMap<RouteKey, List<Route>> possibleRoutes = new HashMap<RouteKey, List<Route>>();
+    private Table<Point, Point, List<Route>> possibleRoutes = HashBasedTable.create();
     private String backgroundFileName;
 
     public double getPointTrackThreshold() {
@@ -362,9 +364,8 @@ public class Map {
      * @return The list of the routes between the two points.
      */
     public List<Route> getRoutes(Point from, Point to) {
-        RouteKey routeKey = new RouteKey(from, to);
         if (possibleRoutes.isEmpty()) updatePossibleRoutes();
-        return possibleRoutes.get(routeKey);
+        return possibleRoutes.get(from, to);
     }
 
     /**
@@ -409,7 +410,7 @@ public class Map {
     }
 
     private void updatePossibleRoutes() {
-        possibleRoutes = new HashMap<RouteKey, List<Route>>();
+        possibleRoutes.clear();
 
         for (Location locationOne : locations) {
             for (Location locationTwo : locations) {
@@ -418,27 +419,22 @@ public class Map {
                 Point pointOne = locationOne.getPoint();
                 Point pointTwo = locationTwo.getPoint();
 
-                // Using funky routeKey class to get around the fact that
-                // I cannot use a simple list of points added in a reverse
-                // order for equality.
-                RouteKey routeKey = new RouteKey(pointOne, pointTwo);
-
                 // We don't want to regenerate the route if its reverse already
                 // exists, we can simply reverse every route found.
-                if (possibleRoutes.containsKey(routeKey.reverse())) {
+                if (possibleRoutes.contains(pointTwo, pointOne)) {
                     List<Route> reversedRoutes = new ArrayList<Route>();
-                    for (Route route : possibleRoutes.get(routeKey.reverse())) {
+                    for (Route route : possibleRoutes.get(pointTwo, pointOne)) {
                         reversedRoutes.add(route.reverse());
                     }
-                    possibleRoutes.put(routeKey, reversedRoutes);
+                    possibleRoutes.put(pointOne, pointTwo, reversedRoutes);
                 } else {
-                    possibleRoutes.put(routeKey, Route.getRoutes(pointOne, pointTwo, this));
+                    possibleRoutes.put(pointOne, pointTwo, Route.getRoutes(pointOne, pointTwo, this));
                 }
             }
         }
     }
 
-    public HashMap<RouteKey, List<Route>> getPossibleRoutes() {
+    public Table<Point, Point, List<Route>> getPossibleRoutes() {
         if (possibleRoutes.isEmpty()) updatePossibleRoutes();
         return possibleRoutes;
     }
@@ -447,40 +443,7 @@ public class Map {
         // Only concerned about the different locations that can
         // navigated from one another, not the actual amount of
         // possible routes from A to B.
+        if (possibleRoutes.isEmpty()) updatePossibleRoutes();
         return getPossibleRoutes().size();
-    }
-
-    public class RouteKey {
-        private Point from;
-        private Point to;
-
-        RouteKey(Point from, Point to) {
-            this.from = from;
-            this.to = to;
-        }
-
-        RouteKey reverse() {
-            return new RouteKey(to, from);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            RouteKey routeKey = (RouteKey) o;
-
-            if (from != null ? !from.equals(routeKey.from) : routeKey.from != null) return false;
-            if (to != null ? !to.equals(routeKey.to) : routeKey.to != null) return false;
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = from != null ? from.hashCode() : 0;
-            result = 31 * result + (to != null ? to.hashCode() : 0);
-            return result;
-        }
     }
 }
