@@ -114,6 +114,8 @@ public class ActiveTrainTest {
     @Test
     public void testChangeTrack() throws Exception {
         ActiveTrain activeTrain = new ActiveTrain(train, longRoute);
+        activeTrain.changeRoute(track1, track2);
+        activeTrain.changeRoute(track2, track3);
 
         activeTrain.setCurrentSpeed(1d);
 
@@ -127,6 +129,8 @@ public class ActiveTrainTest {
     @Test
     public void testChangeTrackOvershoot() throws Exception {
         ActiveTrain activeTrain = new ActiveTrain(train, longRoute);
+        activeTrain.changeRoute(track1, track2);
+        activeTrain.changeRoute(track2, track3);
 
         activeTrain.setCurrentSpeed(1d);
 
@@ -214,6 +218,8 @@ public class ActiveTrainTest {
     @Test
     public void testReverse() throws Exception {
         ActiveTrain activeTrain = new ActiveTrain(train, longRoute);
+        activeTrain.changeRoute(track1, track2);
+        activeTrain.changeRoute(track2, track3);
 
         activeTrain.setCurrentSpeed(1d);
 
@@ -279,6 +285,7 @@ public class ActiveTrainTest {
         track1.setActiveConnection(point2, altTrack);
 
         ActiveTrain activeTrain = new ActiveTrain(train, map.fastestRoute(startLocation, altLocation));
+        activeTrain.changeRoute(track1, altTrack);
         activeTrain.getTrain().setAmountOfFuel(150d);
 
         activeTrain.setCurrentSpeed(1d);
