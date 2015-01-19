@@ -351,11 +351,17 @@ public class Actions {
 	}
 
 	public static String getContractSummary(Contract contract, Map map) {
-		return "\tStart: " + map.getLocationFromPoint(contract.getInitialRoute().getFrom()) + "\n" + "\tDestination: " + map.getLocationFromPoint(contract.getInitialRoute().getTo()) + "\n"
-				+ "\tTrain type: " + contract.getRequiredTrainType() + "\n"
-				+ "\tMoney reward: " + contract.getMoneyPayout() + "\n"
-				+ "\tReputation reward: " + contract.getReputationPayout() + "\n"
-				+ "\tTime limit: " + contract.getTimeLimit() + "\n";
+		return "\tStart: "
+				+ map.getLocationFromPoint(contract.getInitialRoute().getFrom())
+						.getName()
+				+ "\n"
+				+ "\tDestination: "
+				+ map.getLocationFromPoint(contract.getInitialRoute().getTo())
+						.getName() + "\n" + "\tTrain type: "
+				+ contract.getRequiredTrainType() + "\n" + "\tMoney reward: "
+				+ contract.getMoneyPayout() + "\n" + "\tReputation reward: "
+				+ contract.getReputationPayout() + "\n" + "\tTime limit: "
+				+ contract.getTimeLimit() + "\n";
 	}
 
 }

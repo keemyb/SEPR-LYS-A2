@@ -33,6 +33,8 @@ public class GameWindow extends JFrame {
 	private boolean trainPanelShow = false;
 	private double lastZoom;
 
+	private static final double TRAIN_SPEED_CONST = 0.0000000005;
+
 	Image coinstackImg = new ImageIcon("files/coinstack.png").getImage()
 			.getScaledInstance(60, 60, Image.SCALE_SMOOTH);
 	Image clockImg = new ImageIcon("files/clock.png").getImage()
@@ -140,6 +142,7 @@ public class GameWindow extends JFrame {
 
 		@Override
 		public void contractChoose() {
+			speedSlider.setValue(0);
 			Contract[] contracts = game.getContracts().toArray(new Contract[3]);
 			String start0 = game
 					.getMap()
@@ -185,45 +188,53 @@ public class GameWindow extends JFrame {
 
 			String message = "Choose your contract\n\n" + "Contract 1:\n"
 					+ Actions.getContractSummary(contracts[0], game.getMap())
-					+ "\n"
-					+ "Contract 2:\n"
+					+ "\n" + "Contract 2:\n"
 					+ Actions.getContractSummary(contracts[1], game.getMap())
-					+ "\n"
-					+ "Contract 3:\n"
+					+ "\n" + "Contract 3:\n"
 					+ Actions.getContractSummary(contracts[2], game.getMap());
 
 			Object[] options = { "Contract 1", "Contract 2", "Contract 3" };
-			
+
 			int n = -1;
-			while(n == -1) {
-					n = JOptionPane.showOptionDialog(Dialog.parent, message,
-					"Choose a contract", JOptionPane.DEFAULT_OPTION,
-					JOptionPane.PLAIN_MESSAGE, null, options, null);
+			while (n == -1) {
+				n = JOptionPane.showOptionDialog(Dialog.parent, message,
+						"Choose a contract", JOptionPane.DEFAULT_OPTION,
+						JOptionPane.PLAIN_MESSAGE, null, options, null);
 			}
-			
+
 			Contract chosenContract = contracts[n];
 			Object[] trains = game.getTrains(chosenContract).toArray();
 			Train chosenTrain = null;
-			while(chosenTrain == null) {
-				
-			chosenTrain = (Train) JOptionPane.showInputDialog(
-					Dialog.parent, "Choose a train", "Choose a train",
-					JOptionPane.PLAIN_MESSAGE, null, trains, trains[0]);
+			while (chosenTrain == null) {
+
+				chosenTrain = (Train) JOptionPane.showInputDialog(
+						Dialog.parent, "Choose a train", "Choose a train",
+						JOptionPane.PLAIN_MESSAGE, null, trains, trains[0]);
 			}
-			
+
 			game.assignContract(chosenTrain, chosenContract);
 		}
 
 		@Override
 		public void turnBegin() {
-			String playerName = "player"; // TODO replace this with an actual
-											// player name
+			Player activePlayer = game.getActivePlayer();
+			if (game.hasAContract(activePlayer)) {
+				speedSlider.setValue((int) Math.round(game.getActivePlayer()
+						.getActiveTrain().getCurrentSpeed()
+						/ TRAIN_SPEED_CONST) * 100);
+			} else {
+				speedSlider.setValue(0);
+			}
+			String playerName = game.getPlayerName(game.getPlayers().indexOf(
+					game.getActivePlayer())); // TODO replace this with an
+												// actual player name
 			Dialog.info("Player " + playerName + ", it is your turn.");
 		}
 
 		@Override
 		public void update() {
-			game.setTrainSpeed(((double) speedSlider.getValue() / 100) * 0.0000000005);
+			game.setTrainSpeed(((double) speedSlider.getValue() / 100)
+					* TRAIN_SPEED_CONST);
 			repaint();
 		}
 
@@ -310,11 +321,11 @@ public class GameWindow extends JFrame {
 		storeButton.setBounds(15, 80, 60, 60);
 		inventoryButton.setBounds(15, 15, 60, 60);
 
-		speedSlider.setBounds(110, 15, trainInfoPanel.getWidth()-120,
+		speedSlider.setBounds(110, 15, trainInfoPanel.getWidth() - 120,
 				speedSlider.getPreferredSize().height);
 
-		reverseTrainButton.setBounds(trainInfoPanel.getWidth()-70,
-				speedSlider.getHeight()+25, 60, 60);
+		reverseTrainButton.setBounds(trainInfoPanel.getWidth() - 70,
+				speedSlider.getHeight() + 25, 60, 60);
 
 		int zoomButtonWidth = zoomResetButton.getPreferredSize().width;
 		int zoomButtonHeight = zoomResetButton.getPreferredSize().height;
