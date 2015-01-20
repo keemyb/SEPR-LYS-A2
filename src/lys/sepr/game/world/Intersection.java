@@ -228,13 +228,9 @@ public class Intersection {
             if (trackOtherPoint.equals(to)) return;
         }
 
-        // Remove the reference to this intersection of every track,
-        // before moving them, and then add the reference back
         for (int i=0; i < tracks.size(); i++) {
             Track track = tracks.get(i);
-            track.removeIntersection(this);
             track.move(getPoint(), to);
-            track.addIntersection(this);
         }
         point = to;
         updateValidConnections();

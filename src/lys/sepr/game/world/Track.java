@@ -208,13 +208,6 @@ public class Track {
             points.add(new Point(to));
         }
 
-        // If there was an intersection at the point where we moved from, break the connection
-        Intersection existingIntersection = getIntersection(from);
-        if (existingIntersection != null) {
-            existingIntersection.removeTrack(this);
-            removeIntersection(existingIntersection);
-        }
-
         // Update the valid tracks as the angle between tracks may have changed
         // Only doing this for the intersection which was at the end of the track
         // that was not moved, as if the track was moved as part of an intersection
