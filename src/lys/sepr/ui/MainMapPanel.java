@@ -94,6 +94,9 @@ public class MainMapPanel extends JPanel {
                 state.setClickedIntersection();
             } else if (state.getSelectedTrack() != null) {
                 state.setClickedTrack();
+            } else {
+                state.clearClickedTrackAndIntersection();
+                setCursor(cursorNormal);
             }
 
             Track clickedTrack1 = state.getClickedTrack1();
