@@ -31,9 +31,9 @@ public class GameWindow extends JFrame {
 
 	public Game game = null;
 
-	private int trainPanelX = -230;
-	private boolean trainPanelShow = false;
 	private double lastZoom;
+
+	private boolean paused = false;
 
 	private static final double TRAIN_SPEED_CONST = 0.0000000005;
 
@@ -95,16 +95,16 @@ public class GameWindow extends JFrame {
 						.getLocationFromPoint(
 								game.getActivePlayer().getCurrentContract()
 										.getInitialRoute().getTo()).getName();
-				long timeStarted = game.getActivePlayer()
-						.getContractStartTime();
+
 				int moneyPayout = game.getActivePlayer().getCurrentContract()
 						.getMoneyPayout();
 				int repPayout = game.getActivePlayer().getCurrentContract()
 						.getReputationPayout();
 				g2.drawString("Destination:" + destination, 10, 45);
-				int timeleft = game.getActivePlayer().getCurrentContract().getTimeLimit() - (int) ((System.currentTimeMillis() - timeStarted)/1000);
-				String mins = (timeleft / 60 == 0 ? "" : "" + timeleft/60 + "m ");
-				String secs = ""  + timeleft%60 + "s";
+				int timeleft = game.getContractClock();
+				String mins = (timeleft / 60 == 0 ? "" : "" + timeleft / 60
+						+ "m ");
+				String secs = "" + timeleft % 60 + "s";
 				g2.drawString("Time Left: " + mins + secs, 10, 65);
 				g2.drawString("Money Reward: " + moneyPayout, 10, 85);
 				g2.drawString("Reputation Reward: " + repPayout, 10, 105);
@@ -125,18 +125,20 @@ public class GameWindow extends JFrame {
 			g2.setFont(new Font("Courier New", Font.PLAIN, 14));
 			g2.drawString("Train Speed:", 10, 25);
 			ActiveTrain train = game.getActivePlayer().getActiveTrain();
-			if(train != null) {
+			if (train != null) {
 				g2.drawString("Train:", 10, 46);
 				g2.drawString(train.getTrain().getName(), 20, 67);
 				int currentHealth = train.getTrain().getHealth();
 				int maxHealth = train.getTrain().getMaxHealth();
 				int currentFuel = (int) train.getTrain().getAmountOfFuel();
 				int maxFuel = (int) train.getTrain().getMaxFuelCapacity();
-				g2.drawString("Health: " + currentHealth + "/" + maxHealth , 10, 88);
+				g2.drawString("Health: " + currentHealth + "/" + maxHealth, 10,
+						88);
 				int healthBarWidth = getWidth() - 90;
-				int healthBarFill = (healthBarWidth * currentHealth)/maxHealth;
+				int healthBarFill = (healthBarWidth * currentHealth)
+						/ maxHealth;
 				int fuelBarWidth = getWidth() - 90;
-				int fuelBarFill = (fuelBarWidth * currentFuel)/maxFuel;
+				int fuelBarFill = (fuelBarWidth * currentFuel) / maxFuel;
 				if ((float) currentHealth / maxHealth > 0.5) {
 					g2.setColor(Color.GREEN);
 				} else {
@@ -153,8 +155,11 @@ public class GameWindow extends JFrame {
 				g2.fillRect(10, 117, fuelBarFill, 15);
 				g2.setColor(Color.BLACK);
 				g2.drawRect(10, 117, fuelBarWidth, 15);
-				FontMetrics fm = g2.getFontMetrics(new Font("Courier New", Font.PLAIN, 14));
-				String fuel = "" + Math.round(train.getTrain().getAmountOfFuel()) + "/" + Math.round(train.getTrain().getMaxFuelCapacity());
+				FontMetrics fm = g2.getFontMetrics(new Font("Courier New",
+						Font.PLAIN, 14));
+				String fuel = ""
+						+ Math.round(train.getTrain().getAmountOfFuel()) + "/"
+						+ Math.round(train.getTrain().getMaxFuelCapacity());
 				g2.drawString("Fuel: " + fuel, 10, 145);
 			} else {
 				g2.drawString("No train", 10, 46);
@@ -207,6 +212,8 @@ public class GameWindow extends JFrame {
 
 		@Override
 		public void contractCompleted() {
+			game.pause();
+			paused = true;
 			repaint();
 			int money = game.getActivePlayer().getCurrentContract()
 					.getMoneyPayout();
@@ -216,12 +223,18 @@ public class GameWindow extends JFrame {
 					: "\n\t- Reputation: " + reputation);
 			Dialog.info("You completed your contract and have been rewarded the following:"
 					+ moneyStr + repStr);
+			game.resume();
+			paused = false;
 		}
 
 		@Override
 		public void contractFailed() {
+			game.pause();
+			paused = true;
 			repaint();
 			Dialog.info("You ran out of time and did not complete your contract!");
+			game.resume();
+			paused = false;
 
 		}
 
@@ -229,48 +242,10 @@ public class GameWindow extends JFrame {
 		public void contractChoose() {
 			speedSlider.setValue(0);
 			repaint();
+			game.pause();
+			paused = true;
+			repaint();
 			Contract[] contracts = game.getContracts().toArray(new Contract[3]);
-			String start0 = game
-					.getMap()
-					.getLocationFromPoint(
-							contracts[0].getInitialRoute().getFrom()).getName();
-			String dest0 = game
-					.getMap()
-					.getLocationFromPoint(
-							contracts[0].getInitialRoute().getTo()).getName();
-			String requiredTrainType0 = contracts[0].getRequiredTrainType()
-					.toString();
-			String moneyPayout0 = "" + contracts[0].getMoneyPayout();
-			String repPayout0 = "" + contracts[0].getReputationPayout();
-			String timeLimit0 = "" + contracts[0].getTimeLimit() + "s";
-
-			String start1 = game
-					.getMap()
-					.getLocationFromPoint(
-							contracts[1].getInitialRoute().getFrom()).getName();
-			String dest1 = game
-					.getMap()
-					.getLocationFromPoint(
-							contracts[1].getInitialRoute().getTo()).getName();
-			String requiredTrainType1 = contracts[1].getRequiredTrainType()
-					.toString();
-			String moneyPayout1 = "" + contracts[1].getMoneyPayout();
-			String repPayout1 = "" + contracts[1].getReputationPayout();
-			String timeLimit1 = "" + contracts[1].getTimeLimit() + "s";
-
-			String start2 = game
-					.getMap()
-					.getLocationFromPoint(
-							contracts[2].getInitialRoute().getFrom()).getName();
-			String dest2 = game
-					.getMap()
-					.getLocationFromPoint(
-							contracts[2].getInitialRoute().getTo()).getName();
-			String requiredTrainType2 = contracts[2].getRequiredTrainType()
-					.toString();
-			String moneyPayout2 = "" + contracts[2].getMoneyPayout();
-			String repPayout2 = "" + contracts[2].getReputationPayout();
-			String timeLimit2 = "" + contracts[2].getTimeLimit() + "s";
 
 			String message = "Choose your contract\n\n" + "Contract 1:\n"
 					+ Actions.getContractSummary(contracts[0], game.getMap())
@@ -299,10 +274,15 @@ public class GameWindow extends JFrame {
 			}
 
 			game.assignContract(chosenTrain, chosenContract);
+			game.resume();
+			paused = false;
+			repaint();
 		}
 
 		@Override
 		public void turnBegin() {
+			game.pause();
+			paused = true;
 			Player activePlayer = game.getActivePlayer();
 			if (game.hasAContract(activePlayer)) {
 				speedSlider.setValue((int) Math.round(game.getActivePlayer()
@@ -314,7 +294,9 @@ public class GameWindow extends JFrame {
 			String playerName = game.getPlayerName(game.getPlayers().indexOf(
 					game.getActivePlayer())); // TODO replace this with an
 												// actual player name
-			Dialog.info("Player " + playerName + ", it is your turn.");
+			Dialog.info("" + playerName + ", it is your turn.");
+			game.resume();
+			paused = false;
 		}
 
 		@Override
@@ -346,6 +328,28 @@ public class GameWindow extends JFrame {
 				JViewport.SIMPLE_SCROLL_MODE);
 		mainMapScrollPane.getHorizontalScrollBar().setUnitIncrement(16);
 		mainMapScrollPane.getVerticalScrollBar().setUnitIncrement(16);
+
+		pauseButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				game.pause();
+				paused = true;
+				repaint();
+				Object[] options = { "Resume", "Exit" };
+				int n = JOptionPane.showOptionDialog(Dialog.parent,
+						"Game is paused.", "", JOptionPane.YES_NO_OPTION,
+						JOptionPane.PLAIN_MESSAGE, null, options, null);
+				if (n == 1) {
+					game.stopGame();
+					dispose();
+				}
+				paused = false;
+				game.resume();
+				repaint();
+			}
+
+		});
 
 		zoomInButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -442,6 +446,10 @@ public class GameWindow extends JFrame {
 	public void paint(Graphics g) {
 		setLayouts();
 		super.paint(g);
+		if (paused) {
+			g.setColor(new Color(255, 255, 255, 200));
+			g.fillRect(0, 0, getWidth(), getHeight());
+		}
 	}
 
 	/*

@@ -29,6 +29,10 @@ public class Game implements Runnable {
 	// thread variables
 	private long turnStartTime = 0;
 	private long loopTime = 0;
+	
+	private long pauseStart = 0;
+	private long pauseTime = 0;
+	private boolean paused = false;
 
 	// An empty listener so we can stop messages after game has closed without
 	// NullPointerExceptions
@@ -75,6 +79,19 @@ public class Game implements Runnable {
 		generatePossibleContracts();
 	}
 
+	public void pause() {
+		paused = true;
+		pauseStart = System.currentTimeMillis();
+	}
+	
+	public void resume() {
+		long pauseEnd = System.currentTimeMillis();
+		long pauseDuration = pauseEnd - pauseStart;
+		pauseTime = pauseTime + pauseDuration;
+		pauseStart = 0;
+		paused = false;
+	}
+	
 	public List<Player> getPlayers() {
 		return players;
 	}
@@ -136,7 +153,7 @@ public class Game implements Runnable {
 			nextPlayerIndex = currentPlayerIndex + 1;
 		}
 		activePlayer = players.get(nextPlayerIndex);
-		turnStartTime = System.currentTimeMillis();
+		turnStartTime = System.currentTimeMillis() - pauseTime;
 		gameListener.turnBegin();
 	}
 
@@ -181,7 +198,13 @@ public class Game implements Runnable {
 	}
 
 	public int getTurnClock() {
-		return (int) (timePerTurn - (System.currentTimeMillis() - turnStartTime)) / 1000;
+		return ((int) (timePerTurn - ((System.currentTimeMillis()-pauseTime) - turnStartTime)) / 1000)+1;
+	}
+	
+	public int getContractClock() {
+		long timeStarted = activePlayer
+				.getContractStartTime();
+		return activePlayer.getCurrentContract().getTimeLimit() - (int) (((System.currentTimeMillis()-pauseTime) - timeStarted)/1000);
 	}
 
 	private void generatePossibleContracts() {
@@ -285,7 +308,8 @@ public class Game implements Runnable {
 		turnStartTime = System.currentTimeMillis();
 		loopTime = System.currentTimeMillis();
 		while (gameRunning) {
-			long nowTime = System.currentTimeMillis();
+			while(paused);
+			long nowTime = System.currentTimeMillis() - pauseTime;
 			update(nowTime - loopTime);
 			gameListener.update();
 			if (hasAContract(activePlayer)) {
@@ -293,7 +317,7 @@ public class Game implements Runnable {
 					gameListener.contractCompleted();
 					fulfilledCurrentContract(activePlayer);
 				}
-				if (activePlayer.isContractOutOfTime()) {
+				if (activePlayer.isContractOutOfTime(pauseTime)) {
 					gameListener.contractFailed();
 					failedCurrentContract(activePlayer);
 				}

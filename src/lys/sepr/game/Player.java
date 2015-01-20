@@ -93,10 +93,10 @@ public class Player {
         contractStartTime = System.currentTimeMillis();
     }
     
-    public boolean isContractOutOfTime() {
+    public boolean isContractOutOfTime(long pauseTime) {
     	if(currentContract == null)
     		return false;
-    	return (System.currentTimeMillis() - contractStartTime) >= currentContract.getTimeLimit()*1000;
+    	return ((System.currentTimeMillis()-pauseTime) - contractStartTime) >= currentContract.getTimeLimit()*1000;
     }
 
     private void endContract() {
