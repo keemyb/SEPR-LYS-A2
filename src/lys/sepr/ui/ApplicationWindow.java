@@ -88,10 +88,29 @@ public class ApplicationWindow extends JFrame {
 	private void newGame() {
 		// TODO ask for player names and number of contracts
 		// Don't call a main method
+		String player1name = "";
+		String player2name = "";
+		int numberOfContracts = -1;
+		while(player1name.equals("")) {
+			player1name = Dialog.stringInput("Player 1, enter your name.");
+		}
+		while(player2name.equals("")) {
+			player2name = Dialog.stringInput("Player 2, enter your name.");
+		}
+		while(numberOfContracts == -1) {
+			try {
+				numberOfContracts = Dialog.intInput("Enter the number of contracts to complete.");
+				if(numberOfContracts < 1) {
+					Dialog.info("Please enter a non zero positive integer.");
+				}
+			} catch (NumberFormatException e) {
+				Dialog.error("You did not enter an integer, try again.");
+			}
+		}
 		List<Player> players = new ArrayList<Player>(Arrays.asList(
-				new Player(0, Player.PlayerColor.BLUE), new Player(0, Player.PlayerColor.GREEN)));
+				new Player(0, Player.PlayerColor.BLUE, player1name), new Player(0, Player.PlayerColor.GREEN, player2name)));
 		try {
-			g = new Game(players, 1, Actions.loadMap());
+			g = new Game(players, numberOfContracts, Actions.loadMap());
 			GameWindow gw = new GameWindow(g);
 			gw.addWindowListener(new WindowListener() {
 

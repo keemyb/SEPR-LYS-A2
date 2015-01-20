@@ -328,6 +328,6 @@ public class Game implements Runnable {
 	
 	
 	public String getPlayerName(int playerNumber) {
-		return "Player"; //TODO this properly
+		return players.get(playerNumber).getName(); //TODO this properly
 	}
 }

@@ -33,6 +33,7 @@ public class Player {
     private long contractStartTime;
     private int money;
     private PlayerColor playerColor;
+    private String playerName;
 
     private Inventory inventory = new Inventory();
 
@@ -44,9 +45,10 @@ public class Player {
     private int reputation = 0;
     private Profile profile;
 
-    public Player(int money, PlayerColor playerColor) {
+    public Player(int money, PlayerColor playerColor, String playerName) {
         this.money = money;
         this.playerColor = playerColor;
+        this.playerName = playerName;
     }
 
     public ActiveTrain getActiveTrain() {
@@ -105,6 +107,10 @@ public class Player {
     public void addMoney(int money) {
         if (money < 0) return;
         this.money += money;
+    }
+    
+    public String getName() {
+    	return playerName;
     }
 
     public int getMoney() {
