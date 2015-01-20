@@ -30,6 +30,8 @@ public class ApplicationWindow extends JFrame {
 			"files/Tutorial_button.png").getImage()));
 	JButton exitButton = new JButton(new ImageIcon(new ImageIcon(
 			"files/Exit_button.png").getImage()));
+	
+	JLabel backgroundLabel = new JLabel(new ImageIcon("files/Wallpaper.png"));
 
 
 
@@ -69,6 +71,7 @@ public class ApplicationWindow extends JFrame {
 		menuPanel.add(tutorialButton);
 		menuPanel.add(exitButton);
 		menuPanel.add(settingsButton);
+		menuPanel.add(backgroundLabel);
 		add(menuPanel);
 	}
 
@@ -173,8 +176,8 @@ public class ApplicationWindow extends JFrame {
 		loadGameButton.setBounds(hinset, 2 * (vgap + 60), 260, 55);
 		tutorialButton.setBounds(hinset,3 * (vgap + 60), 260, 55);
 		exitButton.setBounds(hinset,4 * (vgap + 60), 260, 55);
-
 		settingsButton.setBounds(getWidth() - 96, 0, 80, 60);
+		backgroundLabel.setBounds(0, 0, getWidth(), getHeight());
 
 	}
 
