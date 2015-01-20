@@ -136,8 +136,7 @@ public class Game implements Runnable {
 			nextPlayerIndex = currentPlayerIndex + 1;
 		}
 		activePlayer = players.get(nextPlayerIndex);
-		turnStartTime = System.currentTimeMillis();
-		gameListener.turnBegin();
+
 	}
 
 	// Starting the players turn by giving them the contract and
@@ -147,6 +146,8 @@ public class Game implements Runnable {
 	public void assignContract(Train train, Contract contract) {
 		activePlayer.acceptContract(train, contract);
 		possibleContracts.remove(contract);
+		turnStartTime = System.currentTimeMillis();
+		gameListener.turnBegin();
 	}
 
 	// Returns a list of contracts for player to choose from
@@ -274,7 +275,7 @@ public class Game implements Runnable {
 			ActiveTrain activeTrain = player.getActiveTrain();
 			if (activeTrain != null) {
 				// Infinite fuel
-				activeTrain.getTrain().refill(Integer.MAX_VALUE);
+//				activeTrain.getTrain().refill(Integer.MAX_VALUE);
 				activeTrain.move(timePassed);
 			}
 		}
