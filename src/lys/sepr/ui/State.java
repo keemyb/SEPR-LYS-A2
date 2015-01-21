@@ -6,7 +6,9 @@ import lys.sepr.game.world.Point;
 import lys.sepr.game.world.Track;
 
 import javax.imageio.ImageIO;
+
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 
 public class State {
@@ -45,13 +47,13 @@ public class State {
     static {
         originalRailAndWood = null;
         try {
-            originalRailAndWood = ImageIO.read(State.class.getResourceAsStream("/RailAndWood.png"));
+            originalRailAndWood = ImageIO.read(new File("files/RailAndWood.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
         scaledRailAndWood = Actions.scaleImage(originalRailAndWood, (double) railHeight / originalRailAndWood.getHeight());
 
-        trainPaths = new String[]{"/Train_red_small.png", "/Train_green_small.png", "/Train_blue_small.png", "/Train_yellow_small.png"};
+        trainPaths = new String[]{"files/Train_red_small.png", "files/Train_green_small.png", "files/Train_blue_small.png", "files/Train_yellow_small.png"};
         originalTrains = new BufferedImage[trainPaths.length];
         scaledTrains = new BufferedImage[trainPaths.length];
 
@@ -59,7 +61,7 @@ public class State {
             String path = trainPaths[i];
 
             try {
-                originalTrains[i] = ImageIO.read(State.class.getResourceAsStream(path));
+                originalTrains[i] = ImageIO.read(new File(path));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -67,7 +69,7 @@ public class State {
             scaledTrains[i] = Actions.scaleImage(originalTrains[i], (double) railHeight * relativeTrainWidthToRail / originalTrains[i].getWidth());
         }
 
-        flagPaths = new String[]{"/Flag_red.png", "/Flag_green.png", "/Flag_blue.png", "/Flag_yellow.png"};
+        flagPaths = new String[]{"files/Flag_red.png", "files/Flag_green.png", "files/Flag_blue.png", "files/Flag_yellow.png"};
         originalFlags = new BufferedImage[trainPaths.length];
         scaledFlags = new BufferedImage[trainPaths.length];
 
@@ -75,7 +77,7 @@ public class State {
             String path = flagPaths[i];
 
             try {
-                originalFlags[i] = ImageIO.read(State.class.getResourceAsStream(path));
+                originalFlags[i] = ImageIO.read(new File(path));
             } catch (IOException e) {
                 e.printStackTrace();
             }

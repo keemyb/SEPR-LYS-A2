@@ -8,10 +8,12 @@ import lys.sepr.game.world.Track;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 
 public class MainMapPanel extends JPanel {
@@ -37,21 +39,21 @@ public class MainMapPanel extends JPanel {
     static {
         cursorNormalImage = null;
         try {
-            cursorNormalImage = ImageIO.read(State.class.getResourceAsStream("/Cursor_normal_small.png"));
+            cursorNormalImage = ImageIO.read(new File("files/Cursor_normal_small.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         cursorIntersectionImage = null;
         try {
-            cursorIntersectionImage = ImageIO.read(State.class.getResourceAsStream("/Cursor_junction_small.png"));
+            cursorIntersectionImage = ImageIO.read(new File("files/Cursor_junction_small.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         cursorRouteChangeImage = null;
         try {
-            cursorRouteChangeImage = ImageIO.read(State.class.getResourceAsStream("/Cursor_routeChange_small.png"));
+            cursorRouteChangeImage = ImageIO.read(new File("files/Cursor_routeChange_small.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }

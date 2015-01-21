@@ -287,11 +287,7 @@ public class Actions {
 		XStream xstream = new XStream();
 
 		File mapXml = null;
-		try {
-			mapXml = new File(Actions.class.getResource("/eu1.trmp").toURI());
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
+		mapXml = new File("files/eu1.trmp");
 		Map map = (Map) xstream.fromXML(mapXml);
 		return map;
 	}
@@ -342,8 +338,7 @@ public class Actions {
 
 	public static BufferedImage getBackground(Map map) {
 		try {
-			return ImageIO.read(Actions.class.getResourceAsStream("/"
-					+ map.getBackgroundFileName()));
+			return ImageIO.read(new File("files/" + map.getBackgroundFileName()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
